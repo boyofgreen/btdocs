@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>113 ConfigureSW - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-113-update-your-web-app-with-pwa-features">Task 1.1.3 - Update your Web App with PWA features</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This task has a dependency on <a href="../112_GeneratePWA/">Task 1.1.2</a> and all of it's prerequisites</p>
+<h2 id="task">Task</h2>
+<h3 id="add-web-app-manifest-to-your-site">Add Web App Manifest to your site</h3>
+<p>The first thing you'll need to do is pull the "manifest.json" file and the "images" folder that you obtained from the zip file. in the previous step.</p>
+<ol>
+<li>Add the manifest.json and the "images" folder to the root path of your site (wwwroot).  Remember if you change the path of your "images" folder, you need to update the json in your manifest file to reflect your changes. The easiest way to add new content to a project is to drag and drop the contents from the file explorer into the solutions explorer of your project.</li>
+</ol>
+<p>![add image of manifest and paths ]</p>
+<ol>
+<li>
+<p>Reference the manifest in your page with a link tag:</p>
+<p><code>&lt;link rel="manifest" href="manifest.json"&gt;&lt;/link&gt;</code>
+This can be done by opening the Views \ Shippings \ index.cshtml page in your site, and adding the following to the top of the document:</p>
+</li>
+</ol>
+<pre><code>
+@section HeadExtension{ 
+&lt;link rel=&quot;manifest&quot; href=&quot;manifest.json&quot; /&gt;
+}
+
+</code></pre>
+
+<h3 id="add-sw-code-to-your-site">Add SW code to your site</h3>
+<p>Your Service Worker needs likewise needs to be added to your site to take effect.  </p>
+<ol>
+<li>Copy the "pwabuilder-sw.js" file from the zip you downloaded from the service worker page of PWA Builder and add it to your js folder in wwwroot  (not in a folder) like so:</li>
+</ol>
+<p><img alt="show sw location" src="../images/swlocal.png" /></p>
+<!----
+
+2.  You will then want to add a short "time to live" for your manifest file so it can be updated often.  To do this you will need to add the following block of code to
+
+!!!!!!!!!!!!!!!!!!!!!!!how do you sent a short expiration on this file"!!!!!!!!!!!!!!!!?????????????
+
+-->
+
+<ol>
+<li>Open up the landing page of your app (index.cshtml) and create a new script tag in the head from within the same HeadExtension section like so:</li>
+</ol>
+<pre><code>@section HeadExtension{ 
+&lt;link rel=&quot;manifest&quot; href=&quot;manifest.json&quot; /&gt;
+&lt;script&gt;&lt;/script&gt;
+}
+
+
+</code></pre>
+
+<p>You will want to place this at the top of your document.</p>
+<ol>
+<li>Add the following registration code inside the new script tag:</li>
+</ol>
+<pre><code>//This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
+
+//Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
+if (navigator.serviceWorker.controller) {
+  console.log('[PWA Builder] active service worker found, no need to register')
+} else {
+
+//Register the ServiceWorker
+  navigator.serviceWorker.register('pwabuilder-sw.js', {
+    scope: './'
+  }).then(function(reg) {
+    console.log('Service worker has been registered for scope:'+ reg.scope);
+  });
+}
+
+</code></pre>
+
+<!-- 
+### Prime your Service Worker for offline
+
+This Particular Service Worker makes a copy of all the pages you visit and caches it so that you can view any of those pages when the app is offline, or network connectivity is low.  In order to make sure you service worker has a copy of your site, simply visit the pages you want 
+
+
+1. create a new file inside your root called "pwab-config.json".
+
+2. Copy and past the following JSON object into the new file
+
+
+wzxhzdk:3
+
+-->
+
+<!-- 3. So we make sure this file is checked for the latest content, set a file life of XXXXXXXXXXXXXX. -->
+
+<h3 id="re-publish-changes">Re-Publish Changes</h3>
+<p>Now that you have these powerful new features running locally, you can publish them to your website to be consumed as a PWA.</p>
+<ol>
+<li>
+<p>In Visual studio choose Project &gt; Publish...</p>
+</li>
+<li>
+<p>Choose "Microsoft Azure App Service" from the selection screen</p>
+</li>
+</ol>
+<p><strong>NOTE</strong> if your Visual Studio project is still debugging your azure server or your local server, you may need to halt the server before re-publishing.</p>
+<p><img alt="publish screen from vs" src="../images/publish1.PNG" /></p>
+<ol>
+<li>Choose "deploy"</li>
+</ol>
+<h2 id="references">References</h2>
+<p>https://www.pwabuilder.com</p>
+<h2 id="continue-to-next-task">continue to <a href="../114_Test_App/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

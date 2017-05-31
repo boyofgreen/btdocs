@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>512a Unity - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-512a-create-a-unity-solution-to-visualize-3d-model">Task 5.1.2a - Create a Unity solution to visualize 3D Model</h1>
+<p>Now that we have a proper 3D model of our nose prototype, we can start rendering it in real-time through a UWP app. To create the app, we use the Unity 3D rendering engine.
+Unity 3D has built-in support for loading FBX, so all we need to do is to load the model, add it to a scene and export it as a UWP. This allows us to properly simulate how our prototypes looks in the real world!</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This walkthrough assumes that you have:
+<em> Windows 10 Creators Update
+</em> 3D Nose Model from Paint 5.1.1
+* Unity 5.6 with UWP Plugin for exporting UWP</p>
+<h2 id="task">Task</h2>
+<h4 id="creating-a-new-project">Creating a new project</h4>
+<ol>
+<li>
+<p>Launch Unity 3D using the Windows Start Menu. When the Unity 3D Project dialogue is visible, click NEW.
+    &gt; Note: If you launch if for the first time, log in with you free unity3d account.</p>
+</li>
+<li>
+<p>In the Create New Project dialogue, give the project a proper name like "Nose3D", select the 3D toggle and where you want it before clicking [Create project].</p>
+<p><img alt="3D objects tool" src="../images/512a_1.png" /></p>
+</li>
+<li>
+<p>Unity will spend a few seconds on generating the new project. When done, you will see a default blank Unity 3D project.</p>
+</li>
+<li>Let's save the empty scene first by using <strong>CTRL+S</strong> or <strong>File-&gt;Save Scenes</strong> and name it <strong>Main.unity</strong>. Save it directly in the new projects default Assets-folder.</li>
+<li>Unity 3D is a complex 3D engine, and for rendering our 3D nose we have to touch some of the basics.</li>
+</ol>
+<p><strong>The interface:</strong></p>
+<p><img alt="3D objects tool" src="../images/512a_2.png" /></p>
+<p>The Unity 3D interface has 5 main parts. The big 3D view is your scene. There are a couple of tabs above this scene named Scene and Game. Scene is where you will be working, and the Game tab is where you can see what the Game looks like when you press Play.</p>
+<p>The hierarchy is where you can see all objects currently in your scene. If your Main scene is collapsed, click the triangle to expand its content (just a normal tree-view). By default, the scene has a camera (what you see through in the Game tab), and a Directional Light (think of this as the sun).
+This is where we will be adding our own objects to build up the scene. Each of these items is a GameObject.</p>
+<p>The Project tab contains the entire projects file structure. Everything you work with needs to be in the default Assets folder. Inside this folder you are free to do everything you want to build up your own folder structure.</p>
+<p>The Inspector tab contains all the properties of a selected GameObject. If you select the Main Camera GameObject from the Hierarchy, you can see all components and properties attached to this GameObject. This is the way objects are built in Unity, a combination of different components create and defines a GameObjects purpose.</p>
+<p>The top menu is the normal Windows menu, with some tools for transforming GameObjects and configuring your scene view and UI layout.</p>
+<h4 id="loading-the-3d-nose-model">Loading the 3D Nose model</h4>
+<p>Next we will have to load the 3D nose model we created earlier.
+1. Create a new folder in the project view from Unity by right-clicking and selecting <strong>Create-&gt;Folder</strong>. Name it <strong>Models</strong>.</p>
+<pre><code>![3D objects tool](images/512a_3.png)
+</code></pre>
+<ol>
+<li>Now locate the 3D Nose FBX model from where you saved it in 5.1.1 and copy it into the new Models folder using File Explorer.</li>
+<li>
+<p>Go back to Unity 3D. You will notice that it automatically detects a new file and imports it. You can find it in the Assets/Models folder in the project view:</p>
+<p><img alt="3D objects tool" src="../images/512a_4.png" /></p>
+</li>
+<li>
+<p>Now drag the nose into the scene hierarchy (release it on the gray area) to place it in the scene.</p>
+</li>
+<li>
+<p>You should see the Nose in the Hierarchy View, but it might not be visible in the scene view. Having the GameObject selected, hover the mouse over the scene view window and press <strong>F</strong> on the keyboard to focus on the object. You should now see it.</p>
+<p><img alt="3D objects tool" src="../images/512a_5.png" /></p>
+<p>Clicking the Game tab on top of the Scene view will let you see what the camera sees. In the end, we want to position it so it is visible by the camera.</p>
+<p><img alt="3D objects tool" src="../images/512a_6.png" /></p>
+</li>
+<li>
+<p>There are some issues we need to solve:</p>
+<ul>
+<li>The scale is different between Unity and Paint 3D, so the object we imported is very big.</li>
+<li>The origo for the polygons in the 3D model got an offset from center of the GameObject.</li>
+<li>The color is a bit dark</li>
+</ul>
+</li>
+<li>
+<p>Solving the scale issue: Click on the NosePrototype to view the Position, Scale and Rotation properties. Set the scale to <strong>0.01</strong></p>
+<p><img alt="3D objects tool" src="../images/512a_7.png" /></p>
+<p>I. Solving the origo issue: Create a new and empty GameObject in the scene by clicking the small button on the top-left side of the Hierarchy panel named Create and select <strong>Create Empty</strong>.</p>
+<p><img alt="3D objects tool" src="../images/512a_8.png" /></p>
+<p>A new GameObject item is visible in the Scene Hierarchy. Click it to view the properties. First, set the name to Nose, and set the all the Position fields to 0 to center the empty gameobject in the scene. You can focus it again using <strong>F</strong> with the mouse hovering the scene view in Scene mode (move out from Game if you didn't do this yet). You can then see the empty GameObject in the center of the scene, with the nose somewhere next to it.</p>
+<p><img alt="3D objects tool" src="../images/512a_9.png" /></p>
+<p>II. Select the Nose 3D model GameObject and use the axis handles to position it as close to the center as possible (drag the red and green handles using the mouse and left mouse button). It does not need to be 100% accurate but give it a good try.
+Tip: The handles are there so you can move the object along the selected axis. You can use the Grid and these handles to align them to the center. Look closely in the image below, the grid aligns with the axis handles:</p>
+<p><img alt="3D objects tool" src="../images/512a_10.png" /></p>
+<p>III. With the Nose model in the center, we need to use the Hierarchy View to make it a child of the new empty <strong>Nose</strong> GameObject. Drag the NosePrototype GameObject (it will be named the same as you 3D model FBX file name) and drop it on the Nose GameObject to make it a child.</p>
+<p><img alt="3D objects tool" src="../images/512a_11.png" /></p>
+<p>Having the Nose 3D model GameObject as a child to another will position it relative to the parent GameObject. This means that if we rotate or move it, it will follow.
+8. Fixing the dark color issue: Each GameObject that got a visible surface like our Nose 3D model got a Material. A material is a descriptor on how the surface which the material is assigned to will look and behave. This includes color, texture assignment and light calculations. For those who are familiar with Graphics Programming, a Material is the Shader being used to render the polygons. To find the assigned material, you can either expand the Nose GameObject and select the 3D model GameObject (NosePrototype) and find the Material on it, or navigate to the Materials folder generated when importing the model and clicking it from the Project view.</p>
+<p><img alt="3D objects tool" src="../images/512a_12.png" /></p>
+<p>When we imported the object, it automatically generated a Material, set the texture to what we made in Paint 3D and assigned it to the model in Unity. The property that allows us to control the texture is the Albedo property under Main Maps on the Material. You can see the texture next to it in a miniature thumbnail. Next to this property you can see a gray color. This is multiplied with the texture, thus darkening it. Set this color to white to fix the dark coloring issues. Feel free to play around with the metallic and smoothness settings to give it a metallic or matte look based on your preference.</p>
+<p><img alt="3D objects tool" src="../images/512a_13.png" /></p>
+</li>
+<li>
+<p>With the issues fixed, the color now looks more natural, the object has a better size and is centered.</p>
+<p><img alt="3D objects tool" src="../images/512a_14.png" /></p>
+<p>Verify that the camera in the Game view sees this too. This is what the user will see when they launch the app later. From this view, you can continue to modify the scale and position if needed. In my case, it now looks like this:</p>
+<p><img alt="3D objects tool" src="../images/512a_15.png" /></p>
+</li>
+</ol>
+<h4 id="making-the-nose-rotate">Making the nose rotate</h4>
+<p>To make this look less static, we will create a custom component using C# to make the nose rotate.
+1. Under Assets, create a new folder named Scripts:</p>
+<pre><code>![3D objects tool](images/512a_16.png)
+</code></pre>
+<ol>
+<li>
+<p>In the Scripts folder, right click and click <strong>Create-&gt;C# script</strong>. Name it <strong>NoseRotator</strong></p>
+<p><img alt="3D objects tool" src="../images/512a_17.png" /></p>
+</li>
+<li>
+<p>If the Nose GameObject is not collapsed, collapse it now. Then drag and drop the NoseRotator script on the Nose GameObject in the Hierarchy View to add it as a component to this object:</p>
+<p><img alt="3D objects tool" src="../images/512a_18.png" /></p>
+</li>
+<li>
+<p>If you click on the Nose GameObject using the Hierarchy Panel, you can use the Inspector to see the component you added.</p>
+<p><img alt="3D objects tool" src="../images/512a_19.png" /></p>
+</li>
+<li>
+<p>Double click the NoseRotator script in the Project view to edit the code. You can use the Unity Preferences (<strong>Edit-&gt;Preferences</strong>) to set what Editor you want to use. I set it up to use Visual Studio.</p>
+</li>
+<li>
+<p>The script has two functions by default, Start() and Update(). Start is called once when the app launches, and Update() is called every frame.
+Since we will animate this nose, we want to rotate it slightly every time Update is called. In Update(), add the following line:</p>
+<p><code>csharp
+    transform.Rotate(Time.deltaTime * Vector3.up * speed);</code></p>
+<p>Also, add a new public floating point variable called speed to the class, just above Start(). The complete listing should look like this:
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;</p>
+<p>public class NoseRotator : MonoBehaviour {
+    public float speed = 50.0f;</p>
+<pre><code>// Use this for initialization
+void Start () {
+
+}
+
+// Update is called once per frame
+void Update () {
+    transform.Rotate(Time.deltaTime * Vector3.up * speed);
+}
+</code></pre>
+<p>}
+```
+The Rotate function is rotating the GameObject this script is attached to. Time.deltaTime is the amount of time since last frame, so it can be used to sync the timing with the clock. Vector3.up is really just a Vector: 0,1,0. This is used to rotate only around the Y axis, and speed is how fast it will rotate. Since we multiply this with Time.deltaTime, speed will control how many degrees it will rotate pr. second.</p>
+<p>Save the code and go back to Unity.</p>
+</li>
+<li>
+<p><strong>Testing the app</strong>: Before exporting this as a UWP, we need to ensure the app is working. Click the Play button on top of the scene to automatically enter the Game tab, and start running the code. You should now see the nose rotating in the center of the screen. It might have some offset to it based on how accurate you were when centering it earlier.
+    <img alt="3D objects tool" src="../images/512a_20.png" /></p>
+<blockquote>
+<p>Tip: With the Nose GameObject selected, you can see the speed variable visible, and set to 50. Since we made the speed variable public, you can directly set the variable inside the editor instead of changing the script.</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="exporting-as-uwp">Exporting as UWP</h4>
+<p>The final step is to export our fresh Nose 3D visualizer app as a UWP so we can distribute it. This is very simple using Unity.
+1. To export, go to the Build Settings of the project by using <strong>File-&gt;Build Settings</strong>. A new popup will show. A large empty gray area is visible named Scene in Build. Click the button below it named <strong>Add Open Scene</strong> to add our scene <strong>Main</strong> to the list.
+2. Select Windows Store and click Build to export:</p>
+<pre><code>![3D objects tool](images/512a_21.png)
+
+Export it to a new folder somewhere on your PC and press OK to start exporting the project. This will take a minute.
+</code></pre>
+<ol>
+<li>When the export is done, the folder will open in File Explorer. Open the Nose3D.sln solution in Visual Studio.</li>
+<li>Change the Build Configuration to <strong>Master</strong> and <strong>x64</strong> and build, deploy and run the project.</li>
+</ol>
+<p><img alt="3D objects tool" src="../images/512a_22.png" /></p>
+<ol>
+<li>The project should now build (it might take a few minutes) and run. You should see the rotating 3D nose in the center of the app.</li>
+</ol>
+<p>Congratulations, you have now created a 3D Nose visualizer UWP app using Unity! Since this is now a valid Windows Store app, you can now find the app from the Windows Start Menu.</p>
+<h2 id="references">References</h2>
+<h2 id="continue-to-next-task">continue to <a href="../512b_Babylon/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

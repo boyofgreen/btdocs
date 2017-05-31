@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>222 Share - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-222-add-support-for-other-apps-to-share-images-with-the-knowzy-app">Task 2.2.2 -  Add support for other apps to share images with the Knowzy App</h1>
+<p>Our development department has the idea to allow Knowzy app users to share images from other Windows 10 applications with the Knowzy app. 
+For now, we just want you to implement the Windows 10 sharing code. To show that the image was shared with the Knowzy app, please display a toast
+with the image.</p>
+<p>Requirements for this task:
+<em> Share an image from another Windows 10 App. The Knowzy app should appear as one of the options for Share Targets.
+</em> Display a XAML UI for sharing with the Knowzy app.
+* Display a Toast that displays the image after the sharing operation has completed.</p>
+<p>Our research has found a starting point for the sharing idea <a href="https://blogs.windows.com/buildingapps/2017/02/01/adding-uwp-features-existing-pc-software/#vEJwTPxsf80CZvOh.97">here</a>
+under the "Making your PC software a share target" section.</p>
+<p>We also found some <a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples/tree/master/Samples/WPFasShareTarget">sample code</a>.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This task has a dependency on <a href="../221_XAMLView/">Task 2.2.1</a> and all of it's prerequisites</p>
+<h2 id="task">Task</h2>
+<ol>
+<li>
+<p>You will need to add a sharing extension to the Extension section of the Application tag in Package.appxmanifest in the Microsoft.Knowzy.UWP project to enable the app to be an image share target. 
+You also need to specify that you are a share target that supports Bitmap images.</p>
+<p><code>xml
+&lt;uap:Extension Category="windows.shareTarget" Executable="Microsoft.Knowzy.UWP.exe" EntryPoint="Microsoft.Knowzy.UWP.App"&gt;
+  &lt;uap:ShareTarget&gt;
+    &lt;uap:SupportedFileTypes&gt;
+      &lt;uap:SupportsAnyFileType /&gt;
+    &lt;/uap:SupportedFileTypes&gt;
+    &lt;uap:DataFormat&gt;Bitmap&lt;/uap:DataFormat&gt;
+  &lt;/uap:ShareTarget&gt;
+&lt;/uap:Extension&gt;</code></p>
+</li>
+<li>
+<p>You will need to add an OnShareTargetActivated event handler to App.xaml.cs in the Microsoft.Knowzy.UWP project. This handler will be called when a user attempts to share an image to the Knowzy app.
+It should look something like:</p>
+<p><code>c#
+protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs e)
+{
+    Frame rootFrame = new Frame();
+    Window.Current.Content = rootFrame;
+    rootFrame.Navigate(typeof(SharePage), e.ShareOperation);
+    Window.Current.Activate();
+}</code></p>
+</li>
+<li>
+<p>You will need to add a new XAML page to the Microsoft.Knowzy.UWP project. Right click on the project and select <strong>Add | New Item...</strong>. Choose the <strong>Blank Page</strong> template and name it <strong>SharePage.xaml</strong>.</p>
+</li>
+<li>
+<p>You will need to add the Sharing UI to the SharePage.xaml file. For now, use something like:</p>
+<p><code>xml
+&lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12"&gt;
+    &lt;StackPanel&gt;
+        &lt;Button Content="Share to Microsoft.Knowzy.WPF" Click="ShareButton_Click"/&gt;
+        &lt;TextBlock x:Name="tbFileName" /&gt;
+        &lt;Image x:Name="img"/&gt;
+    &lt;/StackPanel&gt;
+&lt;/Grid&gt;</code>    </p>
+</li>
+<li>
+<p>In the file SharePage.xaml.cs you will need to handle the OnNavigatedTo event. The NavigationEventArgs parameter will contain the shared image information. Display the shared image in the
+SharedPage UI. Pay attention to threading issues such as processing the image in a separate task. Also, you can only update the XAML UI image on the UI thread so you will need to use a dispacther to update the UI.</p>
+<p>```c#
+// add the following using directives
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.Storage;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Media.Imaging;</p>
+<p>// add the following private members to the SharePage class
+private ShareOperation operation = null;
+private StorageFile file = null;</p>
+<p>// Add the following method to the SharePage class
+protected override async void OnNavigatedTo(NavigationEventArgs args)
+{
+    if (args.Parameter != null)
+    {
+        // It is recommended to only retrieve the ShareOperation object in the activation handler, return as
+        // quickly as possible, and retrieve all data from the share target asynchronously.
+        operation = (ShareOperation)args.Parameter;</p>
+<pre><code>    await Task.Factory.StartNew(async () =&gt;
+    {
+        if (operation.Data.Contains(StandardDataFormats.StorageItems))
+        {
+            var storageItems = await operation.Data.GetStorageItemsAsync();
+            file = (StorageFile)(storageItems[0]);
+            var stream = await file.OpenReadAsync();
+            // Get back to the UI thread using the dispatcher.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =&gt;
+            {
+                var image = new BitmapImage();
+                img.Source = image;
+                await image.SetSourceAsync(stream);
+            });
+        }
+    });
+}
+</code></pre>
+<p>}
+```</p>
+</li>
+<li>
+<p>Up to this point, the user has only shared the image with the UWP version of Knowzy. We need to share the image so it can be accessed by the WPF version of Knowzy. The SharePage UI includes a "Share to Knowzy WPF" 
+button that will trigger this sharing operation. Add a "ShareButton_Click" event handler to SharePage.xaml.cs. Please note the location of the sharing folder. ApplicationData.Current.LocalFolder. More information on
+this folder is available <a href="https://docs.microsoft.com/en-us/uwp/api/windows.storage.applicationdata">here</a>.</p>
+<p>```c#
+private async void ShareButton_Click(object sender, RoutedEventArgs e)
+{
+    if (file != null)
+    {
+        // copy file to app's local folder. Desktop Bridge app will detect new file with its FileWatcher
+        try
+        {
+            await file.CopyAsync(ApplicationData.Current.LocalFolder, file.Name, NameCollisionOption.ReplaceExisting);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ShareButton_Click Error:" + ex.Message);
+        }
+    }</p>
+<pre><code>if (operation != null)
+{
+    operation.ReportCompleted();
+}
+</code></pre>
+<p>}
+```</p>
+</li>
+<li>
+<p>Now that the image has been copied to the ApplicationData.Current.LocalFolder, the Knowzy WPF app needs to be able to detect that an image has been shared. 
+We will use a FileSystemWatcher to detect when an image has been to the ApplicationData.Current.LocalFolder. We will make this a feature that is only supported
+when the app is running as a Desktop Bridge app. Add the following code to MainView.xaml.cs in the Microsoft.Knowzy.WPF project:</p>
+<p>```c#
+using System;
+using System.Diagnostics;
+using System.IO;
+using Microsoft.Knowzy.UwpHelpers;</p>
+<p>public MainView()
+{
+    InitializeComponent();</p>
+<pre><code>if (ExecutionMode.IsRunningAsUwp())
+{
+   try
+    {
+        // get the path to the App folder (WPF or UWP).
+        var path = AppFolders.Local;
+        FileSystemWatcher watcher = new FileSystemWatcher(path);
+        watcher.EnableRaisingEvents = true;
+        watcher.Changed += Watcher_Changed;
+    }
+    catch(Exception ex)
+    {
+        Debug.WriteLine("FileSystemWatcher Error:" + ex.Message);
+    }
+}
+</code></pre>
+<p>}
+```</p>
+</li>
+<li>
+<p>Add the FileSystemWatcher event handler to MainView.xaml.cs in the Microsoft.Knowzy.WPF project:</p>
+<p><code>c#
+private void Watcher_Changed(object sender, FileSystemEventArgs e)
+{
+    if (ExecutionMode.IsRunningAsUwp())
+    {
+        if (File.Exists(e.FullPath))
+        {
+            var xml = "&lt;toast&gt;&lt;visual&gt;&lt;binding template='ToastGeneric'&gt;&lt;image src='" + e.FullPath + "'/&gt;&lt;text hint-maxLines='1'&gt;Microsoft.Knowzy.WPF received a new image&lt;/text&gt;&lt;/binding&gt;&lt;/visual&gt;&lt;/toast&gt;";
+            Toast.CreateToast(xml);
+        }
+    }
+}</code></p>
+</li>
+<li>
+<p>You will need to add a getter to AppFolders.cs in Microsoft.Knowzy.UwpHelpers to return the path to Windows.Storage.ApplicationData.Current.LocalFolder. </p>
+</li>
+</ol>
+<p>Add the following code to AppFolders.cs</p>
+<pre><code class="c#">public static string Local
+{
+    get
+    {
+        string path = null;
+        if (ExecutionMode.IsRunningAsUwp())
+        {
+            path = GetSafeAppxLocalFolder();
+        }
+        return path;
+    }
+}
+
+internal static string GetSafeAppxLocalFolder()
+{
+    try
+    {
+        return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine(ex.Message);
+    }
+    return null;
+}
+</code></pre>
+
+<ol>
+<li>
+<p>Once you have made all of your changes to to code, build and run the Microsoft.Knowzy.Debug project.</p>
+</li>
+<li>
+<p>Open an Windows 10 application that is capable of sharing a picture (Microsoft Edge). Navigate to a picture you want to share.</p>
+</li>
+<li>
+<p>Right click on the image and select <strong>Share picture</strong></p>
+</li>
+</ol>
+<p><img alt="Share Picture UWP" src="../images/222-share-picture.png" /></p>
+<ul>
+<li>In the list of apps that are iamge share targets, select Microsoft.Know.UWP</li>
+</ul>
+<p><img alt="Knowzy Share Target" src="../images/222-share-knowzy.png" /></p>
+<ul>
+<li>The Microsoft.Knowzy.UWP SharePage will appear and display the image. Click on the <strong>Share to Microsoft.Knowzy.WPF</strong> button.</li>
+</ul>
+<p><img alt="Knowzy SharePage UI" src="../images/222-knowzy-share-ui.png" /></p>
+<ul>
+<li>The FileSystemWatcher in the Microsoft.Knowzy.WPF app will be notified that a new image has been shared to the app. It will then display the toast with the image.</li>
+</ul>
+<p><img alt="Knowzy Share Toast" src="../images/222-share-knowzy-toast.png" /></p>
+<p>We will continue to add more Windows 10 UWP features to our app in the <a href="../223_AppServices/">next task</a>.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/app-to-app/share-data">Share data</a></li>
+<li><a href="https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/ShareTarget">Sharing content target app sample</a> </li>
+<li><a href="https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/ShareSource">Sharing content source app sample</a></li>
+<li><a href="https://blogs.windows.com/buildingapps/2017/02/01/adding-uwp-features-existing-pc-software/#vEJwTPxsf80CZvOh.97">Adding UWP features to your existing PC software</a></li>
+<li><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples/tree/master/Samples/WPFasShareTarget">WPF picture viewer as a share target</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../223_AppServices/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

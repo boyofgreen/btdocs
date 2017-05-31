@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>415 Kubernetes - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-415-deploy-to-kubernetes-on-azure-container-services">Task 4.1.5 - Deploy to Kubernetes on Azure Container Services</h1>
+<h2 id="1-prerequisites">1. Prerequisites</h2>
+<ul>
+<li>Access to Azure subscription.</li>
+<li>Azure Cloud Shell should be <a href="https://github.com/jluk/ACC-Documentation/blob/master/persisting-shell-storage.md">Configured for persistent shell storage</a>.</li>
+<li>Azure Cloud shell should be pointed toward the correct subscription, more details in <a href="../411_CosmosDB/">Step 4.1.1</a></li>
+<li>You'll also need the name of the resource group created in <a href="../411_CosmosDB/">Step 4.1.1</a></li>
+</ul>
+<h2 id="2-creating-and-deploying-to-a-kubernetes-cluster-in-azure-container-service">2. Creating and deploying to a Kubernetes cluster in Azure Container Service</h2>
+<h3 id="a-set-up-the-cluster-with-azure-cloud-shell">a. Set up the cluster with Azure Cloud Shell</h3>
+<p>We're going to be working within the Azure Cloud Shell. Lets start by setting up a few variables:</p>
+<pre><code class="bash"># Use the name of the Resource Group created in 4.1.1 if this is not the same Cloud Shell session
+RESOURCE_GROUP=&lt;resource group name&gt;
+
+# A unique DNS Prefix for your cluster, which will also be the Kubernetes cluster name
+DNS_PREFIX=&lt;unique cluster name&gt;
+
+# The name for the ACS Instance
+ACS_NAME=&lt;unique ACS instance name&gt;
+</code></pre>
+
+<h3 id="b-create-the-cluster-using-the-azure-cli">b. Create the cluster using the Azure CLI</h3>
+<p>We'll add the <code>--generate-ssh-keys</code> parameter which generates the necessary SSH key files for the deployment if they don't exist already in the default <code>~/.ssh/</code> directory.</p>
+<blockquote>
+<p>These keys are needed to grant access to the cluster, and will be stored in the Storage Account created for your Cloud Shell. You can learn more by visiting the <a href="https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage">Cloud Shell documentation</a></p>
+</blockquote>
+<pre><code class="bash">az acs create --orchestrator-type=kubernetes --agent-vm-size Standard_A1 --resource-group $RESOURCE_GROUP --name=$ACS_NAME --dns-prefix=$DNS_PREFIX --generate-ssh-keys
+</code></pre>
+
+<p>This will take several minutes as your resources are created and configured. Once your cluster is created, you'll need to get the config from Kubernetes into your Cloud Shell session so that you can interact with it.</p>
+<pre><code class="bash">az acs kubernetes get-credentials --resource-group=$RESOURCE_GROUP --name=$ACS_NAME
+</code></pre>
+
+<p>Verify that you can used <code>kubectl</code> to talk to the cluster</p>
+<pre><code class="bash">kubectl cluster-info
+</code></pre>
+
+<h3 id="c-deploying-your-container-images-from-step-414">c. Deploying your container images <em>(from <a href="../414_Docker/">Step 4.1.4</a>)</em></h3>
+<p>i) Store the name of your Azure Container Registry</p>
+<p>This registry was generated in step <a href="../414_Docker/#acr">4.1.4</a>, and is where the images containing the apps and services we want to deploy are located.</p>
+<pre><code class="bash">ACR_NAME=&lt;name of registry that contains your images&gt;
+</code></pre>
+
+<p>ii) Deploy your two services from their respective Docker images. We can deploy by telling kubernetes to get the docker images and deploy them, using the run command in <code>kubectl</code>, we're passing the <code>--env</code> parameter, to tell the container images the connection string for your data-store, so the running services once deployed know how to connect to the CosmosDB.</p>
+<pre><code class="bash"># Deploy to Kubernetes
+kubectl run ordersapi --image=$ACR_NAME.azurecr.io/knowzy/ordersapi:1 --env &quot;COSMOSDB_ENDPOINT=https://&lt;&lt; your cosmosdb name&gt;&gt;.documents.azure.com:443/&quot; --env &quot;COSMOSDB_KEY=&lt;your Cosmos DB key string&gt;&quot;
+kubectl run productsapi --image=$ACR_NAME.azurecr.io/knowzy/productsapi:1 --env &quot;COSMOSDB_ENDPOINT=https://&lt;&lt; your cosmosdb name&gt;&gt;.documents.azure.com:443/&quot; --env &quot;COSMOSDB_KEY=&lt;your Cosmos DB key string&gt;&quot;
+kubectl run webapp --image=$ACR_NAME.azurecr.io/knowzy/webapp:1
+
+# View your running pods
+kubectl get pods
+</code></pre>
+
+<p>iii) Expose your services</p>
+<p>You've got containers running on Kubernetes, but they're not yet exposed to the outside world. Let's do that now</p>
+<pre><code class="bash"># This will create an Azure Load Balancer to direct traffic to your app
+kubectl expose deployment ordersapi --port=80 --type=LoadBalancer
+kubectl expose deployment productsapi --port=80 --type=LoadBalancer
+
+# List Kubernetes services, which includes the external IP
+kubectl get svc
+</code></pre>
+
+<pre><code class="bash">NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
+kubernetes   10.0.0.1     &lt;none&gt;        443/TCP        2d
+ordersapi    10.0.8.27    &lt;pending&gt;     80:30213/TCP   3h
+productsapi  10.0.8.28    &lt;pending&gt;     80:30175/TCP   19s
+</code></pre>
+
+<p>Initially, you will see something similar to the above. Wait a couple of minutes for the IP's and load balancers to be provisioned, and re-run <code>kubectl get svc</code> to see your public-facing IP's.</p>
+<pre><code class="bash">NAME          CLUSTER-IP     EXTERNAL-IP     PORT(S)          AGE
+kubernetes    10.0.0.1       &lt;none&gt;          443/TCP          2d
+ordersapi     10.0.8.27      13.81.60.236    80:30213/TCP     3h
+productsapi   10.0.8.28      52.232.72.172   80:30175/TCP     5m
+</code></pre>
+
+<p>You can test your deployment as soon as the <code>&lt;pending&gt;</code> external IP is provided. Simply go into your browser to the url provided <code>http://&lt;&lt;External IP&gt;&gt;/api/values</code>.</p>
+<p>iii) Deploy your webapp from the Docker image. We deploy the same way as above, but we don't need the database parameter, as the front end web application should have no direct access to the CosmosDB. Instead we should provide the url to the api services</p>
+<pre><code class="bash">kubectl run webapp --image=$ACR_NAME.azurecr.io/knowzy/webapp:1 --env &quot;PRODUCTSAPI_URL=&lt;&lt;Orders API IP&gt;&gt;&quot; --env &quot;ORDERAPI_URL=&lt;&lt;Orders API IP&gt;&gt;&quot;
+</code></pre>
+
+<p>iv) Expose your webapp and consume your APIs</p>
+<pre><code class="bash">kubectl expose deployment webapp --port=80 --type=LoadBalancer
+</code></pre>
+
+<p>Wait for the IP to come back <code>kubectl get sv</code> and access it in your browser</p>
+<pre><code class="bash">NAME          CLUSTER-IP     EXTERNAL-IP     PORT(S)          AGE
+kubernetes    10.0.0.1       &lt;none&gt;          443/TCP          2d
+ordersapi     10.0.8.27      13.8.60.236    8080:30213/TCP   3h
+productsapi   10.0.148.198   52.232.72.12   80:30175/TCP     5m
+webapp   10.0.142.191   54.22.172.17   80:31945/TCP     5m
+</code></pre>
+
+<h2 id="3-references">3. References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage">Persisting Files in Azure Cloud Shell</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions">Azure resource naming best practices</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli">Azure CLI reference</a></li>
+<li><a href="https://kubernetes.io/docs/user-guide/kubectl-overview/">kubectl overview</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../416_Integrate/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

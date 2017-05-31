@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>214 WindowsHello - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-214-integrate-windows-hello-authentication">Task 2.1.4 - Integrate Windows Hello Authentication</h1>
+<p>This task will guide you through the process of adding the Windows Hello UWP API to your Win32 Desktop app using Visual Studio 2017. 
+We will also add support for presenting Windows 10 UWP Toast notifications to the user. </p>
+<h2 id="what-is-windows-hello">What is Windows Hello?</h2>
+<p><a href="https://docs.microsoft.com/en-us/windows/uwp/security/microsoft-passport">Windows Hello</a> is the name Microsoft has given to the new biometric sign-in system built into Windows 10. Because it is built directly into the operating system, Windows Hello allows face or fingerprint identification to unlock users’ devices. Authentication happens when the user supplies his or her unique biometric identifier to access the device-specific credentials, which means that an attacker who steals the device can’t log on to it unless that attacker has the PIN. The Windows secure credential store protects biometric data on the device. By using Windows Hello to unlock a device, the authorized user gains access to all of his or her Windows experience, apps, data, websites, and services.
+The Windows Hello authenticator is known as a Hello. A Hello is unique to the combination of an individual device and a specific user. It does not roam across devices, is not shared with a server or calling app, and cannot easily be extracted from a device. If multiple users share a device, each user needs to set up his or her own account. Every account gets a unique Hello for that device. You can think of a Hello as a token you can use to unlock (or release) a stored credential. The Hello itself does not authenticate you to an app or service, but it releases credentials that can. In other words, the Hello is not a user credential but it is a second factor for the authenticating process.</p>
+<p>Windows Hello is shipping as part of the Windows 10 operating system and developers can implement this technology to protect their Universal Windows Platform (UWP) apps and backend services. </p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Basic knowledge of C# development</li>
+<li>Basic knowledge of client development with the .NET framework</li>
+<li>Basic knowledge of Windows 10 and the Universal Windows Platform</li>
+<li>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which isn’t available in the Home version.</li>
+<li>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></li>
+<li>Complete the section on <a href="../213_AddUwp/">Adding Windows 10 UWP APIs to your Desktop Bridge App</a></li>
+</ul>
+<h2 id="task">Task</h2>
+<p>We will use the Desktop Bridge Knowzy application which was created in the previous tasks as a starting point.
+To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder with Visual Studio 2017.</p>
+<p>*Note: If you are starting with this from the <strong>2.1.4</strong> branch, you will need to do the following:</p>
+<ul>
+<li>Set the Build configuration to <strong>Debug | x86</strong></li>
+</ul>
+<p><img alt="Debug | x86" src="../images/212-debug-x86.png" /></p>
+<ul>
+<li>Select <strong>Options</strong> from the <strong>Debug</strong> menu, From the <strong>Debugging | General</strong> Tab,  disable the <strong>Enable Just My Code</strong> option.</li>
+</ul>
+<p><img alt="Just My Code" src="../images/212-just-my-code.png" /></p>
+<p>Verify these settings before you continue with this task.</p>
+<h4 id="step-1-add-a-new-uwp-helper-class-for-windows-hello">Step 1: Add a New UWP Helper Class for Windows Hello</h4>
+<p>Following the techniques presented in the previous task, we are going to add the Windows 10 UWP code for the Windows Hello API and Toast notifications as helper classes.
+These helper classes can be accessed by the Knowzy app when it is running as a Desktop Bridge UWP app.</p>
+<ul>
+<li>
+<p>Add a new C# class to the Microsoft.Knowzy.UwpHelpers project. Name the file WindowsHello.cs.</p>
+</li>
+<li>
+<p>Add the following code to WindowsHello.cs. This code uses methods from the Windows 10 UWP API</p>
+</li>
+</ul>
+<pre><code class="c#">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.Security.Credentials;
+
+namespace Microsoft.Knowzy.UwpHelpers
+{
+    public class WindowsHello
+    {
+        public static async Task&lt;bool&gt; Login()
+        {
+            var result = await KeyCredentialManager.IsSupportedAsync();
+            String message;
+
+            if (result)
+            {
+                var authenticationResult = await KeyCredentialManager.RequestCreateAsync(&quot;login&quot;, KeyCredentialCreationOption.ReplaceExisting);
+                if (authenticationResult.Status == KeyCredentialStatus.Success)
+                {
+                    message = &quot;User is logged in&quot;;
+                }
+                else
+                {
+                    message = &quot;Login error: &quot; + authenticationResult.Status;
+                }
+            }
+            else
+            {
+                message = &quot;Windows Hello is not enabled for this device.&quot;;
+            }
+
+            String imagePath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+            String xml = &quot;&lt;toast&gt;&lt;visual&gt;&lt;binding template='ToastGeneric'&gt;&lt;text hint-maxLines='1'&gt;&quot; + message + &quot;&lt;/text&gt;&lt;/binding&gt;&lt;/visual&gt;&lt;/toast&gt;&quot;;
+
+            Toast.CreateToast(xml);
+
+            return result;
+        }
+    }
+}
+</code></pre>
+
+<p>This is only a starting point for Windows Hello support but it is sufficient to demonstrate how to add Windows 10 UWP APIs to your Desktop Bridge App. You will have the opporunity to complete coding
+a Windows Hello login in a later task.</p>
+<h4 id="step-2-add-a-new-uwp-helper-class-for-toast-notifications">Step 2: Add a New UWP Helper Class for Toast Notifications</h4>
+<p>The previous code example for Windows Hello uses a <a href="https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-adaptive-interactive-toasts">Toast</a> notification to indicated to the user
+if they are logged in. We need to add a UWP Helper class for Toasts.</p>
+<ul>
+<li>
+<p>Add a new C# class to the Microsoft.Knowzy.UwpHelpers project. Name the file Toast.cs.</p>
+</li>
+<li>
+<p>Add the following code to Toast.cs. This code uses methods from the Windows 10 UWP API</p>
+</li>
+</ul>
+<pre><code class="c#">using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Notifications;
+
+namespace Microsoft.Knowzy.UwpHelpers
+{
+    public class Toast
+    {
+        static ToastNotification toast = null;
+        static ToastNotifier notifier = null;
+
+        public static void CreateToast(String xml)
+        {
+            if (!ExecutionMode.IsRunningAsUwp())
+            {
+                return;
+            }
+
+            try
+            {
+                if (notifier == null)
+                {
+                    notifier = ToastNotificationManager.CreateToastNotifier();
+                }
+                else
+                {
+                    notifier.Hide(toast);
+                }
+                XmlDocument toastXml = new XmlDocument();
+                toastXml.LoadXml(xml);
+
+                toast = new ToastNotification(toastXml);
+                notifier.Show(toast);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(&quot;CreateToast Error:&quot; + ex.Message);
+            }
+        }
+    }
+}
+</code></pre>
+
+<h4 id="step-3-add-a-reference-to-microsoftknowzyuwphelpers">Step 3: Add a Reference to Microsoft.Knowzy.UwpHelpers</h4>
+<ul>
+<li>Right-click on the Microsoft.Knowzy.WPF project and select <strong>Add | Reference...</strong> and select the Microsoft.Knowzy.UwpHelpers project. Click <strong>OK</strong>.</li>
+</ul>
+<h4 id="step-4-add-login-code-to-the-wpf-app">Step 4: Add Login Code to the WPF App</h4>
+<p>When the Login menu item in clicked in the UI of the Knowzy app, a message to open the Login dialog is sent to the  Handle(OpenLoginMessage message) method in
+Microsoft.Knowzy.WPF\ViewModels\ShellViewModel.cs.</p>
+<p><img alt="Knowzy UWP" src="../images/214-knowzy-uwp.png" /></p>
+<ul>
+<li>
+<p>Open the file Microsoft.Knowzy.WPF\ViewModels\ShellViewModel.cs and find the Handle(OpenLoginMessage message) method near line 78.</p>
+</li>
+<li>
+<p>Modify the Handle(OpenLoginMessage message) as follows:</p>
+</li>
+</ul>
+<pre><code class="c#">using Microsoft.Knowzy.UwpHelpers;
+
+public async void Handle(OpenLoginMessage message)
+{
+    if (ExecutionMode.IsRunningAsUwp())
+    {
+        await WindowsHello.Login();
+    }
+    else
+    {
+        _windowManager.ShowDialog(_loginViewModel);
+    }
+}
+</code></pre>
+
+<ul>
+<li>
+<p>Build and run the solution (with Windows.Knowzy.Debug as the startup application)</p>
+</li>
+<li>
+<p>Click on the Login Menu item. </p>
+<ul>
+<li>If your computer is capable of running the Windows Hello Login you will be presented with the Windows Hello Login interface.</li>
+<li>If your computer is not capable of running the Windows Hello Login, a Toast will appear in the lower left corner of your screen.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="Login UWP" src="../images/214-login-uwp.png" /></p>
+<ul>
+<li>Run just the WPF version (right-click on the Microsoft.Knowzy.WPF project and select Debug | Start new instance). Clicking on the Login button will show:</li>
+</ul>
+<p><img alt="Login WPF" src="../images/214-login-wpf.png" /></p>
+<p>Please note that this is not a complete implementation of Windows Hello login. For more information, please go <a href="https://docs.microsoft.com/en-us/windows/uwp/security/microsoft-passport">here</a>.</p>
+<p>We will continue to add more Windows 10 UWP features to our app in the <a href="../221_XAMLView/">next task</a>.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/security/microsoft-passport">Windows Hello</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-badges-notifications">Tiles, badges, and notifications for UWP apps</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-adaptive-interactive-toasts">Adaptive and interactive toast notifications</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../221_XAMLView/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

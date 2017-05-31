@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>512b Babylon - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-512b-create-a-babylonjs-solution-to-visualize-3d-model">Task 5.1.2b - Create a BabylonJS solution to visualize 3D Model</h1>
+<p>Now that we have a proper 3D model of our nose prototype, we can start rendering it in real-time through a Javascript UWP application. To create the application, we use the Visual Studio 2017 Javasctipt UWP template.</p>
+<p>In order to load and render our model, we will rely on Babylon JS which is a WebGL based 3d engine.</p>
+<p>As Babylon does not support natively loading FBX, we will first need to convert our FBX file to a Bablylon supported format (babylon, GlTF or OBJ).</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This walkthrough assumes that you have:
+<em> Windows 10 Creators Update
+</em> 3D Nose Model from Paint 5.1.1
+* Visual Studio 2017 with the Universal Windows Platform Development Workload to create a Javascript UWP</p>
+<h2 id="task">Task</h2>
+<h4 id="convert-the-model-to-obj">Convert the model to OBJ</h4>
+<p>To convert the model, we will use the online FBX to OBJ converter, using the FBX we exported in 5.1.1.
+1. Go to: <a href="http://www.greentoken.de/onlineconv/">Online Model Converter</a>
+2. Follow the steps in the tool to convert the FBX to OBJ, and download the OBJ file. The MTL file is not needed.
+3. The problem here is that we don't have the texture, but you can use any png file, just create a new file in pain with a red color and use it through these steps.</p>
+<h4 id="creating-a-new-project">Creating a new project</h4>
+<ol>
+<li>
+<p>Launch Visual Studio 2017 using the Windows Start Menu. Once open, click File&gt;New&gt;Project...
+    &gt; Note: If you launch if for the first time, log in with your MSA account.</p>
+</li>
+<li>
+<p>In the "Create New Project" dialog under template, select Javascript&gt;Windows Universal&gt;Blank App, and give the project a proper name like "BabylonUWP".</p>
+<p><img alt="New Project" src="../images/512b_1.png" /></p>
+</li>
+<li>
+<p>Click Ok to create your project.
+    &gt; Note: You may be asked to turn on the developer mode in the Windows settings in order to create the UWP.</p>
+</li>
+<li>
+<p>Your project is now ready and it can easily be launched by pressing F5 (for debug mode) or Ctrl+F5 (for normal mode). You should see an application running with a white page containing the text: "Content goes here!".</p>
+<p><img alt="New Project" src="../images/512b_2.png" /></p>
+</li>
+</ol>
+<h4 id="adding-babylon-js-dependency">Adding Babylon JS dependency</h4>
+<p>It is now time to add content in our UWP.</p>
+<ol>
+<li>
+<p>Add the Babylon.JS dependency to your project (this allows your project to work offline). Right click on the <em>js</em> folder, click on <strong>Add -&gt; Existing Item...</strong>. Copy this link to your clipboard (<code>https://preview.babylonjs.com/babylon.js</code>) and paste it in the <em>File name</em> box. Click <strong>Add</strong>. </p>
+<p><img alt="Add Reference" src="../images/512b_5.png" /></p>
+</li>
+<li>
+<p>Add the Babylon.JS OBJ Loader dependency to your project (this allows your project to work offline). Similar to the previous step, use this link to add the file to the js folder (<code>https://preview.babylonjs.com/loaders/babylon.objFileLoader.js</code>)</p>
+</li>
+<li>
+<p>The solution folder should now look like this:</p>
+<p><img alt="New Project" src="../images/512b_3.png" /></p>
+</li>
+<li>
+<p>It is now time to integrate those files in the application. Open the <code>index.html</code> file and add the two following script references <em>before</em> the main.js one:</p>
+</li>
+</ol>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;BabylonUWP&lt;/title&gt;
+    &lt;link href=&quot;css/default.css&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div&gt;Content goes here!&lt;/div&gt;
+
+    &lt;script src=&quot;js/babylon.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;js/babylon.objFileLoader.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;js/main.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<ol>
+<li>The project can now be launched in debug by pressing F5 to ensure that the setup is correct. No error should be displayed in the javascript console.</li>
+</ol>
+<h4 id="create-your-first-scene">Create your first scene</h4>
+<p>As the project is ready, we can now create our first 3D scene as explained in the <a href="https://doc.babylonjs.com/tutorials/creating_a_basic_scene">Basic Tutorial</a> of Babylon JS.</p>
+<ol>
+<li>
+<p>The <code>div</code> element containing the text: "Content goes here!" needs to be replaced by a canvas enabling WebGL rendering in Html. Open the <code>index.html</code> and replace <code>&lt;div&gt;Content goes here!&lt;/div&gt;</code> by <code>&lt;canvas id="renderCanvas"&gt;&lt;/canvas&gt;</code>.</p>
+</li>
+<li>
+<p>The <code>index.html</code> file should look like this:</p>
+</li>
+</ol>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;BabylonUWP&lt;/title&gt;
+    &lt;link href=&quot;css/default.css&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;canvas id=&quot;renderCanvas&quot;&gt;&lt;/canvas&gt;
+
+    &lt;script src=&quot;js/babylon.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;js/babylon.objFileLoader.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;js/main.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<ol>
+<li>To ensure that the canvas is rendered in full screen, replace the content of the file <code>css/default.css</code> by the following one:</li>
+</ol>
+<pre><code class="css">html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+</code></pre>
+
+<ol>
+<li>The setup being done, open the <code>js/main.js</code> file and replace its content by the following:</li>
+</ol>
+<pre><code class="javascript">// Get the canvas element from our HTML above
+var canvas = document.getElementById(&quot;renderCanvas&quot;);
+
+// Load the BABYLON 3D engine
+var engine = new BABYLON.Engine(canvas, true);
+
+// Now create a basic Babylon Scene object
+var scene = new BABYLON.Scene(engine);
+
+// Let's try our built-in 'box' shape. Params: name, size.
+var box1 = BABYLON.Mesh.CreateBox(&quot;box1&quot;, 1);
+
+// Creates a default light and camera.
+scene.createDefaultCameraOrLight(true);
+
+// This attaches the input camera controls to the canvas
+scene.activeCamera.attachControl(canvas, false);
+
+// Register a render loop to repeatedly render the scene
+engine.runRenderLoop(function () {
+    scene.render();
+});
+</code></pre>
+
+<ol>
+<li>
+<p>The project can now be launched and displays a cube in 3D !!! The camera can rotate by holding the mouse left click on the application. The zoom level is controlled by the mouse wheel.</p>
+<p><img alt="New Project" src="../images/512b_4.png" /></p>
+</li>
+</ol>
+<h4 id="loading-the-3d-nose-model">Loading the 3D Nose model</h4>
+<ol>
+<li>
+<p>Create a folder named <code>assets</code> at the root of the solution and copy your <code>redNose.obj</code> file in this folder.</p>
+</li>
+<li>
+<p>Instead of creating a sphere, the model needs to be loaded. The content of the <code>js/main.js</code> file needs to be updated to:</p>
+</li>
+</ol>
+<pre><code class="javascript">// Get the canvas element from our HTML above
+var canvas = document.getElementById(&quot;renderCanvas&quot;);
+
+// Load the BABYLON 3D engine
+var engine = new BABYLON.Engine(canvas, true);
+
+// Now create a basic Babylon Scene object
+var scene = new BABYLON.Scene(engine);
+
+// Let's load the red nose model.
+BABYLON.SceneLoader.ImportMesh(null, &quot;assets/&quot;, &quot;redNose.obj&quot;, scene, function (meshes) {
+    // Keeps track of our model root.
+    var redNoseModel = meshes[0];
+
+    // Creates a default light and camera.
+    scene.createDefaultCameraOrLight(true);
+
+    // This attaches the input camera controls to the canvas
+    scene.activeCamera.attachControl(canvas, false);
+
+    // Register a render loop to repeatedly render the scene
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+});
+</code></pre>
+
+<ol>
+<li>By launching the project now,  we can see a beautiful red nose model displayed in a Javascript UWP application.</li>
+</ol>
+<h4 id="making-the-nose-rotate">Making the nose rotate</h4>
+<p>To make this look less static, we will animate the model.</p>
+<ol>
+<li>The main.js needs to be adapted to integrate the new animation code:
+    &gt; Note: This codes demonstrates the animation system but you could rely upon the manual animation as well: <a href="https://doc.babylonjs.com/tutorials/animations">Animation Tutorial</a>.</li>
+</ol>
+<pre><code class="javascript">// Get the canvas element from our HTML above
+var canvas = document.getElementById(&quot;renderCanvas&quot;);
+
+// Load the BABYLON 3D engine
+var engine = new BABYLON.Engine(canvas, true);
+
+// Now create a basic Babylon Scene object
+var scene = new BABYLON.Scene(engine);
+
+// Let's load the red nose model.
+BABYLON.SceneLoader.ImportMesh(null, &quot;assets/&quot;, &quot;redNose.obj&quot;, scene, function (meshes) {
+    // Keeps track of our model root.
+    var redNoseModel = meshes[0];
+
+    // Creates a default light and camera.
+    scene.createDefaultCameraOrLight(true);
+
+    // This attaches the input camera controls to the canvas
+    scene.activeCamera.attachControl(canvas, false);
+
+    // Create a rotation animation at 30 FPS
+    var animation = new BABYLON.Animation(&quot;rotationAnimation&quot;, &quot;rotation.y&quot;, 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+    // Add the animation key frames.
+    var keys = [];
+    // At the animation key 0, the value of rotation is &quot;0&quot;
+    keys.push({
+        frame: 30 * 0,
+        value: 0
+    });
+
+    // At the animation key at 1 second, the value of scaling is a quarter of turn
+    keys.push({
+        frame: 30 * 1,
+        value: Math.PI / 2
+    });
+
+    // At the animation key at 2 seconds, the value of scaling is a half of turn
+    keys.push({
+        frame: 30 * 2,
+        value: Math.PI
+    });
+
+    // At the animation key at 3 seconds, the value of scaling is 3 quarter of turn
+    keys.push({
+        frame: 30 * 3,
+        value: Math.PI / 2 * 3
+    });
+
+    // At the animation key at 4 seconds, the value of scaling is a full turn
+    keys.push({
+        frame: 30 * 4,
+        value: Math.PI * 2
+    });
+
+    // Adding keys to the animation object
+    animation.setKeys(keys);
+
+    // Then add the animation object to redNoseModel
+    redNoseModel.animations.push(animation);
+
+    // Finally, launch animations on box1, from key 0 to key 60 * 4 with loop activated
+    scene.beginAnimation(redNoseModel, 0, 60 * 4, true);
+
+    // Register a render loop to repeatedly render the scene
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+});
+</code></pre>
+
+<h2 id="references">References</h2>
+<ol>
+<li><a href="https://doc.babylonjs.com/">Babylon JS Documentation</a></li>
+</ol>
+<h2 id="continue-to-next-task">continue to <a href="../521_MR/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

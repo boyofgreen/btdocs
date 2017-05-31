@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>499 Troubleshooting - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-4-troubleshooting-guide">Task 4 Troubleshooting Guide</h1>
+<h2 id="firewall-detected-when-sharing-drive">"Firewall detected" when sharing drive</h2>
+<p>If you encounter a firewall error when sharing drives with Docker, you may need to reset Windows File and Printer sharing on your Hyper-V virtual switch.</p>
+<ol>
+<li>Right click your network connection in the taskbar, and choose <strong>Network and Sharing Center</strong></li>
+<li>In the left menu, select <strong>Change Adapter Settings</strong></li>
+<li>Right click and open the properties for the "vEthernet (DockerNAT)" adapter</li>
+<li>Uncheck the box for <strong>File and Printer Sharing for Windows</strong> and hit OK
+<img alt="" src="../images/troubleshooting-fileshare.png" /></li>
+<li>Open the properties again, re-enable <strong>File and Printer Sharing for Windows</strong> and hit OK</li>
+<li>You should now be able to share drives with Docker</li>
+</ol>
+<h2 id="case-sensitivity">Case sensitivity</h2>
+<p>If you're using Windows to follow along, it's important to note that we're using Linux containers on Docker.
+This means that if you have a case mismatch between file/folder names, you may encounter errors when building or
+running containers because Linux uses a case-sensitive file system.</p>
+<p>For example, this could happen if you named your folder <code>ordersApi</code>, which by default will produce a dll with
+the path <code>ordersApi/bin/Release/netcoreapp1.1/publish/ordersApi.dll</code>. When the supplied <code>Dockerfile</code> is
+executed inside <code>ordersApi</code>, everything looks great! But when you run the container, it will fail because
+the <code>ENTRYPOINT</code> is specified to look for <code>ordersapi.dll</code></p>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>431 Telemetry - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-431-set-up-telemetry">Task 4.3.1 - Set up Telemetry</h1>
+<p>Our development team want to be able to monitor the health of the applications as well as find the source of bugs. The team also want to learn from production and use it to decide on future projects. </p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This task has a dependency on the Web App from <a href="../../1/111_BuildWebApp/">1.1.1</a> and the APIs created under section <a href="../412_OrdersAPI/">4.1.2</a> and <a href="../413_ProductsAPI/">4.1.3</a> and all of their prerequisites.</p>
+<h2 id="task">Task</h2>
+<ol>
+<li>Create an Application Insights account from the Azure Portal or Visual Studio. </li>
+<li>Add Application Insights telemetry logging to the Web App, Orders API, and Products API.</li>
+<li>Update the containers and kubernetes implementation to pass in the value of your instrumentation key to the applications in the containers.</li>
+<li>Use the Azure Portal to see the telemetry that is being captured.</li>
+</ol>
+<h2 id="comments">Comments</h2>
+<h6 id="902am">@ 9:02am</h6>
+<p>I've found the following instructions that should help us get started:
+<em> <a href="https://docs.microsoft.com/en-us/azure/application-insights/app-insights-asp-net-core">Application Insights for ASP.NET Core</a>
+</em> <a href="http://anthonychu.ca/post/aspnet-core-appsettings-secrets-kubernetes/">Managing ASP.NET Core App Settings on Kubernetes</a></p>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

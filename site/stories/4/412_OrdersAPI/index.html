@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>412 OrdersAPI - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-412-create-api-endpoint-for-shipping-and-receiving-services">Task 4.1.2 - Create API endpoint for shipping and receiving services</h1>
+<p>Now that you've created a database to store your data, it's time to create APIs to access that data.  Knowzy believes in a microservices based architecture so you'll need to start by creating a new API for orders so the Web app is not going directly to the database.</p>
+<p>The end goal is a .NET Core based cross-platform solution. The architecture proposes a simplified microservice oriented architecture implementation with multiple autonomous microservices (each one owning its own data/db). The microservices will implement a simple CRUD approach using Http as the current communication protocol.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>This task has a dependency on Tasks <a href="../../1/111_BuildWebApp/">1.1.1</a> and <a href="../411_CosmosDB/">4.1.1</a> and all of their prerequisites.</li>
+</ul>
+<h2 id="creating-a-net-core-app">Creating a .NET Core App</h2>
+<h3 id="1-create-a-new-webapi-project">1. Create a New WebAPI Project</h3>
+<p>From Windows Explorer create a new folder called <code>APIs</code> in the <code>src\2. Services</code> folder of the solution.</p>
+<p>Open the <code>Microsoft.Knowzy</code> solution in Visual Studio 2017. Add a new solution folder called <code>APIs</code> to the <code>2. Services</code> folder. Create a new <code>ASP.NET Core Web Application</code> project called <code>Microsoft.Knowzy.OrdersAPI</code> in that folder:</p>
+<p><img alt="Add new ASP.NET Core Project" src="../images/AddNewApiProject.png" /></p>
+<p>Choose Web API for the project type, and leave the other options as they are (we will add Docker support later):</p>
+<p><img alt="New Web API Project" src="../images/NewApiProject.png" /></p>
+<p>Let's test it out to make sure everything is working properly. In Visual Studio, right click on the project and select <code>Debug -&gt; Start New Instance</code>. Visual Studio will start a browser window for you to see your app running. Click the <code>Stop</code> button in Visual Studio to stop the API app.</p>
+<h3 id="2-using-environment-variables-and-connecting-to-cosmosdb">2. Using Environment Variables and Connecting to CosmosDB</h3>
+<p>In a real-world app, you won't check your secrets into source control, and you won't be writing local code that connects directly to your production data store. Depending on your environment, you might not even have access to production. To address these issues and see how they tie in with Docker, we're going to use the <code>COSMOSDB_ENDPOINT</code> and <code>COSMOSDB_KEY</code> environment variables.</p>
+<p>The default Web API template already calls <code>.AddEnvironmentVariables()</code> (look for it in <code>Startup.cs</code>), so we just need to set a variable, then access it in our code. </p>
+<p>Add these values to the Environment Variables section of the <code>Microsoft.Knowzy.OrdersAPI</code> project properties:</p>
+<p><img alt="Add Environment Variables in Visual Studio" src="../images/AddEnvVars.png" /></p>
+<p>To use these environment variables in our code, we'll just pass the entire configuration object down to a new data access class.</p>
+<p>In <code>Startup.cs</code>, make the following changes:</p>
+<pre><code class="diff">public void ConfigureServices(IServiceConnection services)
+{
+  // Add framework services.
+  services.AddMvc();
++ services.AddSingleton&lt;IConfiguration&gt;(Configuration);
+}
+</code></pre>
+
+<p>Now let's connect our solution to our data store in <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/introduction">CosmosDB</a> that was created as part of task <a href="../411_CosmosDB/">4.1.1</a>. </p>
+<p>Start by adding a Nuget package reference to the latest stable version of <code>Microsoft.Azure.DocumentDB.Core</code> to the <code>Microsoft.Knowzy.OrdersAPI</code> project.</p>
+<p>Add a new folder called <code>Data</code> to the <code>Microsoft.Knowzy.OrdersAPI</code> project. This folder will have the classes that interact with your CosmosDB data store. </p>
+<p>Add a new interface called <code>IOrdersStore.cs</code> to the <code>Data</code> folder and populate it with the following:</p>
+<pre><code class="csharp">using System;
+using System.Threading.Tasks;
+
+namespace Microsoft.Knowzy.OrdersAPI.Data
+{
+    public interface IOrdersStore : IDisposable
+    {
+        Task&lt;bool&gt; Connected();
+    }
+}
+</code></pre>
+
+<p>Add a new class called <code>OrdersStore.cs</code> to the <code>Data</code> folder and populate it with a method to check if it can connect to CosmosDB. Make sure to update the database and collection name in this code to match yours:</p>
+<pre><code class="csharp">using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.Documents.Client;
+
+namespace Microsoft.Knowzy.OrdersAPI.Data
+{
+    public class OrdersStore : IOrdersStore
+    {
+        private readonly DocumentClient _client;
+        private Uri _ordersLink;
+        public OrdersStore(IConfiguration config)
+        {
+            var EndpointUri = config[&quot;COSMOSDB_ENDPOINT&quot;];
+            var PrimaryKey = config[&quot;COSMOSDB_KEY&quot;];
+            _client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
+            //Make sure the below values match your set up
+            _ordersLink = UriFactory.CreateDocumentCollectionUri(&quot;knowzydb&quot;, &quot;orders&quot;); 
+        }
+
+        public async Task&lt;bool&gt; Connected()
+        {
+            try
+            {
+                var db = await _client.GetDatabaseAccountAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _client.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+        }
+    }
+}
+</code></pre>
+
+<p>Note how we are using the <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection">ASP.NET Core dependency injection</a> to get the config instance passed into the class initializer for us, and with it we get the environment variable values. You can read more about configuration in ASP.NET Core in <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration">this help article</a>.</p>
+<p>Modify <code>Startup.cs</code> and register our data access with the list of services (IoC):</p>
+<pre><code class="diff">public void ConfigureServices(IServiceConnection services)
+{
+  // Add framework services.
+  services.AddMvc();
+  services.AddSingleton&lt;IConfiguration&gt;(Configuration);
++ services.AddSingleton&lt;Data.IOrdersStore, Data.OrdersStore&gt;();
+}
+</code></pre>
+
+<p>To test it outupdate the <code>ValuesController.cs</code> file follows:</p>
+<pre><code class="diff">...
++ using Microsoft.Knowzy.OrdersAPI.Data;
+...
+   public class ValuesController : Controller
+{
++        private IOrdersStore _ordersStore;
++        public ValuesController(IOrdersStore ordersStore)
++        {
++            _ordersStore = ordersStore;
++        }
+
+
+...
+    // GET api/values/5
+    [HttpGet(&quot;{id}&quot;)]
+-    public string Get(int id)
++    public async Task&lt;string&gt; Get(int id)
+    {
+-      return &quot;value&quot;;
++      var status = await _ordersStore.Connected() ? &quot;connected&quot; : &quot;not connected&quot;;
++      return $&quot;We are {status} to CosmosDB! and your value is {id}&quot;;
+    }
+  }
+</code></pre>
+
+<p>If you now run the API app again and call <code>/api/values/5</code> on your API you should see <code>We are connected to CosmosDB! and your value is 5</code> returned.</p>
+<h3 id="3-implement-the-orders-api">3. Implement the Orders API</h3>
+<p>Now it's time to implement the endpoints for the Shipping and Receiving controllers of our Orders API, running the API app as needed to verify your app locally.</p>
+<p>In the <code>Microsoft.Knowzy.OrdersAPI</code> add a project reference to the <code>Microsoft.Knowzy.Domain</code> project. This reference has the model classes we will use in the Orders API for serialization.</p>
+<p>Edit the <code>IOrdersStore.cs</code> interface to add the GetShippings method:</p>
+<pre><code class="diff">...
++ using System.Collections.Generic;
+...
+    public interface IOrdersStore : IDisposable
+    {
+        Task&lt;bool&gt; Connected();
+
++        IEnumerable&lt;Domain.Shipping&gt; GetShippings();
+    }
+</code></pre>
+
+<p>And edit the <code>OrdersStore.cs</code> class to implement that method to return all orders:</p>
+<pre><code class="diff">...
++ using System.Collections.Generic;
++ using System.Linq;
+...
++        public IEnumerable&lt;Domain.Shipping&gt; GetShippings()
++        {
++            FeedOptions options = new FeedOptions();
++            options.EnableCrossPartitionQuery = true;
++
++           return _client.CreateDocumentQuery&lt;Domain.Shipping&gt;(
++               _ordersLink,
++               &quot;SELECT * FROM orders o WHERE o.type='shipping'&quot;,
++               _options).ToList();
++        }
+</code></pre>
+
+<p>Add a new class called <code>ShippingController.cs</code> to the <code>Controllers</code> folder to return all shipping orders in the Get method (choose to add a new class instead of a new Controller as we don't need the scaffolding from adding a Controller:</p>
+<pre><code class="csharp">using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Knowzy.OrdersAPI.Data;
+
+namespace Microsoft.Knowzy.OrdersAPI.Controllers
+{
+    [Route(&quot;api/[controller]&quot;)]
+    public class ShippingController : Controller
+    {
+        private IOrdersStore _ordersStore;
+        public ShippingController(IOrdersStore ordersStore)
+        {
+            _ordersStore = ordersStore;
+        }
+        // GET api/values
+        [HttpGet]
+        public IEnumerable&lt;Domain.Shipping&gt; Get()
+        {
+            return _ordersStore.GetShippings();
+        }
+    }
+}
+</code></pre>
+
+<p>Now, when you run and browse your API to <code>/api/Shipping</code> you should get back the json array with all the shipping orders in the CosmosDB <code>orders</code> collection.</p>
+<p>You now need to finalize the Orders API. This is the full <code>IOrderStore.cs</code> interface:</p>
+<pre><code class="csharp">using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Knowzy.Domain;
+
+namespace Microsoft.Knowzy.OrdersAPI.Data
+{
+    public interface IOrdersStore : IDisposable
+    {
+        Task&lt;bool&gt; Connected();
+        IEnumerable&lt;Shipping&gt; GetShippings();
+        Shipping GetShipping(string orderId);
+        IEnumerable&lt;Receiving&gt; GetReceivings();
+        Receiving GetReceiving(string orderId);
+        Task&lt;Order&gt; UpsertAsync(Domain.Order order);
+        Task DeleteOrderAsync(string orderId);
+        IEnumerable&lt;PostalCarrier&gt; GetPostalCarriers();
+    }
+}
+</code></pre>
+
+<p>Note that CosmosDB <a href="https://azure.microsoft.com/en-us/blog/announcing-sql-parameterization-in-documentdb/">supports parameterized SQL queries</a> to avoid SQL injection.</p>
+<p>Update <code>OrdersStore.cs</code> to implement the rest of the interface. This should be all you need to implement the rest of the Shipping controller and create the Receiving and PostalCarrier controllers.</p>
+<p>Update <code>ShippingController.cs</code> to use your updated Orders Store class with Get(id), Put, Post and Delete methods. Use <a href="https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api">this guide</a> to help. </p>
+<p>Create a new controller called <code>ReceivingController.cs</code> to handle all the CRUD methods for Receiving. Note that this can share most of of the same <code>OrderStore.cs</code> methods you used for Shipping (both Shipping and Receiving domain classes implement the Order domain class).</p>
+<p>Create a new controller called <code>PostalCarrierController.cs</code> to handle just the Get (read all) method for it. You can find the PostalCarriers inside the orders collection in CosmosDB. </p>
+<h3 id="4-package-for-release">4. Package for release</h3>
+<p>Now that we've got a working API app, let's package up all of our required files into a single folder for easy distribution. This time, we'll specify the Release configuration. </p>
+<p>Or from Visual Studio 2017, change the configuration to <code>Release</code>, right click on the API project, select <code>Publish</code>, and choose <code>Folder</code> as the destination.</p>
+<p>By default, this places your app files in a folder named <code>bin/Release/PublishOutput</code>. We'll use this output path in <a href="../414_Docker/">Step 4.1.4</a> when we build a Docker image for our app.</p>
+<h2 id="5-references">5. References</h2>
+<ul>
+<li><a href="../499_Troubleshooting/">Troubleshooting guide</a></li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/articles/core/tools/">.NET Core CLI reference</a></li>
+<li><a href="https://docs.microsoft.com/en-us/aspnet/core/">Introduction to ASP.NET Core</a></li>
+<li><a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration">Configuration in .NET Core</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/CosmosDB/CosmosDB-dotnetcore-get-started">Azure Cosmos DB: Getting started with the CosmosDB API and .NET Core</a></li>
+<li><a href="https://github.com/dotnet-architecture/eShopOnContainers">eShopOnContainers sample reference microservice and container based application</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../413_ProductsAPI/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

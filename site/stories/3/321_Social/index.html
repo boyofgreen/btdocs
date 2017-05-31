@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>321 Social - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-321-support-sharing-images-to-social-networks">Task 3.2.1 - Support sharing images to Social Networks</h1>
+<p>Our users want to be able to share images to their social networks. We want users to spread the word for our products. Enabling the application to share content on every platform will make everyone happy.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This task has a dependency on <a href="../312_Camera/">Task 3.1.2</a> and all of it's prerequisites</p>
+<h2 id="task">Task</h2>
+<ol>
+<li>Support sharing content through each platform native share integration</li>
+<li>Support sharing to Facebook or Twitter directly from the app (min UWP)</li>
+</ol>
+<h2 id="comments">Comments</h2>
+<h6 id="923am">@ 9:23am</h6>
+<p>We can use the same method as in <a href="../312_Camera/">Task 3.1.2</a> to create a sharing class for every platform. Found <a href="https://xamarinhelp.com/share-dialog-xamarin-forms/">this blog</a> post that does something similar.</p>
+<h6 id="1031am">@ 10:31am</h6>
+<p>We can use the UWP Community toolkit to share to <a href="http://docs.uwpcommunitytoolkit.com/en/master/services/Facebook/">Facebook</a> and/or <a href="http://docs.uwpcommunitytoolkit.com/en/master/services/Twitter/">Twitter</a> directly on UWP. Sharing to facebook seems super easy:</p>
+<pre><code class="csharp">// Initialize service
+FacebookService.Instance.Initialize(&quot;AppID&quot;);
+
+// Login to Facebook
+if (!await FacebookService.Instance.LoginAsync())
+{
+    return;
+}
+
+// Post a message with a picture on your wall
+await FacebookService.Instance.PostPictureToFeedAsync(&quot;Title&quot;, picture.Name, stream);
+</code></pre>
+
+<h2 id="continue-to-next-task">continue to <a href="../322_Rome/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

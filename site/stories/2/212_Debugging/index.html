@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>212 Debugging - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-212-debugging-a-windows-desktop-bridge-app">Task 2.1.2 - Debugging a Windows Desktop Bridge App</h1>
+<p>This task will guide you through the process of debugging a Windows Desktop Bridge App using Visual Studio 2017. </p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Basic knowledge of C# development</li>
+<li>Basic knowledge of client development with the .NET framework</li>
+<li>Basic knowledge of Windows 10 and the Universal Windows Platform</li>
+<li>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which isn’t available in the Home version.</li>
+<li>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></li>
+<li>The <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.DesktoptoUWPPackagingProject">Desktop Bridge Debugging Project template</a> installed into Visual Studio 2017</li>
+<li>Complete the section on <a href="../211_Centennial/">Add Desktop Bridge Support using Visual Studio 2017</a></li>
+</ul>
+<p>To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder with Visual Studio 2017.</p>
+<h2 id="step-1-install-the-desktop-bridge-debugging-project-extension">Step 1: Install the Desktop Bridge Debugging Project Extension</h2>
+<p>If you do not have the Desktop Bridge Debugging Project extension installed into Visual Studio 2017, please complete the following steps:</p>
+<ol>
+<li>Click on the <strong>Tools</strong> menu and select <strong>Extensions and Updates...</strong></li>
+</ol>
+<p><img alt="Tools and Extensions" src="../images/212-extensions.png" /></p>
+<ol>
+<li>Select <strong>Online</strong> and enter <strong>Desktop Bridge Debugging Project</strong> in the search field. Click <strong>Download</strong>.</li>
+</ol>
+<p><img alt="Install Desktop Bridge Debugging Project" src="../images/212-install-debugging-project.png" /></p>
+<ol>
+<li>
+<p>Close Visual Studio 2017 and the Desktop Bridge Debugging Project Extension will be installed.</p>
+</li>
+<li>
+<p>Reopen your Desktop Bridge solution from the <a href="../211_Centennial/">Add Centennial Support using Visual Studio 2017</a> task.</p>
+</li>
+</ol>
+<h2 id="step-2-add-the-desktop-bridge-debugging-project-to-the-solution">Step 2: Add the Desktop Bridge Debugging Project to the Solution</h2>
+<ul>
+<li>Right-click on the src folder in the Solution and select <strong>Add | New Project...</strong></li>
+</ul>
+<p><img alt="Add project" src="../images/212-add-project.png" /></p>
+<ul>
+<li>Select the <strong>Other Project Types | Desktop Bridge Debugging Project</strong> project template. </li>
+</ul>
+<p><img alt="Add debugging project" src="../images/212-new-debugging-project.png" /></p>
+<ul>
+<li>
+<p>Name the project Microsoft.Knowzy.Debug.</p>
+</li>
+<li>
+<p>Make sure you save the project to the <strong>Knowzy_Engineering_Win32App\src</strong> folder.</p>
+</li>
+</ul>
+<p>You solution should now contain the following projects.</p>
+<p><img alt="Solution Projects" src="../images/212-solution-projects.png" /></p>
+<ul>
+<li>
+<p>Right-click on the Microsoft.Knowzy.Debug project and select <strong>Build Dependencies | Project Dependencies..."</strong></p>
+</li>
+<li>
+<p>Select the Microsoft.Knowzy.WPF and Microsoft.Knowzy.UWP projects and click <strong>OK</strong>.</p>
+</li>
+</ul>
+<h2 id="step-3-configure-the-desktop-bridge-debugging-project">Step 3: Configure the Desktop Bridge Debugging Project</h2>
+<p>Since we will be working a lot with the Microsoft.Knowzy.UWP project, set the Build Configuration and Platform to <strong>Debug | x86</strong></p>
+<p><img alt="Debug | x86 Projects" src="../images/212-debug-x86.png" /></p>
+<p><strong>Clean</strong> the solution by selecting <strong>Clean Solution</strong> from the <strong>Build</strong> menu.</p>
+<p><strong>Build</strong> the x86 configuration of the solution. (Select <strong>Build Solution</strong> from the <strong>Build</strong> menu).</p>
+<p>After the build completes, deploy the Microsoft.Knowzy.UWP project so its AppX folder is created. The next step needs the AppX folder.
+(Select <strong>Deploy Solution</strong> from the <strong>Build</strong> menu).</p>
+<p>Right-click on the Microsoft.Knowzy.Debug project and select <strong>Set as Startup Project</strong>. </p>
+<p><img alt="Startup Project" src="../images/212-startup-project.png" /></p>
+<p>Right-click on the Microsoft.Knowzy.Debug project and select <strong>Properties</strong>. </p>
+<p>For Debug builds use the following settings:</p>
+<ul>
+<li>Package Layout: ..\Microsoft.Knowzy.UWP\bin\x86\Release</li>
+<li>Select Uninstall and then re-install my package.</li>
+<li>From the <strong>Package Layout</strong> field tab to the <strong>Start Up Tile</strong> field and select Microsoft.Knowzy.WPF.</li>
+</ul>
+<p>Notice that we are specifying the path to the <strong>Release</strong> build of the Microsoft.Knowzy.UWP project. This is a fix for the
+Visual 2017 C# UWP Desktop Bridge deployment bug we experienced in the previous task.</p>
+<p><img alt="Debug Properties" src="../images/212-debug-properties.png" /></p>
+<ul>
+<li>
+<p>Save and Close the Properties windows. </p>
+<ul>
+<li><strong>Note:</strong> The Properties window can be a little buggy in saving your settings so make sure they were saved. Most issues with debugging are caused by
+incorrect Debugging Project settings.</li>
+<li><strong>Note:</strong> You will need to add the correct Debugging Project Properties for x86 Release and x64 Debug and Release configurations if you want to build them.</li>
+</ul>
+</li>
+<li>
+<p>Open the AppXPackageFileList.xml file in the Microsoft.Knowzy.Debug project</p>
+</li>
+</ul>
+<p><img alt="AppXPackageFileList.xml" src="../images/212-appxpackagefilelist.png" /></p>
+<ul>
+<li>Modify the xml to the following:</li>
+</ul>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Project ToolsVersion=&quot;14.0&quot;
+         xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+  &lt;PropertyGroup&gt;
+    &lt;MyProjectOutputPath&gt;..\..\bin\Debug&lt;/MyProjectOutputPath&gt;
+  &lt;/PropertyGroup&gt;
+  &lt;ItemGroup&gt;
+    &lt;LayoutFile Include=&quot;$(MyProjectOutputPath)\Microsoft.Knowzy.WPF.exe&quot;&gt;
+      &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.WPF.exe&lt;/PackagePath&gt;
+    &lt;/LayoutFile&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Project&gt;
+</code></pre>
+
+<p>This XML describes to the DesktopBridge Debugging project the location of the Microsoft.Knowzy.WPF.exe after it is built. It will use it when the project is launched and copy it to the correct location in the AppX package.
+This will allow for any changes to the Microsoft.Knowzy.WPF project code to be included in the debugging session. The need for the Desktop Bridge Debugging project will most likely change in future updates to Visual Studio 2017.</p>
+<ul>
+<li>
+<p>Save your changes. </p>
+</li>
+<li>
+<p>Now it is time to <strong>Clean</strong> the solution and then <strong>Build</strong> the Solution.</p>
+</li>
+<li>
+<p>If you get a Build error stating the layout file could not be found you may need to manually deploy the Microsoft.Knowzy.UWP project by right-clicking on the Microsoft.Knowzy.UWP project and selecting <strong>Deploy</strong>. 
+Then build the solution again.</p>
+</li>
+<li>
+<p>Press F5 and your UWP app will now be deployed and launch successfully. You should now be able to set breakpoints in the Microsoft.Knowzy.WPF source code.</p>
+</li>
+</ul>
+<p><strong>Note:</strong> There is a intermitent bug in the Desktop Bridge Debugging Project ** where it may hang when deploying a build. If this happens, use the Task Manager to kill Visual Studio and then reopen then solution. 
+You should then be able to build and run the app.</p>
+<p><img alt="Breakpoint" src="../images/212-breakpoint.png" /></p>
+<ul>
+<li>
+<p>Set a breakpoint at line 79 in the file ViewModels\MainViewModel.cs in the Microsoft.Knowzy.WPF project. Restart the debugging session and it should break into the debugger at line 79. If you do not hit the breakpoint, 
+<strong>Clean</strong> and <strong>Build</strong> your solution again.</p>
+</li>
+<li>
+<p>Stop debugging and remove the comments we added in the previous task. Press F5 to start the app. You should get the following exception:</p>
+</li>
+</ul>
+<p><img alt="Exception" src="../images/212-exception.png" /></p>
+<p>For some reason, our UWP app is unable to load the Project.json file and it appears that our app is looking for the file in the wrong directory. This is a common problem with newly converted Desktop Bridge apps.
+Depending on how the code is written, the app may be trying to load files from the wrong location. We will fix this in the next task.</p>
+<p>Step 4: Additional Debugging Settings</p>
+<p>In order to be able to easily debug both both the WPF and UWP portions of our app, we need to specify a few more debugging settings.</p>
+<ul>
+<li>Select <strong>Options...</strong> from the <strong>Debug</strong> menu.</li>
+</ul>
+<p><img alt="Debug options" src="../images/212-debug-options.png" /></p>
+<ul>
+<li>Click on <strong>Debugging | General</strong> and turn off the <strong>Enable Just My Code</strong> options</li>
+</ul>
+<p><img alt="Just My Code" src="../images/212-just-my-code.png" /></p>
+<ul>
+<li>
+<p>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Properties</strong>.</p>
+</li>
+<li>
+<p>Select the <strong>Build</strong> tab and turn off <strong>Optimize Code</strong></p>
+</li>
+</ul>
+<p><img alt="Optimize Code" src="../images/212-optimize-code.png" /></p>
+<ul>
+<li>Select the <strong>Debug</strong> tab and turn on <strong>Do not launch, but debug my code when it starts</strong></li>
+</ul>
+<p><img alt="Optimize Code" src="../images/212-do-not-launch.png" /></p>
+<p>We will now fix the products.json issue in the <a href="../213_AddUwp/">next task</a>.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-debug">Run, debug, and test a packaged desktop app (Desktop Bridge)</a></li>
+<li><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples">DesktopBridge To UWP Samples</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-packaging-dot-net">Package a .NET app using Visual Studio </a></li>
+<li><a href="https://github.com/qmatteoq/BridgeTour-Workshop">BridgeTour Workshop</a></li>
+<li><a href="https://mva.microsoft.com/en-us/training-courses/developers-guide-to-the-desktop-bridge-17373">Developers Guide to the Desktop Bridge</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../213_AddUwp/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

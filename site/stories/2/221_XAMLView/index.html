@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>221 XAMLView - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-221-create-a-new-xaml-view-as-part-of-app-package">Task 2.2.1 -  Create a new XAML view as part of app package</h1>
+<p>This task will guide you through the process of adding a Windows 10 UWP XAML UI to your Win32 Desktop Bridge app using Visual Studio 2017. 
+We will also add support for using Windows 10 UWP Protocols to communicate between the WPF exe and and UWP exe. </p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Basic knowledge of C# development</li>
+<li>Basic knowledge of client development with the .NET framework</li>
+<li>Basic knowledge of Windows 10 and the Universal Windows Platform</li>
+<li>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which isn’t available in the Home version.</li>
+<li>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></li>
+<li>Completed the section on <a href="../214_WindowsHello/">Integrate Windows Hello Authentication</a></li>
+</ul>
+<h2 id="task">Task</h2>
+<p>Our Desktop Bridge version of the Knowzy app actually consists of two different executables. The original WPF version (Microsoft.Knowzy.WPF.exe) and the UWP version (Microsoft.Knowzy.UWP.exe). 
+Microsoft.Knowzy.UWP.exe is located in src\Microsoft.Knowzy.UWP\bin\x86\Release\AppX.</p>
+<p><img alt="AppX Folder" src="../images/221-appx-folder.png" /></p>
+<p>Microsoft.Knowzy.WPF.exe is located in src\Microsoft.Knowzy.UWP\bin\x86\Release\AppX\desktop</p>
+<p><img alt="AppX Desktop Folder" src="../images/221-appx-desktop-folder.png" /></p>
+<p>The Application element in the Package.appxmanifest in the Microsoft.Knowzy.UWP project specifies that Microsoft.Knowzy.WPF.exe is the app to be launched when the user starts the Desktop Bridge UWP version of Knowzy. 
+There is actually no mention of Microsoft.Knowzy.UWP.exe in the Package.appxmanifest and it currently will not run.</p>
+<pre><code class="xml">  &lt;Applications&gt;
+    &lt;Application Id=&quot;Knowzy&quot; Executable=&quot;desktop\Microsoft.Knowzy.WPF.exe&quot; EntryPoint=&quot;Windows.FullTrustApplication&quot;&gt;
+    &lt;/Application&gt;
+  &lt;/Applications&gt;
+</code></pre>
+
+<p>We are now going to use the Microsoft.Knowzy.UWP.exe to display a UWP XAML UI page. We will launch Microsoft.Knowzy.UWP.exe by using <a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation">URI activation</a>.</p>
+<h4 id="step-1-specify-an-application-extension-in-the-package-manifest">Step 1: Specify an Application Extension in the package manifest</h4>
+<p>As mentioned above, the Package.appxmanifest currently does not know anything about Microsoft.Knowzy.UWP.exe. We are going to add an Extension to the Application tag of the Package.appxmanifest.</p>
+<ul>
+<li>
+<p>Right-click on the Package.appxmanifest file in the Microsoft.Knowzy.UWP project and select <strong>View Code</strong>*</p>
+</li>
+<li>
+<p>Modify the Application section of the XML to add the following Extensions tag</p>
+</li>
+</ul>
+<pre><code class="xml">    &lt;Extensions&gt;
+      &lt;uap:Extension Category=&quot;windows.protocol&quot; Executable=&quot;Microsoft.Knowzy.UWP.exe&quot; EntryPoint=&quot;Microsoft.Knowzy.UWP.App&quot;&gt;
+        &lt;uap:Protocol Name=&quot;com.microsoft.knowzy.protocol.3d&quot; /&gt;
+      &lt;/uap:Extension&gt;
+    &lt;/Extensions&gt;
+</code></pre>
+
+<ul>
+<li>Your Application section should now look something like this:</li>
+</ul>
+<pre><code class="xml">    &lt;Application Id=&quot;Knowzy&quot; Executable=&quot;desktop\Microsoft.Knowzy.WPF.exe&quot; EntryPoint=&quot;Windows.FullTrustApplication&quot;&gt;
+      &lt;uap:VisualElements
+        DisplayName=&quot;Microsoft.Knowzy.UWP&quot;
+        Square150x150Logo=&quot;Assets\Square150x150Logo.png&quot;
+        Square44x44Logo=&quot;Assets\Square44x44Logo.png&quot;
+        Description=&quot;Microsoft.Knowzy.UWP&quot;
+        BackgroundColor=&quot;transparent&quot;&gt;
+        &lt;uap:DefaultTile Wide310x150Logo=&quot;Assets\Wide310x150Logo.png&quot;/&gt;
+        &lt;uap:SplashScreen Image=&quot;Assets\SplashScreen.png&quot; /&gt;
+      &lt;/uap:VisualElements&gt;
+      &lt;Extensions&gt;
+        &lt;uap:Extension Category=&quot;windows.protocol&quot; Executable=&quot;Microsoft.Knowzy.UWP.exe&quot; EntryPoint=&quot;Microsoft.Knowzy.UWP.App&quot;&gt;
+          &lt;uap:Protocol Name=&quot;com.microsoft.knowzy.protocol.3d&quot; /&gt;
+        &lt;/uap:Extension&gt;
+      &lt;/Extensions&gt;
+    &lt;/Application&gt;
+</code></pre>
+
+<p>The Microsoft.Knowzy.UWP app will now be registered as a handler for the com.microsoft.knowzy.protocol.3d Uniform Resource Identifier (URI) name.</p>
+<ul>
+<li>Build and Deploy the Microsoft.Knowzy.UWP project to make sure your Package.appxmanifest file is valid. </li>
+</ul>
+<h4 id="step-2-handle-the-activated-event-in-microsoftknowzyuwp">Step 2: Handle the activated event in Microsoft.Knowzy.UWP</h4>
+<p>When another app sends the Knowzy app a protocol message using the com.microsoft.knowzy.protocol.3d URI, Microsoft.Knowzy.UWP.exe will be activated by the operationg system. 
+We need to add some code to Microsoft.Knowzy.UWP to handle the URI activation.</p>
+<ul>
+<li>
+<p>Open the file App.xaml.cs in the Microsoft.Knowzy.UWP project.</p>
+</li>
+<li>
+<p>Add the following activation code at the bottom of the App class:</p>
+</li>
+</ul>
+<pre><code class="c#">protected override void OnActivated(IActivatedEventArgs args)
+{
+    if (args.Kind == ActivationKind.Protocol)
+    {
+        ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+        // TODO: Handle URI activation
+        // The received URI is eventArgs.Uri.AbsoluteUri
+
+        Uri uri = eventArgs.Uri;
+        if (uri.Scheme == &quot;com.microsoft.knowzy.protocol.3d&quot;)
+        {
+            Frame rootFrame = new Frame();
+            Window.Current.Content = rootFrame;
+            rootFrame.Navigate(typeof(MainPage), uri.Query);
+            Window.Current.Activate();
+        }
+    }
+}
+</code></pre>
+
+<p>This code will present the MainPage of the app if it receives the URI com.microsoft.knowzy.protocol.3d.</p>
+<ul>
+<li>Open the file MainPage.xaml in the Microsoft.Knowzy.UWP project. Modify the XAML to add a WebView</li>
+</ul>
+<pre><code class="xml">    &lt;Grid Background=&quot;{ThemeResource ApplicationPageBackgroundThemeBrush}&quot;&gt;
+        &lt;WebView Name=&quot;webView&quot; /&gt;
+    &lt;/Grid&gt;
+</code></pre>
+
+<ul>
+<li>Open the file MainPage.xaml.cs in the Microsoft.Knowzy.UWP project. Add the following method to the MainPage class:</li>
+</ul>
+<pre><code class="xml">protected override void OnNavigatedTo(NavigationEventArgs args)
+{
+    if (args.Parameter != null)
+    {
+        WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(args.Parameter.ToString());
+        try
+        {
+            var message = decoder.GetFirstValueByName(&quot;nose&quot;);
+            webView.Source = new Uri(message);
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(&quot;MainPage OnNavigatedTo Error: &quot;  + ex.Message);
+        }
+    }
+}
+</code></pre>
+
+<h4 id="step-3-add-the-windows-10-uwp-uri-sending-code-to-the-wpf-app">Step 3: Add the Windows 10 UWP URI sending code to the WPF app</h4>
+<p>Now that the Microsoft.Knowzy.UWP app knows how to handle a URI request, we are going to add code to the Microsoft.Knowzy.WPF project to make the URI request.</p>
+<ul>
+<li>
+<p>Add a new C# class to the Helpers folder of the Microsoft.Knowzy.UwpHelpers project. Name the file UriProtocol.cs.</p>
+</li>
+<li>
+<p>Add the following method to the UriProtocol class. Make sure the class is public,</p>
+</li>
+</ul>
+<p>```c#
+public class UriProtocol
+{
+    public static async Task<bool> SendUri(Uri uri)
+    {
+        // Note: DesktopBridge.Helpers NuGet package incorrectly warns that LaunchUriAsync is not supported in a Centennial App
+        bool result = await Windows.System.Launcher.LaunchUriAsync(uri);
+        return result;
+    }
+}</p>
+<pre><code>
+Intellisense may complain that LaunchUriAsync is only available to UWP apps. You can ignore this warning.
+
+#### Step 4: Add the URI Code to the WPF App
+
+Our Knowzy app has an unused View menu item. We will use this to call the code to launch the UWP XAML UI using the Windows 10 UWP uri code we added to the Helpers.
+
+![Knowzy UWP](images/214-knowzy-uwp.png)
+
+* Modify the XAML Microsoft.Knowzy.WPF\Views\MainView.xaml to add a Click event to the View MenuItem (around line 43)
+
+```xml
+&lt;MenuItem Header=&quot;{x:Static localization:Resources.View_Menu}&quot; Template=&quot;{DynamicResource MenuItemControlTemplate}&quot;&gt;
+    &lt;MenuItem Header=&quot;{x:Static localization:Resources.ListView_Tab}&quot; Template=&quot;{StaticResource MenuItemBarControlTemplate}&quot; 
+              cal:Message.Attach=&quot;ShowListView()&quot;/&gt;
+    &lt;MenuItem Header=&quot;Grid view&quot; Template=&quot;{StaticResource MenuItemBarControlTemplate}&quot;
+              cal:Message.Attach=&quot;ShowGridView()&quot;/&gt;
+    &lt;MenuItem Header=&quot;View 3D&quot; Template=&quot;{StaticResource MenuItemBarControlTemplate}&quot;
+              cal:Message.Attach=&quot;Show3DView()&quot;/&gt;
+&lt;/MenuItem&gt;
+</code></pre>
+
+<ul>
+<li>Add a Show3DView() method to Microsoft.Knowzy.WPF\Models\MainViewModel.cs</li>
+</ul>
+<pre><code class="c#">using Microsoft.Knowzy.UwpHelpers;
+using System;
+
+public async void Show3DView()
+{
+    if (ExecutionMode.IsRunningAsUwp())
+    {
+        Uri uri = new Uri(&quot;com.microsoft.knowzy.protocol.3d://&quot; + &quot;message?nose=&quot; + &quot;https://www.remix3d.com/details/G009SXPQ5S3P&quot;);
+        await UriProtocol.SendUri(uri);
+    }
+    else
+    {
+        MessageBox.Show(&quot;3D View not implemented in WPF version&quot;, &quot;Microsoft.Knowzy.WPF&quot;);
+    };
+}
+
+</code></pre>
+
+<ul>
+<li>
+<p>Build and run the solution (with Windows.Knowzy.Debug as the startup application)</p>
+</li>
+<li>
+<p>Select <strong>View 3D</strong> from the <strong>View</strong> menu. The Xaml ui of the Microsoft.Knowzy.UWP app will appear and display the 3D clown nose specified by the Uri parameters.</p>
+</li>
+</ul>
+<p><img alt="Knowzy XAML UI" src="../images/221-xaml-ui.png" /></p>
+<ul>
+<li>If you want to suggest to Windows 10 the size of the XAML UI Window, add the following code to the MainPage constructor in the file MainPage.xaml.cs in the Microsoft.Knowzy.UWP project</li>
+</ul>
+<pre><code class="c#">using Windows.UI.ViewManagement;
+
+public MainPage()
+{
+    this.InitializeComponent();
+    ApplicationView.GetForCurrentView().TryResizeView(new Size(800, 800));
+}
+</code></pre>
+
+<p>We will continue to add more Windows 10 UWP features to our app in the <a href="../222_Share/">next task</a>.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation">Handle URI activation</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../222_Share/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

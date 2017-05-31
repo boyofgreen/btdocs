@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>223 AppServices - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-223-adding-app-services-to-the-knowzy-desktop-bridge-app">Task 2.2.3 -  Adding App Services to the Knowzy Desktop Bridge App</h1>
+<p>Our development department has identified a problem with the Desktop Bridge version of the Knowzy app.</p>
+<ol>
+<li>There appears to be no way to implement bi-directional communication between the WPF code and the UWP code of the Knowzy app.<ul>
+<li>We can send Uri protocol messages to the UWP code using Windows.System.Launcher.LaunchUriAsync(uri) but we can't receive a response.</li>
+<li><a href="https://docs.microsoft.com/en-us/uwp/api/windows.system.launcher">Windows.System.Launcher.LaunchUriForResultsAsync</a> seems to be a solution as it returns a response to the request
+but LaunchUriForResultsAsync is not supported in DesktopBridge applications.</li>
+</ul>
+</li>
+</ol>
+<p>It appears that a Windows 10 UWP <a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/app-services">App Service</a> will allow data to be shared between a UWP app and a WPF app. There is an example of 
+this sharing scenario <a href="https://blogs.windows.com/buildingapps/2017/02/01/adding-uwp-features-existing-pc-software/#QkPeOqgHqG1fdHOa.97">here</a> 
+in the "Exposing an App Service" section. However, this example requires that we move some of our WPF source code into the App Service. Also there is no example of 
+how to share data between the UWP and WPF portions of our app. </p>
+<p>Here is the problem with the communications between the WPF and UWP parts of our DeskTop Bridge app using an App Service.</p>
+<ol>
+<li>The WPF app starts and connects to the App Service</li>
+</ol>
+<p><img alt="App Service WFP" src="../images/223-appservice-1.png" /></p>
+<ol>
+<li>The XAML UI starts up and connects to the App Service</li>
+</ol>
+<p><img alt="App Service WFP" src="../images/223-appservice-2.png" /></p>
+<ol>
+<li>The WPF app sends a request to the App Service. It can only receive a reply from the App Service. The request is not sent to the XAML UI.
+Likewise, if the XAML UI makes a request to the App Service, that request is not forwarded to the WPF app. Each app can only receive a reply from
+the App Service. Each connection from an app to the App Service may also be running a separate instance of the App Servce so the two connections are not
+aware of each other.</li>
+</ol>
+<p><img alt="App Service WFP" src="../images/223-appservice-reality.png" /></p>
+<p>There is a solution to this problem if we make Microsoft.Knowzy.UWP.exe the startup app for our DeskTop Bridge app. However, we are not ready to make the UWP version since we have not ported the WPF UI to the UWP app.
+We still need the WPF app to be the UI for our desktop bridge app. So we will need to modify our App Service to bridge the communication between the WPF and UWP portions of our Desktop Bridge app.</p>
+<p>Requirements for this task:
+<em> Create an App Service that enables the sharing of the Product information.
+</em> Share Clown nose product information between the UWP XAML UI and the WPF Knowzy application.
+* Share Clown nose product information from the WPF Knowzy application and an external Windows 10 UWP application.</p>
+<p>We want to implement the following App Service  scenario:</p>
+<ol>
+<li>
+<p>The WPF app launches the Windows 10 App Service and registers itself to the App Service as a listener with a unique listener id.</p>
+<p><img alt="WPF Register Listener" src="../images/223-wpf-register-listener.png" /></p>
+</li>
+<li>
+<p>The WPF app opens the UWP XAML UI using Windows.System.Launcher.LaunchUriAsync(uri) and sends the listener id as a parameter.</p>
+<p><img alt="Open UWP Xaml UI" src="../images/223-launch-uwp-xaml-ui.png" /></p>
+</li>
+<li>
+<p>The UWP Xaml UI connects to the App Service, does its work, and sends the response data to the App Service along with the listener id.</p>
+<p><img alt="UWP Send Response" src="../images/223-uwp-send-response.png" /></p>
+</li>
+<li>
+<p>The App Service sends the response data to the listener with the specified listener id.</p>
+<p><img alt="WPF Receive Response" src="../images/223-wpf-receive-response.png" /></p>
+</li>
+</ol>
+<p>Our research has found a starting point for the App Service idea <a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/how-to-create-and-consume-an-app-service">here</a>.
+You will need to modify this code to enable bi-directional communication between the UWP Xaml ui and the WPF application code.</p>
+<p>We also found some App Service sample code <a href="https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/AppServices">here</a>.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This task has a dependency on <a href="../221_XAMLView/">Task 2.2.1</a> and all of it's prerequisites</p>
+<p>Since this will be quite a complicated task, it is recommended that you work through the <a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/how-to-create-and-consume-an-app-service">Create and consume an app service tutorial</a>.
+This tutorial will familiarize you with the following:</p>
+<ol>
+<li>How to create an App Service project and add it to your solution.</li>
+<li>How to specify the App Service in the Package.appxmanifest.</li>
+<li>How to open a connection to an App Service.</li>
+<li>How to send a request to an App Service.</li>
+<li>How to receive a message from an App Service.</li>
+</ol>
+<p>Once you have completed the tutorial, you will be ready to add an App Service to the Knowzy DeskTop Bridge app.</p>
+<h2 id="task">Task</h2>
+<h4 id="create-the-app-service-project">Create the App Service Project</h4>
+<ul>
+<li>
+<p>Right-click on the src folder in the Microsoft.Knowzy.WPF solution and select <strong>Add | New Project...</strong></p>
+</li>
+<li>
+<p>Select the <strong>Visual C# | Windows Univeral | Windows Runtime Component (Univeral Windows)</strong> project template.</p>
+</li>
+<li>
+<p>Make sure you are creating the project in the <strong>src</strong> folder and name the project <strong>Microsoft.Knowzy.AppService</strong>.</p>
+</li>
+</ul>
+<p><img alt="Create AppService Project" src="../images/223-appservice-project.png" /></p>
+<ul>
+<li>
+<p>Rename the Class1.cs file in the Microsoft.Knowzy.AppService project to AppServiceTask.cs</p>
+</li>
+<li>
+<p>Add the following using directives to AppServiceTask.cs:</p>
+</li>
+</ul>
+<pre><code class="c#">using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+</code></pre>
+
+<ul>
+<li>Add the following boilerplate AppService code to AppServiceTask.cs</li>
+</ul>
+<pre><code class="c#">namespace Microsoft.Knowzy.AppService
+{
+    public sealed class AppServiceTask : IBackgroundTask
+    {
+        private BackgroundTaskDeferral backgroundTaskDeferral;
+        private AppServiceConnection appServiceconnection;
+
+        public void Run(IBackgroundTaskInstance taskInstance)
+        {
+            this.backgroundTaskDeferral = taskInstance.GetDeferral(); // Get a deferral so that the service isn't terminated.
+            taskInstance.Canceled += OnTaskCanceled; // Associate a cancellation handler with the background task.
+
+            // Retrieve the app service connection and set up a listener for incoming app service requests.
+            var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
+            appServiceconnection = details.AppServiceConnection;
+            appServiceconnection.RequestReceived += OnRequestReceived;
+        }
+
+        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+        }
+
+        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            if (this.backgroundTaskDeferral != null)
+            {
+                // Complete the service deferral.
+                this.backgroundTaskDeferral.Complete();
+            }
+        }
+    }
+}
+</code></pre>
+
+<ul>
+<li>Build your solution and fix any compilation errors in the App Service code.</li>
+</ul>
+<h4 id="add-the-app-service-to-the-packageappxmanifest">Add the App Service to the Package.appxmanifest</h4>
+<ul>
+<li>
+<p>Open the Package.appxmanifest file in the Microsoft.Knowzy.UWP project by right-clicking on the file and select <strong>View Code</strong>.</p>
+</li>
+<li>
+<p>Add the following xml to the Extensions section.</p>
+</li>
+</ul>
+<pre><code class="xml">&lt;uap:Extension Category=&quot;windows.appService&quot; EntryPoint=&quot;Microsoft.Knowzy.AppService.AppServiceTask&quot;&gt;
+  &lt;uap:AppService Name=&quot;com.microsoft.knowzy.appservice&quot; uap4:SupportsMultipleInstances=&quot;false&quot;/&gt;
+&lt;/uap:Extension&gt;
+</code></pre>
+
+<ul>
+<li>If necessary, add the following xmlns declaration to the Package tag</li>
+</ul>
+<pre><code class="xml">xmlns:uap4=&quot;http://schemas.microsoft.com/appx/manifest/uap/windows10/4&quot;
+</code></pre>
+
+<h4 id="add-a-project-reference-to-microsoftknowzyappservice">Add a project reference to Microsoft.Knowzy.AppService</h4>
+<ul>
+<li>
+<p>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Add | Reference...</strong></p>
+</li>
+<li>
+<p>Select the <strong>Microsoft.Knowzy.AppService</strong> project under the <strong>Projects | Solution</strong> section. </p>
+</li>
+<li>
+<p>The Microsoft.Knowzy.AppService will now be part of the Knowzy UWP AppX package after a build.</p>
+</li>
+</ul>
+<h4 id="create-a-new-c-class-library-project-microsoftknowzyuwphelpersappservice">Create a new C# Class Library project Microsoft.Knowzy.UwpHelpers.AppService</h4>
+<p>The Windows 10 AppServices UWP API does not seem seem to be compatible with Portable Class Libraries so create a regular C# Class Library project called Microsoft.Knowzy.UwpHelpers.AppService.</p>
+<p><img alt="AppService Class Library" src="../images/223-appservice-class-lib.png" /></p>
+<h4 id="add-an-appservice-helper-class-to-microsoftknowzyuwphelpersappservice">Add an AppService helper class to Microsoft.Knowzy.UwpHelpers.AppService</h4>
+<ul>
+<li>
+<p>Add a new C# class called AppService.cs to the Helpers folder of the Microsoft.Knowzy.UwpHelpers.AppService project.</p>
+</li>
+<li>
+<p>Add the following using directives to AppService.cs</p>
+</li>
+</ul>
+<pre><code class="c#">using System.Threading.Tasks;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
+</code></pre>
+
+<ul>
+<li>Add the following code to AppService.cs. This code creates a connection to the App Service and registers the connection as a listener for messages with a specific id. Whenever the
+App Service receives a message with the specified id, it will call the Connection_RequestReceived method with the message.</li>
+</ul>
+<pre><code class="cs">public class AppService
+{
+    private AppServiceConnection _connection = null;
+    private String _listenerId;
+
+    public AppService()
+    {
+    }
+
+    public async Task&lt;bool&gt; StartAppServiceConnection(String listenerId)
+    {
+        var result = false;
+        if (_connection != null)
+        {
+            _connection.Dispose();
+            _connection = null;
+        }
+
+        // Open a connection to the App Service
+        _listenerId = listenerId;
+        _connection = new AppServiceConnection();
+        _connection.AppServiceName = &quot;com.microsoft.knowzy.appservice&quot;;
+        _connection.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
+        _connection.RequestReceived += Connection_RequestReceived;
+        _connection.ServiceClosed += Connection_ServiceClosed;
+        AppServiceConnectionStatus status = await _connection.OpenAsync();
+        if (status == AppServiceConnectionStatus.Success)
+        {
+            // register this App Service Connection as a listener
+            ValueSet registerData = new ValueSet();
+            registerData.Add(&quot;Type&quot;, &quot;Register&quot;);
+            registerData.Add(&quot;Id&quot;, listenerId);
+            var response = await _connection.SendMessageAsync(registerData);
+            if (response.Status == AppServiceResponseStatus.Success)
+            {
+                var message = response.Message;
+                result = message.ContainsKey(&quot;Status&quot;) &amp;&amp; message[&quot;Status&quot;].ToString() == &quot;OK&quot;;
+            }
+        }
+        return result;
+    }
+
+    private async void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+    {
+        var messageDeferral = args.GetDeferral();
+        ValueSet returnData = new ValueSet();
+        returnData.Add(&quot;Status&quot;, &quot;OK&quot;);
+        returnData.Add(&quot;Data&quot;, &quot;Knowzy WPF app received message: &quot; + args.Request.Message[&quot;Data&quot;]);
+        await args.Request.SendResponseAsync(returnData);
+        messageDeferral.Complete(); // Complete the deferral so that the platform knows that we're done responding to the app service call.
+    }
+
+    private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+    {
+        _connection.Dispose();
+        _connection = null;
+    }
+}
+</code></pre>
+
+<h4 id="add-a-project-reference-to-microsoftknowzyuwphelpersappservice">Add a project reference to Microsoft.Knowzy.UwpHelpers.AppService</h4>
+<ul>
+<li>
+<p>Right-click on the Microsoft.Knowzy.WPF project and select <strong>Add | Reference...</strong></p>
+</li>
+<li>
+<p>Select the <strong>Microsoft.Knowzy.UwpHelpers.AppService</strong> project under the <strong>Projects | Solution</strong> section. </p>
+</li>
+</ul>
+<h4 id="add-listener-support-to-the-app-service">Add Listener support to the App Service</h4>
+<p>We will now modify the Microsoft.Knowzy.AppService component to support the adding and removing of connection listeners</p>
+<ul>
+<li>If necessary, add the following using directive to AppServiceTask.cs in the Microsoft.Knowzy.AppService project:</li>
+</ul>
+<pre><code class="c#">using System.Collections.Generic;
+using System.Threading;
+using Windows.Foundation.Collections;
+</code></pre>
+
+<ul>
+<li>Add the following private members to the AppServiceTask class.</li>
+</ul>
+<pre><code class="c#">// Map of AppService message Listeners
+private static IDictionary&lt;string, AppServiceConnection&gt; _connectionMap = new Dictionary&lt;string, AppServiceConnection&gt;();
+
+// Mutex to protect access to _connectionMap
+private static Mutex _mutex = new Mutex();
+</code></pre>
+
+<ul>
+<li>Add methods to add and remove a listener connection. We use a mutex to protect access to the connection Dictionary</li>
+</ul>
+<pre><code class="c#">private void AddListener(String id, AppServiceConnection connection)
+{
+    _mutex.WaitOne();
+    _connectionMap[id] = connection;
+    _mutex.ReleaseMutex();
+}
+
+private void RemoveListener(String id)
+{
+    _mutex.WaitOne();
+    if (_connectionMap.ContainsKey(id))
+    {
+        _connectionMap.Remove(id);
+    }
+    _mutex.ReleaseMutex();
+}
+</code></pre>
+
+<ul>
+<li>Add a method to handle sending a message to a listener. This method will wait for the response from the listener and return the response to the caller.</li>
+</ul>
+<pre><code class="c#">private async Task&lt;ValueSet&gt; SendMessage(String id, ValueSet message)
+{
+    String errorMessage = &quot;&quot;;
+
+    _mutex.WaitOne();
+    AppServiceConnection appServiceConnection = null;
+    if (_connectionMap.ContainsKey(id))
+    {
+        appServiceConnection = _connectionMap[id];
+    }
+    _mutex.ReleaseMutex();
+
+    if (appServiceConnection != null)
+    {
+        var response = await appServiceConnection.SendMessageAsync(message);
+        if (response.Status == AppServiceResponseStatus.Success)
+        {
+            return response.Message;
+        }
+        else
+        {
+            errorMessage = &quot;SendMessageAsync result: &quot; + response.Status;
+        }
+    }
+    else
+    {
+        errorMessage = &quot;No registered Listener for Id: &quot; + id;
+    }
+
+    // build the error response
+    ValueSet error = new ValueSet();
+    error.Add(&quot;Status&quot;, &quot;Error&quot;);
+    error.Add(&quot;ErrorMessage&quot;, errorMessage);
+    return error;
+}
+</code></pre>
+
+<ul>
+<li>Update the OnRequestReceived method to handle listener registration and the sending messages to listeners.</li>
+</ul>
+<pre><code class="cs">async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+{
+    // Get a deferral because we use an awaitable API below to respond to the message
+    // and we don't want this call to get cancelled while we are waiting.
+    var messageDeferral = args.GetDeferral();
+
+    var message = args.Request.Message;
+    ValueSet response = new ValueSet();
+
+    if (message.ContainsKey(&quot;Type&quot;) &amp;&amp; message.ContainsKey(&quot;Id&quot;))
+    {
+        var type = message[&quot;Type&quot;];
+        var id = message[&quot;Id&quot;].ToString();
+        switch (type)
+        {
+            case &quot;Register&quot;:
+                AddListener(id, sender);
+                response.Add(&quot;Status&quot;, &quot;OK&quot;);
+                break;
+
+            case &quot;Unregister&quot;:
+                RemoveListener(id);
+                response.Add(&quot;Status&quot;, &quot;OK&quot;);
+                break;
+
+            case &quot;Message&quot;:
+                response = await SendMessage(id, message);
+                break;
+
+            default:
+                response.Add(&quot;Status&quot;, &quot;Error&quot;);
+                response.Add(&quot;ErrorMessage&quot;, &quot;Unknown KnowzyAppServiceMessage type&quot;);
+                break;
+        }
+     }
+    else
+    {
+        response.Add(&quot;Status&quot;, &quot;Error&quot;);
+        response.Add(&quot;ErrorMessage&quot;, &quot;Missing valid Type or Id parameters&quot;);
+    }
+
+    await args.Request.SendResponseAsync(response);
+    messageDeferral.Complete(); // Complete the deferral so that the platform knows that we're done responding to the app service call.
+}
+</code></pre>
+
+<h4 id="enable-microsoftknowzywpf-to-use-the-app-service">Enable Microsoft.Knowzy.WPF to use the App Service</h4>
+<ul>
+<li>Add a Click event to the Menu Menu in MainView.xaml in the Microsoft.Knowzy.WPF project.</li>
+</ul>
+<pre><code class="xml">&lt;MenuItem Header=&quot;{x:Static localization:Resources.Menu_Menu}&quot; Template=&quot;{DynamicResource MenuItemControlTemplate}&quot; Click=&quot;Menu_Click&quot;/&gt;
+</code></pre>
+
+<ul>
+<li>Add the Menu_Click handler in MainView.xaml.cs in the Microsoft.Knowzy.WPF project.</li>
+</ul>
+<pre><code class="c#">AppService _appService = null;
+
+private async void Menu_Click(object sender, EventArgs e)
+{
+    if (ExecutionMode.IsRunningAsUwp())
+    {
+        if(_appService == null)
+        {
+            // start the app service
+            _appService = new AppService();
+            var result = await _appService.StartAppServiceConnection(&quot;com.microsoft.knowzy.appservice.test&quot;);
+        }
+
+        // start the XAML UI that will communicate with the App Service
+        Uri uri = new Uri(&quot;com.microsoft.knowzy.protocol.test://&quot; + &quot;message?appserviceid=&quot; + &quot;com.microsoft.knowzy.appservice.test&quot;);
+        await UriProtocol.SendUri(uri);
+    }
+}
+</code></pre>
+
+<p>This code will open a connection to the Knowzy App Service and will also open the Xaml AppServiceTest page in the UWP portion of Knowzy. The AppServiceTest page will connect to the AppService and send a message
+to the WPF app through the AppService when the use clicks on the Connect button. The WPF app will echo the message and send it back to the UWP app through the App Service.</p>
+<h4 id="add-the-new-uri-protocol-to-packageappxmanifest-in-the-microsoftknowzyuwp-project">Add the new Uri protocol to package.appxmanifest in the Microsoft.Knowzy.UWP project</h4>
+<pre><code class="xml">&lt;uap:Extension Category=&quot;windows.protocol&quot; Executable=&quot;Microsoft.Knowzy.UWP.exe&quot; EntryPoint=&quot;Microsoft.Knowzy.UWP.App&quot;&gt;
+  &lt;uap:Protocol Name=&quot;com.microsoft.knowzy.protocol.test&quot; /&gt;
+&lt;/uap:Extension&gt;
+</code></pre>
+
+<h4 id="add-the-xaml-ui-page-that-will-communicate-with-the-app-service">Add the XAML ui page that will communicate with the App Service</h4>
+<ul>
+<li>
+<p>Add a new XAML page to Microsoft.Knowzy.UWP project. Name the page AppServiceTest.xaml.</p>
+</li>
+<li>
+<p>Add some XAML UI elements to AppServiceTest.xaml</p>
+</li>
+</ul>
+<pre><code class="xml">&lt;Grid Background=&quot;{ThemeResource ApplicationPageBackgroundThemeBrush}&quot; Margin=&quot;12&quot;&gt;
+    &lt;StackPanel Orientation=&quot;Vertical&quot;&gt;
+        &lt;TextBox Name=&quot;textBox&quot; /&gt;
+        &lt;Button Content=&quot;Connect&quot; Click=&quot;Button_Click&quot; /&gt;
+    &lt;/StackPanel&gt;
+&lt;/Grid&gt;
+</code></pre>
+
+<ul>
+<li>Add the following to App.xaml.cs</li>
+</ul>
+<pre><code class="c#">protected override void OnActivated(IActivatedEventArgs args)
+{
+    if (args.Kind == ActivationKind.Protocol)
+    {
+        ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+        // TODO: Handle URI activation
+        // The received URI is eventArgs.Uri.AbsoluteUri
+
+        Uri uri = eventArgs.Uri;
+        if (uri.Scheme == &quot;com.microsoft.knowzy.protocol.3d&quot;)
+        {
+            Frame rootFrame = new Frame();
+            Window.Current.Content = rootFrame;
+            rootFrame.Navigate(typeof(MainPage), uri.Query);
+            Window.Current.Activate();
+        }
+        else if (uri.Scheme == &quot;com.microsoft.knowzy.protocol.test&quot;)
+        {
+            Frame rootFrame = new Frame();
+            Window.Current.Content = rootFrame;
+            rootFrame.Navigate(typeof(AppServiceTest), uri.Query);
+            Window.Current.Activate();
+        }
+    }
+}
+</code></pre>
+
+<ul>
+<li>Add the following using directive to AppServiceTest.xaml.cs</li>
+</ul>
+<pre><code class="c#">using Windows.ApplicationModel.AppService;
+</code></pre>
+
+<ul>
+<li>Add the following properties to the AppServiceTest class:</li>
+</ul>
+<pre><code class="c#">private String _connectionId;
+private AppServiceConnection _connection = null;
+</code></pre>
+
+<ul>
+<li>Add the uri protocol hander to parse the appserviceid from the uri.</li>
+</ul>
+<pre><code class="c#">protected override void OnNavigatedTo(NavigationEventArgs args)
+{
+    if (args.Parameter != null)
+    {
+        WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(args.Parameter.ToString());
+        try
+        {
+            _connectionId = decoder.GetFirstValueByName(&quot;appserviceid&quot;);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(&quot;AppServiceTest OnNavigatedTo Error: &quot; + ex.Message);
+        }
+    }
+}
+</code></pre>
+
+<ul>
+<li>Add the Button_Click handler</li>
+</ul>
+<pre><code class="c#">private async void Button_Click(object sender, RoutedEventArgs e)
+{
+    if (_connection == null)
+    {
+        _connection = new AppServiceConnection();
+
+        // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the &lt;Extension&gt; section.
+        _connection.AppServiceName = &quot;com.microsoft.knowzy.appservice&quot;; ;
+
+        // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
+        _connection.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
+
+        var status = await _connection.OpenAsync();
+        if (status != AppServiceConnectionStatus.Success)
+        {
+            textBox.Text = &quot;Failed to connect &quot; + status;
+            return;
+        }
+    }
+
+    ValueSet data = new ValueSet();
+    data.Add(&quot;Type&quot;, &quot;Message&quot;);
+    data.Add(&quot;Id&quot;, _connectionId);
+    data.Add(&quot;Data&quot;, &quot;Message from AppServiceTest XAML UI&quot;);
+    textBox.Text = &quot;Sending message to App Service connection listener: &quot; + _connectionId;
+
+    var response = await _connection.SendMessageAsync(data);
+    if (response.Status == AppServiceResponseStatus.Success)
+    {
+        var message = response.Message;
+        bool result = message.ContainsKey(&quot;Status&quot;) &amp;&amp; message[&quot;Status&quot;].ToString() == &quot;OK&quot;;
+        if (result)
+        {
+            var text = message[&quot;Data&quot;] as String;
+            textBox.Text = text;
+        }
+    }
+}
+</code></pre>
+
+<ul>
+<li>
+<p>Build and run the Knowzy app by starting the Microsoft.Knowzy.Debug project.</p>
+</li>
+<li>
+<p>Click on the <strong>Menu</strong> menu item.</p>
+</li>
+<li>
+<p>When the AppServiceTest windows appears, click on the <strong>Connect</strong> button.</p>
+</li>
+<li>
+<p>The following things should now happen</p>
+<ul>
+<li>The UWP app will send a message to the AppService</li>
+<li>The AppService wil forward the event to the WPF via its listener connection</li>
+<li>The WPF responds to the message and send the result back to the App Service</li>
+<li>The App Service returns the result from the WPF app back to the UWP app</li>
+<li>The UWP app displays the result it received from the WPF app.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="AppServiceTest" src="../images/223-appservicetest.png" /></p>
+<p>You have now successfully developed a solution for communicating between the UWP and WPF portions of your Desktop Bridge app using an App Service.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/how-to-create-and-consume-an-app-service">Create and consume an app service</a></li>
+<li><a href="https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/AppServices">App services sample</a></li>
+<li><a href="https://blogs.windows.com/buildingapps/2017/02/01/adding-uwp-features-existing-pc-software/#vEJwTPxsf80CZvOh.97">Adding UWP features to your existing PC software</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../231_Inking_Dial/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

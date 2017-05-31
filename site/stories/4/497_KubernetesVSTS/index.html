@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>497 KubernetesVSTS - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="setting-up-kubernetes-and-vsts">Setting Up Kubernetes and VSTS</h1>
+<p>For the sake of this exercise, <strong>lets focus only on the API code</strong> and any new releases you have. These changes will be tested by VSTS and, pushed into Azure Container Registry (ACR) once all your tests have passed (we won't go into writing tests today). Then VSTS will automatically deploy the latest version of the app into your cluster by obtaining the latest image from ACR.</p>
+<p>The following two resources will provide you all the answers on how to accomplish this task, it´s your duty to understand them and consolidate the concepts to set up a full development cycle. Please note that none of these are a step-by-step tutorial to achieve what you want, but jointly you will be able to make it work:</p>
+<ol>
+<li><a href="https://github.com/dtzar/blog/tree/master/CD-Kubernetes-VSTS">CI/CD to Kubernetes clusters using VSTS</a></li>
+<li><a href="https://www.visualstudio.com/en-us/docs/build/apps/aspnet/aspnetcore-to-azure#enable-continuous-integration-ci">Build and deploy your ASP.NET Core app to Azure</a></li>
+</ol>
+<p>You should be able to do the following steps to provide CI/CD in a Kubernetes cluster using Azure.</p>
+<ol>
+<li>Create a new project in your VSTS account.</li>
+<li>Push your API code into the project's repository in VSTS.</li>
+<li>Install the VSTS Kubernetes <a href="https://marketplace.visualstudio.com/items?itemName=tsuyoshiushio.k8s-endpoint">extension</a>.</li>
+<li>Provide Continuous Integration with VSTS by pushing your docker images with the latest version of the tested code into ACR.</li>
+<li>Set up a trigger to pull your new docker image into your Kubernetes cluster after it has been properly tested and deployed.</li>
+</ol>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

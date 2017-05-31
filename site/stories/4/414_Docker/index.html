@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>414 Docker - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-414-create-docker-images">Task 4.1.4 - Create Docker images</h1>
+<h2 id="1-prerequisites">1. Prerequisites</h2>
+<ul>
+<li><a href="https://docs.docker.com/docker-for-windows/install/">Docker for Windows</a> (Stable channel)</li>
+</ul>
+<h3 id="a-configuring-docker-for-windows">a. Configuring Docker for Windows</h3>
+<p>On Windows, you'll need to share your drive with Docker in order to build images.</p>
+<p>i) Open up Docker settings by right-clicking the Docker icon in the taskbar, and choosing Settings</p>
+<p>ii) Go to the <code>Shared Drives</code> tab and share the C drive </p>
+<p><img alt="image of share screen" src="../images/docker-sharedrive.png" /></p>
+<p>If you receive a firewall error, try these <a href="../499_Troubleshooting/">Troubleshooting</a> steps. </p>
+<h2 id="2-building-images">2. Building Images</h2>
+<p>If you have Visual Studio 2017 you can have it create Docker files for you by simply:
+* Right click on the Microsoft.Knowzy.WebApp project, select <code>Add -&gt; Docker Support</code>. If you are on prompted for Target OS, choose <code>Linux</code> and click OK.</p>
+<p><img alt="Add Docker Support" src="../images/AddDockerSupport.png" />
+<img alt="Choose Docker Linux" src="../images/ChooseLinux.png" /></p>
+<p>This will create a Dockerfile file in your WebApp project, and add a new docker-compose project type to your solution.</p>
+<ul>
+<li>Use the same instructions and add Docker Support to the Microsoft.Knowzy.OrdersAPI project </li>
+<li>Use the same instructions and add Docker Support to the Microsoft.Knowzy.ProductsAPI project</li>
+</ul>
+<p>In the end you should have Dockerfile in each of those three projects, and all three referenced in your Docker compose project. </p>
+<p>Now under the <code>docker-compose.yml</code> file, find the <code>docker-compose.override.yml</code> file, and modify it with the following (changing the values of your CosmosDB endpoint and key):</p>
+<pre><code class="yaml">version: '3'
+
+services:
+  microsoft.knowzy.webapp:
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+     - ASPNETCORE_URLS=http://0.0.0.0:5101
+     - ORDERSAPI_URL=http://microsoft.knowzy.ordersapi:5102
+     - PRODUCTSAPI_URL=http://microsoft.knowzy.productsapi:5103
+    ports:
+      - &quot;5101:5101&quot;
+
+  microsoft.knowzy.ordersapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5102
+      - COSMOSDB_ENDPOINT=&lt;**YOUR COSMOSDB ENDPOINT**&gt;
+      - COSMOSDB_KEY=&lt;**YOUR KEY**&gt;
+    ports:
+      - &quot;5102:5102&quot;
+
+  microsoft.knowzy.productsapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5103
+      - COSMOSDB_ENDPOINT=&lt;**YOUR COSMOSDB ENDPOINT**&gt;
+      - COSMOSDB_KEY=&lt;**YOUR KEY**&gt;
+    ports:
+      - &quot;5103:5103&quot;
+</code></pre>
+
+<p>You can now start debugging the Docker Compose project; it will create all three Docker images and run them on your local dev environment.</p>
+<h3 id="dockerfile-reference">Dockerfile Reference</h3>
+<p>If you're new to Docker, here's a quick overview of the Dockerfile for the Orders API, with an explanation for each statement</p>
+<pre><code class="Dockerfile"># Use the aspnetcore image as a base
+FROM microsoft/aspnetcore:1.1
+
+# Create a variable called source that has the path of the publish directory
+ARG source
+
+# Use /app inside the created container to hold our files
+WORKDIR /app
+
+# Expose port 80 from our created container. This gets overwritten by the docker compose override file
+EXPOSE 80
+
+# Copy from files in the source folder (or obj/Docker/publish if source was not set) into the current folder (/app). 
+COPY ${source:-obj/Docker/publish} .
+
+# The entrypoint for the container is the command: dotnet Microsoft.Knowzy.OrdersAPI.dll
+ENTRYPOINT [&quot;dotnet&quot;, &quot;Microsoft.Knowzy.OrdersAPI.dll&quot;]
+</code></pre>
+
+<blockquote>
+<p>Note how we are using <code>dotnet</code> and the kestrel web server in the configuration to host the APIs and the Web App in their containers. For more information on hosting ASP.NET Core in production see this <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/">article</a>.</p>
+</blockquote>
+<h3 id="docker-composeyml-reference">docker-compose.yml Reference</h3>
+<p>And an overview of what's going on in the docker-compose file</p>
+<pre><code class="yaml">version: '3'
+
+services:
+
+  # Defines a service and gives it a name
+  microsoft.knowzy.webapp:
+
+    # The image tag (in Docker, tags are used as version numbers)
+    image: microsoft.knowzy.webapp
+
+    # Tell Docker to build a new image
+    build:
+      # Specify the location of the Dockerfile used to build the image
+      context: ./src/1. WebApp/Microsoft.Knowzy.WebApp
+      dockerfile: Dockerfile
+
+...
+</code></pre>
+
+<h2 id="3-interacting-with-docker-via-powershell">3. Interacting with Docker via PowerShell</h2>
+<p>You've run your apps by debugging the docker-compose project in Visual Studio. Before you can push your images out to the world, you'll need to know a few things about interacting with Docker. Open up a PowerShell session in the <code>Knowzy_Shipping_WebApp</code> folder</p>
+<pre><code class="powershell"># List your running containers
+docker ps
+</code></pre>
+
+<pre><code>CONTAINER ID        IMAGE                          COMMAND               CREATED             STATUS              PORTS                            NAMES
+b0ee3710499e        microsoft.knowzy.webapp        &quot;tail -f /dev/null&quot;   2 minutes ago       Up 2 minutes        80/tcp, 0.0.0.0:5101-&gt;5101/tcp   dockercompose9124822939927181477_microsoft.knowzy.webapp_1
+82a53378a7c6        microsoft.knowzy.ordersapi     &quot;tail -f /dev/null&quot;   2 minutes ago       Up 2 minutes        80/tcp, 0.0.0.0:5102-&gt;5102/tcp   dockercompose9124822939927181477_microsoft.knowzy.ordersapi_1
+88b91969038c        microsoft.knowzy.productsapi   &quot;tail -f /dev/null&quot;   2 minutes ago       Up 2 minutes        80/tcp, 0.0.0.0:5103-&gt;5103/tcp   dockercompose9124822939927181477_microsoft.knowzy.productsapi_1
+</code></pre>
+
+<p>You'll see that Visual Studio and Docker have generated 3 images, started 3 containers, and have grouped them all together with the same name prefix, in this case, <code>dockercompose9124822939927181477</code>.</p>
+<p>Since you've mapped host ports to containers, you're now able to interact with each of them on localhost by navigating to these urls:</p>
+<ul>
+<li>Orders API - <a href="http://localhost:5102/api/values/5">http://localhost:5102/api/values/5</a></li>
+<li>Products API - <a href="http://localhost:5103/api/values/5">http://localhost:5103/api/values/5</a></li>
+<li>Web App - <a href="http://localhost:5101">http://localhost:5101</a></li>
+</ul>
+<p>Docker containers come and go frequently. You may want to practice and stop your currently running containers to free up some computing resources. In your PowerShell window, run the following, using your name prefix, which was displayed by <code>docker ps</code>. </p>
+<pre><code class="powershell"># Remove resources for your named project
+docker-compose -p &lt;YOUR_NAME_PREFIX&gt; down
+</code></pre>
+
+<p>If you want to spin up your containers again, you can debug the docker-compose project in Visual Studio, or interact directly via PowerShell by running the following commands</p>
+<pre><code class="powershell"># Create and start containers
+# -f: Use the compose &amp; override files
+# -d: Detach (Run containers in the background)
+# --build: Build images before starting containers
+docker-compose -f &quot;docker-compose.yml&quot; -f &quot;docker-compose.override.yml&quot; up -d --build
+
+# Remove containers. 
+# Because we used the defaults, so we don't have to specify a project name
+docker-compose down
+</code></pre>
+
+<p>Note that you don't have to use Docker Compose to run your containers. You could do it all using just the <code>docker</code> command to create / start / remove the containers, but higher level tooling can greatly increase your productivity.</p>
+<p>After you're done interacting with your containers, run the following to look at the images that you've built</p>
+<pre><code class="powershell">docker image ls 
+</code></pre>
+
+<pre><code>REPOSITORY                                                     TAG                 IMAGE ID            CREATED             SIZE
+microsoft.knowzy.productsapi                                   latest              0cf302713f5a        12 minutes ago      325 MB
+microsoft.knowzy.webapp                                        latest              a26d42ad4ecd        12 minutes ago      337 MB
+microsoft.knowzy.ordersapi                                     latest              f48275db75b4        12 minutes ago      325 MB
+</code></pre>
+
+<h2 id="4-deploying-to-a-docker-registry">4. Deploying to a Docker Registry</h2>
+<p>So far, you've developed a few applications, packaged them in Docker images, and have tested them in a production-like environment by running them inside a container on your local computer. To get your apps running in the cloud, your next step is to push your images to a Docker registry.</p>
+<p>You can use <a href="https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro">Azure Container Registry</a> to hold your images. There are a few reasons to do this. First, you want to make sure our images aren't available to just anyone on the Internet. You want to be able to control access to your images! You will also want your images to be available in the same region as your compute resources for quick deployments.</p>
+<h3 id="a-create-an-azure-container-registry-in-azure-cloud-shell"><a id="acr"></a> a. Create an Azure Container Registry in Azure Cloud Shell</h3>
+<p>Using the Azure Cloud Shell, set up some variables for your registry. These will be specific to you:</p>
+<pre><code class="bash"># Create some variables using Azure Cloud Shell
+RESOURCE_GROUP=myResourceGroup
+ACR_NAME=buildtourregistry
+</code></pre>
+
+<blockquote>
+<p>If your resource group hasn't been created yet, the following command will create one in the East US region: <code>az group create -n $RESOURCE_GROUP -l eastus</code></p>
+</blockquote>
+<p>Next, use an Azure CLI command to create your container registry. </p>
+<p>Note the use of the <code>--admin-enabled</code> switch, which enables a simple username/password logon. In a production environment, you'll likely want to disable this option and create a Service Principal, but this will get us up and running for now.</p>
+<pre><code class="bash">az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic --admin-enabled
+</code></pre>
+
+<p>You're all set up with a registry, with the full name of <code>$ACR_NAME.azurecr.io</code>.</p>
+<p>Execute the following command to get the admin password for your newly created registry:</p>
+<pre><code class="bash">az acr credential show -n $ACR_NAME -g $RESOURCE_GROUP
+</code></pre>
+
+<h3 id="b-connect-to-your-registry-with-powershell">b. Connect to Your Registry with PowerShell</h3>
+<p>Go back to your PowerShell window and login to your registry so we can push some images. Run the following command, using either the <code>password</code> or <code>password2</code> result from the previous command as your password:</p>
+<pre><code class="powershell"># Set up PowerShell variables to match those used in the Cloud Shell
+# Again - these will be specific to you
+$ACR_NAME = &quot;buildtourregistry&quot;
+
+docker login -u $ACR_NAME -p &lt;your password&gt; &quot;$ACR_NAME.azurecr.io&quot;
+</code></pre>
+
+<blockquote>
+<p>If you're having trouble copy/pasting the password from the Azure Cloud Shell to PowerShell, try highlighting your password and making sure your cursor is over the highlighted text, and then right click</p>
+</blockquote>
+<h3 id="c-push-an-image">c. Push an Image</h3>
+<p>You've already got some tagged images, and now you need to tell Docker that they're associated with your newly created registry. You'll specify the <code>knowzy</code> namespace before pushing them to keep these apps grouped together. This is as simple as adding another tag for our existing images, using the following commands.</p>
+<pre><code class="powershell"># Add additional tags to the existing images
+docker tag microsoft.knowzy.ordersapi &quot;$ACR_NAME.azurecr.io/knowzy/ordersapi:1&quot;
+docker tag microsoft.knowzy.productsapi &quot;$ACR_NAME.azurecr.io/knowzy/productsapi:1&quot;
+docker tag microsoft.knowzy.webapp &quot;$ACR_NAME.azurecr.io/knowzy/webapp:1&quot;
+
+# View the new tags. Notice there are multiple tags for the same image id
+docker image ls
+</code></pre>
+
+<p>To push images to your registry, use the following commands:</p>
+<pre><code class="powershell"># The first push will take a moment
+docker push &quot;$ACR_NAME.azurecr.io/knowzy/ordersapi:1&quot;
+
+# The subsequent images will be much faster because they use a common base image
+docker push &quot;$ACR_NAME.azurecr.io/knowzy/productsapi:1&quot;
+docker push &quot;$ACR_NAME.azurecr.io/knowzy/webapp:1&quot;
+</code></pre>
+
+<p>When finished, you can look at your images in your Azure Container Registry by using the following commands in the Azure Cloud Shell:</p>
+<pre><code class="bash"># Use the Cloud Shell to inspect your registry
+az acr repository list -n $ACR_NAME
+az acr repository show-tags -n $ACR_NAME --repository knowzy/ordersapi
+</code></pre>
+
+<h2 id="4-references">4. References</h2>
+<ul>
+<li><a href="../499_Troubleshooting/">Troubleshooting guide</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/">Dockerfile reference</a></li>
+<li><a href="https://docs.docker.com/engine/reference/commandline/cli/">Docker CLI reference</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli">Azure CLI reference</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro">Azure Container Registry reference</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../415_Kubernetes/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>
