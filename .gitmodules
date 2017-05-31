@@ -1,3 +1,6 @@
 [submodule "docs/BuildTourHack"]
 	path = docs/BuildTourHack
 	url = https://github.com/Microsoft/BuildTourHack.git
+[submodule "docs/--force"]
+	path = docs/--force
+	url = https://github.com/Microsoft/BuildTourHack.git
