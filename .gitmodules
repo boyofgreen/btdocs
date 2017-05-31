@@ -1,0 +1,3 @@
+[submodule "docs/BuildTourHack"]
+	path = docs/BuildTourHack
+	url = https://github.com/Microsoft/BuildTourHack.git
