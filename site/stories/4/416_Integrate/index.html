@@ -56,6 +56,8 @@
 <p>I looked at the website code, and it seems to currently use a mock implementation of the API/data access. It's getting the initial data from static json files, and keeping the data in memory. In order to override the existing implementation for accesing data and integrate with the APIs we should implement the <code>IOrderRepository</code> interface whith our own custom class implementation that calls the APIs (using <code>OrderRepositoryMock.cs</code> as guidance), and then change the service configuration in <code>Startup.cs</code> class adding the new implementation files:</p>
 <p><code>c#
 services.AddScoped&lt;IOrderRepository, OrderRepository&gt;();</code></p>
+<h6 id="915am">@ 9:15am</h6>
+<p>We can check the <a href="https://github.com/Knowzy/KnowzyInternalApps/tree/azurecompleted/src/Knowzy_Shipping_WebApp">end version of the code for reference, in the <code>azurecompleted</code> branch of the <code>KnowzyInternalApps</code> repo</a> to help. Especially the implementation of <a href="https://github.com/Knowzy/KnowzyInternalApps/blob/azurecompleted/src/Knowzy_Shipping_WebApp/src/2.%20Services/Repositories/Microsoft.Knowzy.Repositories.Core/OrderRepository.cs">OrderRepository</a>.</p>
 <h6 id="1115am">@ 11:15am</h6>
 <p>In the Docker instructions in <a href="../414_Docker/">4.1.4</a> for the dev machine, and Kubernetes instructions in <a href="../415_Kubernetes/">4.1.5</a> the web app container has the ORDERSAPI_URL and PRODUCTSAPI_URL environment variables with the two API endpoints URLs passed in to it. Now we can run website in the dev machine and deploy it via kubernetes again to get it to use the APIs.</p>
 <h2 id="continue-to-next-task">continue to <a href="../421_SetupVSTS/">next task &gt;&gt; </a></h2>

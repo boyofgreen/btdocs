@@ -60,7 +60,7 @@
 <p><img alt="Add Environment Variables in Visual Studio" src="../images/AddEnvVars.png" /></p>
 <p>To use these environment variables in our code, we'll just pass the entire configuration object down to a new data access class.</p>
 <p>In <code>Startup.cs</code>, make the following changes:</p>
-<pre><code class="diff">public void ConfigureServices(IServiceConnection services)
+<pre><code class="language-diff">public void ConfigureServices(IServiceConnection services)
 {
   // Add framework services.
   services.AddMvc();
@@ -140,18 +140,35 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 </code></pre>
 
 <p>Note how we are using the <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection">ASP.NET Core dependency injection</a> to get the config instance passed into the class initializer for us, and with it we get the environment variable values. You can read more about configuration in ASP.NET Core in <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration">this help article</a>.</p>
-<p>Modify <code>Startup.cs</code> and register our data access with the list of services (IoC):</p>
-<pre><code class="diff">public void ConfigureServices(IServiceConnection services)
+<p>Modify <code>Startup.cs</code> and register our data access with the list of services (IoC) and with new JSON serialization settings:</p>
+<pre><code class="language-diff">public void ConfigureServices(IServiceConnection services)
 {
   // Add framework services.
   services.AddMvc();
   services.AddSingleton&lt;IConfiguration&gt;(Configuration);
 + services.AddSingleton&lt;Data.IOrdersStore, Data.OrdersStore&gt;();
 }
+...
+// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+{
+  loggerFactory.AddConsole(Configuration.GetSection(&quot;Logging&quot;));
+  loggerFactory.AddDebug();
+  app.UseMvc();
+
++ JsonConvert.DefaultSettings = () =&gt;
++ {
++   return new JsonSerializerSettings
++   {
++     MissingMemberHandling = MissingMemberHandling.Ignore,
++     NullValueHandling = NullValueHandling.Ignore
++   };
++ };
+ }
 </code></pre>
 
 <p>To test it outupdate the <code>ValuesController.cs</code> file follows:</p>
-<pre><code class="diff">...
+<pre><code class="language-diff">...
 + using Microsoft.Knowzy.OrdersAPI.Data;
 ...
    public class ValuesController : Controller
@@ -178,10 +195,10 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
 <p>If you now run the API app again and call <code>/api/values/5</code> on your API you should see <code>We are connected to CosmosDB! and your value is 5</code> returned.</p>
 <h3 id="3-implement-the-orders-api">3. Implement the Orders API</h3>
-<p>Now it's time to implement the endpoints for the Shipping and Receiving controllers of our Orders API, running the API app as needed to verify your app locally.</p>
+<p>Now it's time to implement the endpoints for the Shipping, Receiving, Postal Carrier, and Customer controllers of our Orders API, running the API app as needed to verify your app locally.</p>
 <p>In the <code>Microsoft.Knowzy.OrdersAPI</code> add a project reference to the <code>Microsoft.Knowzy.Domain</code> project. This reference has the model classes we will use in the Orders API for serialization.</p>
 <p>Edit the <code>IOrdersStore.cs</code> interface to add the GetShippings method:</p>
-<pre><code class="diff">...
+<pre><code class="language-diff">...
 + using System.Collections.Generic;
 ...
     public interface IOrdersStore : IDisposable
@@ -193,7 +210,7 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 </code></pre>
 
 <p>And edit the <code>OrdersStore.cs</code> class to implement that method to return all orders:</p>
-<pre><code class="diff">...
+<pre><code class="language-diff">...
 + using System.Collections.Generic;
 + using System.Linq;
 ...
@@ -235,7 +252,7 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
 }
 </code></pre>
 
-<p>Now, when you run and browse your API to <code>/api/Shipping</code> you should get back the json array with all the shipping orders in the CosmosDB <code>orders</code> collection.</p>
+<p>Now, when you run and browse your API to <code>/api/Shipping</code> you should get back the JSON array with all the shipping orders in the CosmosDB <code>orders</code> collection.</p>
 <p>You now need to finalize the Orders API. This is the full <code>IOrderStore.cs</code> interface:</p>
 <pre><code class="csharp">using System;
 using System.Threading.Tasks;
@@ -251,18 +268,151 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
         Shipping GetShipping(string orderId);
         IEnumerable&lt;Receiving&gt; GetReceivings();
         Receiving GetReceiving(string orderId);
-        Task&lt;Order&gt; UpsertAsync(Domain.Order order);
-        Task DeleteOrderAsync(string orderId);
         IEnumerable&lt;PostalCarrier&gt; GetPostalCarriers();
+        Task UpsertAsync(Domain.Order order);
+        Task DeleteOrderAsync(string orderId);
     }
 }
 </code></pre>
 
-<p>Note that CosmosDB <a href="https://azure.microsoft.com/en-us/blog/announcing-sql-parameterization-in-documentdb/">supports parameterized SQL queries</a> to avoid SQL injection.</p>
-<p>Update <code>OrdersStore.cs</code> to implement the rest of the interface. This should be all you need to implement the rest of the Shipping controller and create the Receiving and PostalCarrier controllers.</p>
-<p>Update <code>ShippingController.cs</code> to use your updated Orders Store class with Get(id), Put, Post and Delete methods. Use <a href="https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api">this guide</a> to help. </p>
-<p>Create a new controller called <code>ReceivingController.cs</code> to handle all the CRUD methods for Receiving. Note that this can share most of of the same <code>OrderStore.cs</code> methods you used for Shipping (both Shipping and Receiving domain classes implement the Order domain class).</p>
-<p>Create a new controller called <code>PostalCarrierController.cs</code> to handle just the Get (read all) method for it. You can find the PostalCarriers inside the orders collection in CosmosDB. </p>
+<p>Update <code>OrdersStore.cs</code> to implement the rest of the interface. This should be all you need to implement the rest of the Shipping controller and create the Receiving and PostalCarrier controllers. For example, here is an <code>OrdersStore.cs</code> implementation:</p>
+<pre><code class="csharp">using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.Documents.Client;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Azure.Documents;
+using Microsoft.Knowzy.Domain;
+
+namespace Microsoft.Knowzy.OrdersAPI.Data
+{
+    public class OrdersStore : IOrdersStore
+    {
+        private readonly DocumentClient _client;
+        private Uri _ordersLink;
+        private FeedOptions _options = new FeedOptions();
+
+        public OrdersStore(IConfiguration config)
+        {
+            var EndpointUri = config[&quot;COSMOSDB_ENDPOINT&quot;];
+            var PrimaryKey = config[&quot;COSMOSDB_KEY&quot;];
+            _client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
+            //Make sure the below values match your set up
+            _ordersLink = UriFactory.CreateDocumentCollectionUri(&quot;knowzydb&quot;, &quot;orders&quot;);
+            _options.EnableCrossPartitionQuery = true;
+        }
+
+        public async Task&lt;bool&gt; Connected()
+        {
+            try
+            {
+                var db = await _client.GetDatabaseAccountAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public IEnumerable&lt;Shipping&gt; GetShippings()
+        {
+            return GetOrders&lt;Shipping&gt;(&quot;shipping&quot;);
+        }
+
+        public Shipping GetShipping(string orderId)
+        {
+            return GetOrder&lt;Shipping&gt;(orderId);
+        }
+
+        public IEnumerable&lt;Receiving&gt; GetReceivings()
+        {
+            return GetOrders&lt;Receiving&gt;(&quot;receiving&quot;);
+        }
+
+        public Receiving GetReceiving(string orderId)
+        {
+            return GetOrder&lt;Receiving&gt;(orderId);
+        }
+
+        public async Task UpsertAsync(Order order)
+        {
+            await _client.UpsertDocumentAsync(_ordersLink.ToString(), order);
+        }
+
+        public async Task DeleteOrderAsync(string orderId)
+        {
+            await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(&quot;knowzydb&quot;, &quot;orders&quot;, orderId));
+        }
+
+        public IEnumerable&lt;PostalCarrier&gt; GetPostalCarriers()
+        {
+            return _client.CreateDocumentQuery&lt;PostalCarrier&gt;(
+                    _ordersLink,
+                    &quot;SELECT o.postalCarrier.id, o.postalCarrier.name FROM orders o&quot;,
+                    _options).ToList().GroupBy(x =&gt; x.Name).Select(x =&gt; x.First());
+        }
+
+        private IEnumerable&lt;T&gt; GetOrders&lt;T&gt;(string orderType)
+        {
+            return _client.CreateDocumentQuery&lt;T&gt;(
+                _ordersLink,
+                new SqlQuerySpec
+                {
+                    QueryText = &quot;SELECT * FROM orders o WHERE (o.type = @ordertype)&quot;,
+                    Parameters = new SqlParameterCollection()
+                        {
+                                     new SqlParameter(&quot;@ordertype&quot;, orderType)
+                        }
+                },
+                _options).ToList();
+        }
+
+        private T GetOrder&lt;T&gt;(string orderId)
+        {
+            return _client.CreateDocumentQuery&lt;T&gt;(
+                    _ordersLink,
+                    new SqlQuerySpec
+                    {
+                        QueryText = &quot;SELECT TOP 1 * FROM orders o WHERE (o.id = @orderid)&quot;,
+                        Parameters = new SqlParameterCollection()
+                        {
+                                     new SqlParameter(&quot;@orderid&quot;, orderId)
+                        }
+                    },
+                    _options).ToList().FirstOrDefault();
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _client.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+        }
+    }
+}
+</code></pre>
+
+<p>Note how CosmosDB <a href="https://azure.microsoft.com/en-us/blog/announcing-sql-parameterization-in-documentdb/">supports parameterized SQL queries</a> to avoid SQL injection.</p>
+<p>Now it's time to finalize the API. We provided an <a href="https://github.com/Knowzy/KnowzyInternalApps/tree/azurecompleted/src/Knowzy_Shipping_WebApp/src/2.%20Services/APIs">end version of the APIs for your reference in the <code>azurecompleted</code> branch of the <code>KnowzyInternalApps</code> repo</a>. The things to implement are:
+- Update <code>ShippingController.cs</code> to use your updated Orders Store class with Get(id), Put, Post and Delete methods. Use <a href="https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api">this guide</a> to help. 
+- Create a new controller called <code>ReceivingController.cs</code> to handle all the CRUD methods for Receiving. Note that this can share most of of the same <code>OrderStore.cs</code> methods you used for Shipping (both Shipping and Receiving domain classes implement the Order domain class).
+- Create a new controller called <code>PostalCarrierController.cs</code> to handle just the Get (read all) method for it. You can find the PostalCarriers inside the orders collection in CosmosDB. 
+- Create new classes called <code>ICustomersStore.cs</code> and <code>CostumersStorecs</code> to implement the CRUD methods to go against the <code>customers</code> collection in CosmosDB.
+- Create a new controller called <code>CostumerController.cs</code> to handle just the Get (read all) method for it. </p>
+<p>Again: you have access to an <a href="https://github.com/Knowzy/KnowzyInternalApps/tree/azurecompleted/src/Knowzy_Shipping_WebApp/src/2.%20Services/APIs">end version of the APIs for your reference in the <code>azurecompleted</code> branch of the <code>KnowzyInternalApps</code> repo</a> to help.</p>
 <h3 id="4-package-for-release">4. Package for release</h3>
 <p>Now that we've got a working API app, let's package up all of our required files into a single folder for easy distribution. This time, we'll specify the Release configuration. </p>
 <p>Or from Visual Studio 2017, change the configuration to <code>Release</code>, right click on the API project, select <code>Publish</code>, and choose <code>Folder</code> as the destination.</p>
