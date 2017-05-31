@@ -37,13 +37,27 @@
 <p>This task will guide you through the process of debugging a Windows Desktop Bridge App using Visual Studio 2017. </p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
-<li>Basic knowledge of C# development</li>
-<li>Basic knowledge of client development with the .NET framework</li>
-<li>Basic knowledge of Windows 10 and the Universal Windows Platform</li>
-<li>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which isn’t available in the Home version.</li>
-<li>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></li>
-<li>The <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.DesktoptoUWPPackagingProject">Desktop Bridge Debugging Project template</a> installed into Visual Studio 2017</li>
-<li>Complete the section on <a href="../211_Centennial/">Add Desktop Bridge Support using Visual Studio 2017</a></li>
+<li>
+<p>Basic knowledge of C# development</p>
+</li>
+<li>
+<p>Basic knowledge of client development with the .NET framework</p>
+</li>
+<li>
+<p>Basic knowledge of Windows 10 and the Universal Windows Platform</p>
+</li>
+<li>
+<p>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which is not available in the Home version.</p>
+</li>
+<li>
+<p>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></p>
+</li>
+<li>
+<p>The <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.DesktoptoUWPPackagingProject">Desktop Bridge Debugging Project template</a> installed into Visual Studio 2017</p>
+</li>
+<li>
+<p>Complete the section on <a href="../211_Centennial/">Add Desktop Bridge Support using Visual Studio 2017</a></p>
+</li>
 </ul>
 <p>To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder with Visual Studio 2017.</p>
 <h2 id="step-1-install-the-desktop-bridge-debugging-project-extension">Step 1: Install the Desktop Bridge Debugging Project Extension</h2>
@@ -103,9 +117,15 @@
 <p>Right-click on the Microsoft.Knowzy.Debug project and select <strong>Properties</strong>. </p>
 <p>For Debug builds use the following settings:</p>
 <ul>
-<li>Package Layout: ..\Microsoft.Knowzy.UWP\bin\x86\Release</li>
-<li>Select Uninstall and then re-install my package.</li>
-<li>From the <strong>Package Layout</strong> field tab to the <strong>Start Up Tile</strong> field and select Microsoft.Knowzy.WPF.</li>
+<li>
+<p>Package Layout: ..\Microsoft.Knowzy.UWP\bin\x86\Release</p>
+</li>
+<li>
+<p>Select Uninstall and then re-install my package.</p>
+</li>
+<li>
+<p>From the <strong>Package Layout</strong> field tab to the <strong>Start Up Tile</strong> field and select Microsoft.Knowzy.WPF.</p>
+</li>
 </ul>
 <p>Notice that we are specifying the path to the <strong>Release</strong> build of the Microsoft.Knowzy.UWP project. This is a fix for the
 Visual 2017 C# UWP Desktop Bridge deployment bug we experienced in the previous task.</p>
@@ -114,9 +134,13 @@ Visual 2017 C# UWP Desktop Bridge deployment bug we experienced in the previous 
 <li>
 <p>Save and Close the Properties windows. </p>
 <ul>
-<li><strong>Note:</strong> The Properties window can be a little buggy in saving your settings so make sure they were saved. Most issues with debugging are caused by
-incorrect Debugging Project settings.</li>
-<li><strong>Note:</strong> You will need to add the correct Debugging Project Properties for x86 Release and x64 Debug and Release configurations if you want to build them.</li>
+<li>
+<p><strong>Note:</strong> The Properties window can be a little buggy in saving your settings so make sure they were saved. Most issues with debugging are caused by
+incorrect Debugging Project settings.</p>
+</li>
+<li>
+<p><strong>Note:</strong> You will need to add the correct Debugging Project Properties for x86 Release and x64 Debug and Release configurations if you want to build them.</p>
+</li>
 </ul>
 </li>
 <li>
@@ -199,11 +223,21 @@ Depending on how the code is written, the app may be trying to load files from t
 <p>We will now fix the products.json issue in the <a href="../213_AddUwp/">next task</a>.</p>
 <h2 id="references">References</h2>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-debug">Run, debug, and test a packaged desktop app (Desktop Bridge)</a></li>
-<li><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples">DesktopBridge To UWP Samples</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-packaging-dot-net">Package a .NET app using Visual Studio </a></li>
-<li><a href="https://github.com/qmatteoq/BridgeTour-Workshop">BridgeTour Workshop</a></li>
-<li><a href="https://mva.microsoft.com/en-us/training-courses/developers-guide-to-the-desktop-bridge-17373">Developers Guide to the Desktop Bridge</a></li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-debug">Run, debug, and test a packaged desktop app (Desktop Bridge)</a></p>
+</li>
+<li>
+<p><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples">DesktopBridge To UWP Samples</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-packaging-dot-net">Package a .NET app using Visual Studio </a></p>
+</li>
+<li>
+<p><a href="https://github.com/qmatteoq/BridgeTour-Workshop">BridgeTour Workshop</a></p>
+</li>
+<li>
+<p><a href="https://mva.microsoft.com/en-us/training-courses/developers-guide-to-the-desktop-bridge-17373">Developers Guide to the Desktop Bridge</a></p>
+</li>
 </ul>
 <h2 id="continue-to-next-task">continue to <a href="../213_AddUwp/">next task &gt;&gt; </a></h2>
        

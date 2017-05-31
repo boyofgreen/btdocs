@@ -37,20 +37,38 @@
 <p>This task will guide you through the process of adding Windows 10 UWP APIs to your Desktop Bridge app. </p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
-<li>Basic knowledge of C# development</li>
-<li>Basic knowledge of client development with the .NET framework</li>
-<li>Basic knowledge of Windows 10 and the Universal Windows Platform</li>
-<li>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which isn’t available in the Home version.</li>
-<li>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></li>
-<li>Complete the section on <a href="../212_Debugging/">Debugging a Windows Desktop Bridge App</a></li>
+<li>
+<p>Basic knowledge of C# development</p>
+</li>
+<li>
+<p>Basic knowledge of client development with the .NET framework</p>
+</li>
+<li>
+<p>Basic knowledge of Windows 10 and the Universal Windows Platform</p>
+</li>
+<li>
+<p>A computer with Windows 10 Anniversary Update or Windows 10 Creators Update. If you want to use the Desktop App Converter with an installer, you will need at least a Pro or Enterprise version, since it leverages a feature called Containers which is not available in the Home version.</p>
+</li>
+<li>
+<p>Visual Studio 2017 with the tools to develop applications for the Universal Windows Platform. Any edition is supported, including the free <a href="https://www.visualstudio.com/vs/community/">Visual Studio 2017 Community</a></p>
+</li>
+<li>
+<p>Complete the section on <a href="../212_Debugging/">Debugging a Windows Desktop Bridge App</a></p>
+</li>
 </ul>
 <p>To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder with Visual Studio 2017.</p>
 <h2 id="task">Task</h2>
 <p>In this task we will do the following:</p>
 <ul>
-<li>Configure our Desktop Bridge projects to be able to use Windows 10 UWP APIs.</li>
-<li>Add NuGet packages to our project that will make it easier to use the Windows 10 UWP APIs</li>
-<li>Fix the issue from the previous tasks where the Desktop Bridge app was not able to load the Product.json file when running as a UWP app.</li>
+<li>
+<p>Configure our Desktop Bridge projects to be able to use Windows 10 UWP APIs.</p>
+</li>
+<li>
+<p>Add NuGet packages to our project that will make it easier to use the Windows 10 UWP APIs</p>
+</li>
+<li>
+<p>Fix the issue from the previous tasks where the Desktop Bridge app was not able to load the Product.json file when running as a UWP app.</p>
+</li>
 </ul>
 <p>In the previous tasks we discovered that our Desktop Bridge version of the Knowzy app cannot find the required file Products.json. The UWP version is looking for Products.json in the location expected by the 
 WPF version. We need to correct this code so that when the UWP version of Knowzy is running it will look for the file in the correct location.</p>
@@ -118,9 +136,15 @@ After a build and deployment of the Knowzy app, we will find the Products.json f
 }
 </code></pre>
 
-<p>We are going to need to add at least 2 UWP methods to our DeskTop Bridge version of Knowzy in order to be able to load the Products.json file.
-1. A method to detect if we are running the UWP version
-1. A method that returns the directory of the UWP application</p>
+<p>We are going to need to add at least 2 UWP methods to our DeskTop Bridge version of Knowzy in order to be able to load the Products.json file.</p>
+<ol>
+<li>
+<p>A method to detect if we are running the UWP version</p>
+</li>
+<li>
+<p>A method that returns the directory of the UWP application</p>
+</li>
+</ol>
 <h4 id="step-1-adding-uwp-support-to-the-knowzy-app">Step 1: Adding UWP support to the Knowzy App</h4>
 <p>We can add UWP APIs to our Knowzy app at any location we need the UWP code. However, it will be easier if we create a set of UWP helper classes and place then all in a single C# library. </p>
 <p>Since all of the other dependencies in the Knowzy WPF solution are Windows Classic Desktop C# Class Libraries, we will add a new C# Class library called Microsoft.Knowzy.UwpHelpers.</p>
@@ -341,16 +365,36 @@ public Product[] GetData()
 <p>We will continue to add more Windows 10 UWP features to our app in the <a href="../214_WindowsHello/">next task</a>.</p>
 <h2 id="references">References</h2>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/uwp/api/windows.applicationmodel.package">Package Class</a></li>
-<li><a href="https://blogs.msdn.microsoft.com/appconsult/2016/11/03/desktop-bridge-identify-the-applications-context/">Desktop Bridge – Identify the application’s context</a></li>
-<li><a href="https://blogs.windows.com/buildingapps/2017/01/17/announcing-uwpdesktop-nuget-package-version-14393/#SfO8ORg9vZY6h9dj.97">Announcing “UWPDesktop” NuGet Package Version 14393</a></li>
-<li><a href="https://www.nuget.org/packages/UwpDesktop">UWP for Desktop NuGet Package</a></li>
-<li><a href="https://github.com/ljw1004/uwp-desktop">UWP for Desktop</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-debug">Run, debug, and test a packaged desktop app (Desktop Bridge)</a></li>
-<li><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples">DesktopBridge To UWP Samples</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-packaging-dot-net">Package a .NET app using Visual Studio </a></li>
-<li><a href="https://github.com/qmatteoq/BridgeTour-Workshop">BridgeTour Workshop</a></li>
-<li><a href="https://mva.microsoft.com/en-us/training-courses/developers-guide-to-the-desktop-bridge-17373">Developers Guide to the Desktop Bridge</a></li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/uwp/api/windows.applicationmodel.package">Package Class</a></p>
+</li>
+<li>
+<p><a href="https://blogs.msdn.microsoft.com/appconsult/2016/11/03/desktop-bridge-identify-the-applications-context/">Desktop Bridge – Identify the application’s context</a></p>
+</li>
+<li>
+<p><a href="https://blogs.windows.com/buildingapps/2017/01/17/announcing-uwpdesktop-nuget-package-version-14393/#SfO8ORg9vZY6h9dj.97">Announcing “UWPDesktop” NuGet Package Version 14393</a></p>
+</li>
+<li>
+<p><a href="https://www.nuget.org/packages/UwpDesktop">UWP for Desktop NuGet Package</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ljw1004/uwp-desktop">UWP for Desktop</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-debug">Run, debug, and test a packaged desktop app (Desktop Bridge)</a></p>
+</li>
+<li>
+<p><a href="https://github.com/Microsoft/DesktopBridgeToUWP-Samples">DesktopBridge To UWP Samples</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/windows/uwp/porting/desktop-to-uwp-packaging-dot-net">Package a .NET app using Visual Studio </a></p>
+</li>
+<li>
+<p><a href="https://github.com/qmatteoq/BridgeTour-Workshop">BridgeTour Workshop</a></p>
+</li>
+<li>
+<p><a href="https://mva.microsoft.com/en-us/training-courses/developers-guide-to-the-desktop-bridge-17373">Developers Guide to the Desktop Bridge</a></p>
+</li>
 </ul>
 <h2 id="continue-to-next-task">continue to <a href="../214_WindowsHello/">next task &gt;&gt; </a></h2>
        

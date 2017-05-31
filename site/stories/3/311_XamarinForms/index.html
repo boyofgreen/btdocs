@@ -122,49 +122,54 @@ public static async Task<Nose[]> GetProducts()
 <p>}
 ```</p>
 <p>You will need to add few namespaces for this function to work:</p>
-<p><code>csharp
-    using Newtonsoft.Json;
-    using System.Net.Http;
-    using System.Threading.Tasks;</code></p>
 </li>
 </ul>
 </li>
 </ol>
+<pre><code class="csharp">            using Newtonsoft.Json;
+            using System.Net.Http;
+            using System.Threading.Tasks;
+
+</code></pre>
+
 <p>We now have a static method that retrieves the JSON feed and deserializes into Nose objects that we can use in out app.</p>
 <h4 id="add-shared-ui">Add shared UI</h4>
 <p>Now that we have the business logic out of the way, on to the UI. Xamarin.Forms uses XAML to define the shared UI, so if you've used XAML before, you will feel right at home. All the shared code is in the shared project in the solution, and there is already a page created for us: MainPage.xaml. Go ahead and open the page. Currently there is only one element there, a <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/text/label/">Label</a>. Instead of a Label, we will use a <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/listview/">ListView</a> to display all of the products.</p>
 <ol>
-<li>
-<p>Remove the Label and add a new element ListView instead. Give it a name. In this case it's <em>ProductListView</em>*</p>
+<li>Remove the Label and add a new element ListView instead. Give it a name. In this case it's <em>ProductListView</em>*</li>
+</ol>
 <p>```xaml
-<ListView x:Name="ProductListView"></p>
-<p></ListView>
-```</p>
-</li>
-<li>
-<p>Open MainPage.xaml.cs. This is where the code goes for your view. Here we can override the <em>OnAppearing</em> method which will allows us to get the list of products and set them as the source of the ListView. Add the following code:</p>
-<p><code>csharp
-protected async override void OnAppearing()
-{
-    base.OnAppearing();
-    ProductListView.ItemsSource = await DataProvider.GetProducts();
-}</code></p>
-</li>
+    <ListView x:Name="ProductListView"></p>
+<pre><code>&lt;/ListView&gt;
+</code></pre>
+<p>```</p>
+<ol>
+<li>Open MainPage.xaml.cs. This is where the code goes for your view. Here we can override the <em>OnAppearing</em> method which will allows us to get the list of products and set them as the source of the ListView. Add the following code:</li>
+</ol>
+<p>```csharp
+    protected async override void OnAppearing()
+    {
+        base.OnAppearing();
+        ProductListView.ItemsSource = await DataProvider.GetProducts();
+    }</p>
+<p>```</p>
+<ol>
 <li>
 <p>Finally, we need to define how each product will look like. For that we will create a data template to customize each <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/listview/customizing-cell-appearance/">Cell</a>. Here is what the final XAML looks like for the ListView</p>
-<p><code>xaml
-&lt;ListView x:Name="ProductListView"&gt;
-    &lt;ListView.ItemTemplate&gt;
-        &lt;DataTemplate&gt;
-            &lt;ViewCell&gt;
-                &lt;StackLayout Orientation="Horizontal"&gt;
-                    &lt;Image Source="{Binding Image}" HeightRequest="150" WidthRequest="150"&gt;&lt;/Image&gt;
-                    &lt;Label Text="{Binding Name}"&gt;&lt;/Label&gt;
-                &lt;/StackLayout&gt;
-            &lt;/ViewCell&gt;
-        &lt;/DataTemplate&gt;
-    &lt;/ListView.ItemTemplate&gt;
-&lt;/ListView&gt;</code></p>
+<p>```xaml</p>
+<p><ListView x:Name="ProductListView">
+    <ListView.ItemTemplate>
+        <DataTemplate>
+            <ViewCell>
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="{Binding Image}" HeightRequest="150" WidthRequest="150"></Image>
+                    <Label Text="{Binding Name}"></Label>
+                </StackLayout>
+            </ViewCell>
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView></p>
+<p>```</p>
 </li>
 </ol>
 <p><strong>Task Complete</strong>. Go ahead and run the the app on your machine and run the app in the Android emulator.</p>

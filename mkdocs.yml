@@ -1,3 +1,4 @@
 site_name: Build Tour Hack
 theme: null
 theme_dir: 'theme_dir'
+docs_dir: "docs/BuildTourHack"
