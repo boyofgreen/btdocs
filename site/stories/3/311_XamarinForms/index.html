@@ -11,7 +11,12 @@
     <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
  <link href="/Gumby-master/css/style.css" rel="stylesheet" />
  <link href="/prism.css" rel="stylesheet" />
-
+<style>
+  body ul {
+    margin-left: 30px;
+    list-style: outside;
+  }
+</style>
 <script type="text/javascript">
 
     var _gaq = _gaq || [];
@@ -35,8 +40,7 @@
         <div class="twelve columns">
     <h1 id="task-311-create-a-xamarinforms-app-with-shared-ui">Task 3.1.1 - Create a Xamarin.Forms app with shared UI</h1>
 <p>Building a cross platform mobile application will help our marketing department reach an even wider audience and potential customers. Xamarin.Forms will allow us to build the application only once and still be able to reach multiple platforms. </p>
-<p><strong>Goals for this task:</strong>
-* Mobile application with Shared App running on Android and UWP</p>
+<p><strong>Goals for this task:</strong> Mobile application with Shared App running on Android and UWP</p>
 <p>This is going to be an entire new product for Knowzy and we will start from scratch. We've already done some investigation from the requirements that our management has given us and we have written a guide for the developer on how to get started.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p>This walkthrough assumes that you have:
@@ -61,15 +65,24 @@
 <p>Note: A <em>Xamarin Mac Agent</em> window might open asking you to connect to a Mac as soon as you create the project. You can safely ignore and close this window.</p>
 <p>Note: A <em>New Universal Windows Project</em> might open asking you to choose target and minimum platform version. Make sure <strong>Target Version</strong> is <em>Windows 10 Creators Update</em>. Minimum version can be anything.</p>
 </blockquote>
-<p><img alt="New UWP" src="../images/new_uwp.png" /></p>
+<pre><code>![New UWP](images/new_uwp.png)
+</code></pre>
 <p>That's it. At this point, you should probably spend some time checking out the new solution. You will notice there are four projects in the solution, one shared project and three platform specific projects. To run the app on the specific platform, use the drop down at the top of Visual Studio to select what project to run:</p>
 <p><img alt="Select Project" src="../images/select_platform.png" /></p>
 <p>We will focus on UWP and Android for our first release. To run on your machine as UWP, select the UWP project first. Then change the architecture (the dropdown on the left of the Startup projects dropdown) and select x86 or x64. Then simply click the play button to build and run the app:</p>
 <p><img alt="Run" src="../images/run.png" /></p>
-<p>To test and debug the app on Andorid, there are several options:
-<em> <a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-emulator/android-sdk-emulator/">Use the Android SDK Emulator</a>
-</em> <a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-emulator/visual-studio-android-emulator/">Use the Visual Studio Emulator</a>
-* <a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-device/">Use a real device</a></p>
+<p>To test and debug the app on Andorid, there are several options:</p>
+<ul>
+<li>
+<p><a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-emulator/android-sdk-emulator/">Use the Android SDK Emulator</a></p>
+</li>
+<li>
+<p><a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-emulator/visual-studio-android-emulator/">Use the Visual Studio Emulator</a></p>
+</li>
+<li>
+<p><a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/debug-on-device/">Use a real device</a></p>
+</li>
+</ul>
 <blockquote>
 <p>Note: If you try to run the faster x86 version of the Android SDK Emulator and get an exception, you might need to turn of the hypervisor by running the following command in Command Prompt as Administrator: <code>bcdedit /set hypervisorlaunchtype off</code> and reboot</p>
 </blockquote>
@@ -86,14 +99,14 @@
 <p>Let's create a new class that we can use to represent our nose model. Right click on the Shared project (the one without a platform specifier at the end) and click <strong>Add -&gt; Class</strong>:</p>
 <p><img alt="Add Class" src="../images/add_class.png" /></p>
 <p>Name the new class <strong>Nose</strong>. Erase everything between the namespace definition. We need our new class to match the data we get from our JSON feed, so we will create a new class from the JSON. Copy this JSON but don't paste it anywhere yet:</p>
-<p><code>json
-{
+<pre><code>{
     "Id": "RN3454",
     "Name": "Black Nose",
     "RawMaterial": "Black foam",
     "Notes": "Everything you'd expect, and a little something more.",
     "Image": "https://raw.githubusercontent.com/Knowzy/KnowzyInternalApps/master/src/Noses/Frabicnose400x300.jpg"
-}</code></p>
+}
+</code></pre>
 <p>Switch to Visual Studio, place the cursor where you want to copy the new class (between the namespace braces). In Visual Studio, click on <strong>Edit -&gt; Paste Special -&gt; Paste JSON as Classes</strong>. This will generate a new class for you by using the JSON you just copied and you just need to change the name from RootObject to <strong>Nose</strong>.</p>
 <p><img alt="JSON as Class" src="../images/json_as_class.png" /></p>
 </li>
@@ -110,66 +123,60 @@
 <li>Make the class public. </li>
 <li>
 <p>Add this static method in the class to pull in the data from the link above:</p>
-<p>```csharp
-public static async Task<Nose[]> GetProducts()
+<pre><code>public static async Task&lt;Nose[]&gt; GetProducts()
 {
     using (var client = new HttpClient())
     {
-        var json = await client.GetStringAsync("https://raw.githubusercontent.com/Knowzy/KnowzyInternalApps/master/src/Noses/noses.json");</p>
-<pre><code>    return JsonConvert.DeserializeObject&lt;Nose[]&gt;(json);
+        var json = await client.GetStringAsync("https://raw.githubusercontent.com/Knowzy/KnowzyInternalApps/master/src/Noses/noses.json");
+
+        return JsonConvert.DeserializeObject&lt;Nose[]&gt;(json);
+    }
 }
 </code></pre>
-<p>}
-```</p>
 <p>You will need to add few namespaces for this function to work:</p>
+<pre><code>using Newtonsoft.Json;
+using System.Net.Http;
+using System.Threading.Tasks;
+</code></pre>
 </li>
 </ul>
 </li>
 </ol>
-<pre><code class="csharp">            using Newtonsoft.Json;
-            using System.Net.Http;
-            using System.Threading.Tasks;
-
-</code></pre>
-
 <p>We now have a static method that retrieves the JSON feed and deserializes into Nose objects that we can use in out app.</p>
 <h4 id="add-shared-ui">Add shared UI</h4>
 <p>Now that we have the business logic out of the way, on to the UI. Xamarin.Forms uses XAML to define the shared UI, so if you've used XAML before, you will feel right at home. All the shared code is in the shared project in the solution, and there is already a page created for us: MainPage.xaml. Go ahead and open the page. Currently there is only one element there, a <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/text/label/">Label</a>. Instead of a Label, we will use a <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/listview/">ListView</a> to display all of the products.</p>
 <ol>
-<li>Remove the Label and add a new element ListView instead. Give it a name. In this case it's <em>ProductListView</em>*</li>
-</ol>
-<p>```xaml
-    <ListView x:Name="ProductListView"></p>
-<pre><code>&lt;/ListView&gt;
+<li>
+<p>Remove the Label and add a new element ListView instead. Give it a name. In this case it's <em>ProductListView</em>*</p>
+<pre><code>&lt;ListView x:Name="ProductListView"&gt;
+
+&lt;/ListView&gt;
 </code></pre>
-<p>```</p>
-<ol>
-<li>Open MainPage.xaml.cs. This is where the code goes for your view. Here we can override the <em>OnAppearing</em> method which will allows us to get the list of products and set them as the source of the ListView. Add the following code:</li>
-</ol>
-<p>```csharp
-    protected async override void OnAppearing()
+</li>
+<li>
+<p>Open MainPage.xaml.cs. This is where the code goes for your view. Here we can override the <em>OnAppearing</em> method which will allows us to get the list of products and set them as the source of the ListView. Add the following code:</p>
+<pre><code>    protected async override void OnAppearing()
     {
         base.OnAppearing();
         ProductListView.ItemsSource = await DataProvider.GetProducts();
-    }</p>
-<p>```</p>
-<ol>
+    }
+</code></pre>
+</li>
 <li>
 <p>Finally, we need to define how each product will look like. For that we will create a data template to customize each <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/listview/customizing-cell-appearance/">Cell</a>. Here is what the final XAML looks like for the ListView</p>
-<p>```xaml</p>
-<p><ListView x:Name="ProductListView">
-    <ListView.ItemTemplate>
-        <DataTemplate>
-            <ViewCell>
-                <StackLayout Orientation="Horizontal">
-                    <Image Source="{Binding Image}" HeightRequest="150" WidthRequest="150"></Image>
-                    <Label Text="{Binding Name}"></Label>
-                </StackLayout>
-            </ViewCell>
-        </DataTemplate>
-    </ListView.ItemTemplate>
-</ListView></p>
-<p>```</p>
+<pre><code>&lt;ListView x:Name="ProductListView"&gt;
+    &lt;ListView.ItemTemplate&gt;
+        &lt;DataTemplate&gt;
+            &lt;ViewCell&gt;
+                &lt;StackLayout Orientation="Horizontal"&gt;
+                    &lt;Image Source="{Binding Image}" HeightRequest="150" WidthRequest="150"&gt;&lt;/Image&gt;
+                    &lt;Label Text="{Binding Name}"&gt;&lt;/Label&gt;
+                &lt;/StackLayout&gt;
+            &lt;/ViewCell&gt;
+        &lt;/DataTemplate&gt;
+    &lt;/ListView.ItemTemplate&gt;
+&lt;/ListView&gt;
+</code></pre>
 </li>
 </ol>
 <p><strong>Task Complete</strong>. Go ahead and run the the app on your machine and run the app in the Android emulator.</p>
