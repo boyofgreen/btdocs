@@ -69,7 +69,9 @@ The Windows Hello authenticator is known as a Hello. A Hello is unique to the co
 <h2 id="task">Task</h2>
 <p>We will use the Desktop Bridge Knowzy application which was created in the previous tasks as a starting point.
 To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder with Visual Studio 2017.</p>
-<p>*Note: If you are starting with this from the <strong>2.1.4</strong> branch, you will need to do the following:</p>
+<blockquote>
+<p>Note: If you are starting with this from the <strong>2.1.4</strong> branch, you will need to do the following:</p>
+</blockquote>
 <ul>
 <li>Set the Build configuration to <strong>Debug | x86</strong></li>
 </ul>
@@ -88,9 +90,7 @@ These helper classes can be accessed by the Knowzy app when it is running as a D
 </li>
 <li>
 <p>Add the following code to WindowsHello.cs. This code uses methods from the Windows 10 UWP API</p>
-</li>
-</ul>
-<pre><code class="c#">using System;
+<pre><code>using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -108,23 +108,23 @@ namespace Microsoft.Knowzy.UwpHelpers
 
             if (result)
             {
-                var authenticationResult = await KeyCredentialManager.RequestCreateAsync(&quot;login&quot;, KeyCredentialCreationOption.ReplaceExisting);
+                var authenticationResult = await KeyCredentialManager.RequestCreateAsync("login", KeyCredentialCreationOption.ReplaceExisting);
                 if (authenticationResult.Status == KeyCredentialStatus.Success)
                 {
-                    message = &quot;User is logged in&quot;;
+                    message = "User is logged in";
                 }
                 else
                 {
-                    message = &quot;Login error: &quot; + authenticationResult.Status;
+                    message = "Login error: " + authenticationResult.Status;
                 }
             }
             else
             {
-                message = &quot;Windows Hello is not enabled for this device.&quot;;
+                message = "Windows Hello is not enabled for this device.";
             }
 
             String imagePath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
-            String xml = &quot;&lt;toast&gt;&lt;visual&gt;&lt;binding template='ToastGeneric'&gt;&lt;text hint-maxLines='1'&gt;&quot; + message + &quot;&lt;/text&gt;&lt;/binding&gt;&lt;/visual&gt;&lt;/toast&gt;&quot;;
+            String xml = "&lt;toast&gt;&lt;visual&gt;&lt;binding template='ToastGeneric'&gt;&lt;text hint-maxLines='1'&gt;" + message + "&lt;/text&gt;&lt;/binding&gt;&lt;/visual&gt;&lt;/toast&gt;";
 
             Toast.CreateToast(xml);
 
@@ -133,8 +133,9 @@ namespace Microsoft.Knowzy.UwpHelpers
     }
 }
 </code></pre>
-
-<p>This is only a starting point for Windows Hello support but it is sufficient to demonstrate how to add Windows 10 UWP APIs to your Desktop Bridge App. You will have the opporunity to complete coding
+</li>
+</ul>
+<p>This is only a starting point for Windows Hello support but it is sufficient to demonstrate how to add Windows 10 UWP APIs to your Desktop Bridge App. You will have the opportunity to complete coding
 a Windows Hello login in a later task.</p>
 <h4 id="step-2-add-a-new-uwp-helper-class-for-toast-notifications">Step 2: Add a New UWP Helper Class for Toast Notifications</h4>
 <p>The previous code example for Windows Hello uses a <a href="https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-adaptive-interactive-toasts">Toast</a> notification to indicated to the user
@@ -145,9 +146,7 @@ if they are logged in. We need to add a UWP Helper class for Toasts.</p>
 </li>
 <li>
 <p>Add the following code to Toast.cs. This code uses methods from the Windows 10 UWP API</p>
-</li>
-</ul>
-<pre><code class="c#">using System;
+<pre><code>using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -188,13 +187,14 @@ namespace Microsoft.Knowzy.UwpHelpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(&quot;CreateToast Error:&quot; + ex.Message);
+                Debug.WriteLine("CreateToast Error:" + ex.Message);
             }
         }
     }
 }
 </code></pre>
-
+</li>
+</ul>
 <h4 id="step-3-add-a-reference-to-microsoftknowzyuwphelpers">Step 3: Add a Reference to Microsoft.Knowzy.UwpHelpers</h4>
 <ul>
 <li>Right-click on the Microsoft.Knowzy.WPF project and select <strong>Add | Reference...</strong> and select the Microsoft.Knowzy.UwpHelpers project. Click <strong>OK</strong>.</li>
@@ -209,9 +209,7 @@ Microsoft.Knowzy.WPF\ViewModels\ShellViewModel.cs.</p>
 </li>
 <li>
 <p>Modify the Handle(OpenLoginMessage message) as follows:</p>
-</li>
-</ul>
-<pre><code class="c#">using Microsoft.Knowzy.UwpHelpers;
+<pre><code>using Microsoft.Knowzy.UwpHelpers;
 
 public async void Handle(OpenLoginMessage message)
 {
@@ -225,8 +223,7 @@ public async void Handle(OpenLoginMessage message)
     }
 }
 </code></pre>
-
-<ul>
+</li>
 <li>
 <p>Build and run the solution (with Windows.Knowzy.Debug as the startup application)</p>
 </li>

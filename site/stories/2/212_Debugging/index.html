@@ -154,22 +154,21 @@ incorrect Debugging Project settings.</p>
 </ul>
 <p><img alt="AppXPackageFileList.xml" src="../images/212-appxpackagefilelist.png" /></p>
 <ul>
-<li>Modify the xml to the following:</li>
-</ul>
-<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;Project ToolsVersion=&quot;14.0&quot;
-         xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+<li>Modify the xml to the following:<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Project ToolsVersion="14.0"
+        xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
   &lt;PropertyGroup&gt;
     &lt;MyProjectOutputPath&gt;..\..\bin\Debug&lt;/MyProjectOutputPath&gt;
   &lt;/PropertyGroup&gt;
   &lt;ItemGroup&gt;
-    &lt;LayoutFile Include=&quot;$(MyProjectOutputPath)\Microsoft.Knowzy.WPF.exe&quot;&gt;
+    &lt;LayoutFile Include="$(MyProjectOutputPath)\Microsoft.Knowzy.WPF.exe"&gt;
       &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.WPF.exe&lt;/PackagePath&gt;
     &lt;/LayoutFile&gt;
   &lt;/ItemGroup&gt;
 &lt;/Project&gt;
 </code></pre>
-
+</li>
+</ul>
 <p>This XML describes to the DesktopBridge Debugging project the location of the Microsoft.Knowzy.WPF.exe after it is built. It will use it when the project is launched and copy it to the correct location in the AppX package.
 This will allow for any changes to the Microsoft.Knowzy.WPF project code to be included in the debugging session. The need for the Desktop Bridge Debugging project will most likely change in future updates to Visual Studio 2017.</p>
 <ul>

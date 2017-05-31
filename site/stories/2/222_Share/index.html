@@ -62,92 +62,92 @@ under the "Making your PC software a share target" section.</p>
 <li>
 <p>You will need to add a sharing extension to the Extension section of the Application tag in Package.appxmanifest in the Microsoft.Knowzy.UWP project to enable the app to be an image share target. 
 You also need to specify that you are a share target that supports Bitmap images.</p>
-<p><code>xml
-&lt;uap:Extension Category="windows.shareTarget" Executable="Microsoft.Knowzy.UWP.exe" EntryPoint="Microsoft.Knowzy.UWP.App"&gt;
-  &lt;uap:ShareTarget&gt;
+<pre><code>&lt;uap:Extension Category="windows.shareTarget" Executable="Microsoft.Knowzy.UWP.exe" EntryPoint="Microsoft.Knowzy.UWP.App"&gt;
+&lt;uap:ShareTarget&gt;
     &lt;uap:SupportedFileTypes&gt;
-      &lt;uap:SupportsAnyFileType /&gt;
+    &lt;uap:SupportsAnyFileType /&gt;
     &lt;/uap:SupportedFileTypes&gt;
     &lt;uap:DataFormat&gt;Bitmap&lt;/uap:DataFormat&gt;
-  &lt;/uap:ShareTarget&gt;
-&lt;/uap:Extension&gt;</code></p>
+&lt;/uap:ShareTarget&gt;
+&lt;/uap:Extension&gt;
+</code></pre>
 </li>
 <li>
 <p>You will need to add an OnShareTargetActivated event handler to App.xaml.cs in the Microsoft.Knowzy.UWP project. This handler will be called when a user attempts to share an image to the Knowzy app.
 It should look something like:</p>
-<p><code>c#
-protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs e)
+<pre><code>protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs e)
 {
     Frame rootFrame = new Frame();
     Window.Current.Content = rootFrame;
     rootFrame.Navigate(typeof(SharePage), e.ShareOperation);
     Window.Current.Activate();
-}</code></p>
+}
+</code></pre>
 </li>
 <li>
 <p>You will need to add a new XAML page to the Microsoft.Knowzy.UWP project. Right click on the project and select <strong>Add | New Item...</strong>. Choose the <strong>Blank Page</strong> template and name it <strong>SharePage.xaml</strong>.</p>
 </li>
 <li>
 <p>You will need to add the Sharing UI to the SharePage.xaml file. For now, use something like:</p>
-<p><code>xml
-&lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12"&gt;
+<pre><code>&lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12"&gt;
     &lt;StackPanel&gt;
         &lt;Button Content="Share to Microsoft.Knowzy.WPF" Click="ShareButton_Click"/&gt;
         &lt;TextBlock x:Name="tbFileName" /&gt;
         &lt;Image x:Name="img"/&gt;
     &lt;/StackPanel&gt;
-&lt;/Grid&gt;</code>    </p>
+&lt;/Grid&gt;
+</code></pre>
 </li>
 <li>
 <p>In the file SharePage.xaml.cs you will need to handle the OnNavigatedTo event. The NavigationEventArgs parameter will contain the shared image information. Display the shared image in the
 SharedPage UI. Pay attention to threading issues such as processing the image in a separate task. Also, you can only update the XAML UI image on the UI thread so you will need to use a dispacther to update the UI.</p>
-<p>```c#
-// add the following using directives
+<pre><code>// add the following using directives
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Imaging;</p>
-<p>// add the following private members to the SharePage class
+using Windows.UI.Xaml.Media.Imaging;
+
+// add the following private members to the SharePage class
 private ShareOperation operation = null;
-private StorageFile file = null;</p>
-<p>// Add the following method to the SharePage class
+private StorageFile file = null;
+
+// Add the following method to the SharePage class
 protected override async void OnNavigatedTo(NavigationEventArgs args)
 {
     if (args.Parameter != null)
     {
         // It is recommended to only retrieve the ShareOperation object in the activation handler, return as
         // quickly as possible, and retrieve all data from the share target asynchronously.
-        operation = (ShareOperation)args.Parameter;</p>
-<pre><code>    await Task.Factory.StartNew(async () =&gt;
-    {
-        if (operation.Data.Contains(StandardDataFormats.StorageItems))
+        operation = (ShareOperation)args.Parameter;
+
+        await Task.Factory.StartNew(async () =&gt;
         {
-            var storageItems = await operation.Data.GetStorageItemsAsync();
-            file = (StorageFile)(storageItems[0]);
-            var stream = await file.OpenReadAsync();
-            // Get back to the UI thread using the dispatcher.
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =&gt;
+            if (operation.Data.Contains(StandardDataFormats.StorageItems))
             {
-                var image = new BitmapImage();
-                img.Source = image;
-                await image.SetSourceAsync(stream);
-            });
-        }
-    });
+                var storageItems = await operation.Data.GetStorageItemsAsync();
+                file = (StorageFile)(storageItems[0]);
+                var stream = await file.OpenReadAsync();
+                // Get back to the UI thread using the dispatcher.
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =&gt;
+                {
+                    var image = new BitmapImage();
+                    img.Source = image;
+                    await image.SetSourceAsync(stream);
+                });
+            }
+        });
+    }
 }
 </code></pre>
-<p>}
-```</p>
 </li>
 <li>
 <p>Up to this point, the user has only shared the image with the UWP version of Knowzy. We need to share the image so it can be accessed by the WPF version of Knowzy. The SharePage UI includes a "Share to Knowzy WPF" 
 button that will trigger this sharing operation. Add a "ShareButton_Click" event handler to SharePage.xaml.cs. Please note the location of the sharing folder. ApplicationData.Current.LocalFolder. More information on
 this folder is available <a href="https://docs.microsoft.com/en-us/uwp/api/windows.storage.applicationdata">here</a>.</p>
-<p>```c#
-private async void ShareButton_Click(object sender, RoutedEventArgs e)
+<pre><code>private async void ShareButton_Click(object sender, RoutedEventArgs e)
 {
     if (file != null)
     {
@@ -160,50 +160,49 @@ private async void ShareButton_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("ShareButton_Click Error:" + ex.Message);
         }
-    }</p>
-<pre><code>if (operation != null)
-{
-    operation.ReportCompleted();
+    }
+
+    if (operation != null)
+    {
+        operation.ReportCompleted();
+    }
 }
 </code></pre>
-<p>}
-```</p>
 </li>
 <li>
 <p>Now that the image has been copied to the ApplicationData.Current.LocalFolder, the Knowzy WPF app needs to be able to detect that an image has been shared. 
 We will use a FileSystemWatcher to detect when an image has been to the ApplicationData.Current.LocalFolder. We will make this a feature that is only supported
 when the app is running as a Desktop Bridge app. Add the following code to MainView.xaml.cs in the Microsoft.Knowzy.WPF project:</p>
-<p>```c#
-using System;
+<pre><code>using System;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Knowzy.UwpHelpers;</p>
-<p>public MainView()
+using Microsoft.Knowzy.UwpHelpers;
+
+public MainView()
 {
-    InitializeComponent();</p>
-<pre><code>if (ExecutionMode.IsRunningAsUwp())
-{
-   try
+    InitializeComponent();
+
+    if (ExecutionMode.IsRunningAsUwp())
     {
-        // get the path to the App folder (WPF or UWP).
-        var path = AppFolders.Local;
-        FileSystemWatcher watcher = new FileSystemWatcher(path);
-        watcher.EnableRaisingEvents = true;
-        watcher.Changed += Watcher_Changed;
-    }
-    catch(Exception ex)
-    {
-        Debug.WriteLine("FileSystemWatcher Error:" + ex.Message);
+    try
+        {
+            // get the path to the App folder (WPF or UWP).
+            var path = AppFolders.Local;
+            FileSystemWatcher watcher = new FileSystemWatcher(path);
+            watcher.EnableRaisingEvents = true;
+            watcher.Changed += Watcher_Changed;
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine("FileSystemWatcher Error:" + ex.Message);
+        }
     }
 }
 </code></pre>
-<p>}
-```</p>
 </li>
 <li>
 <p>Add the FileSystemWatcher event handler to MainView.xaml.cs in the Microsoft.Knowzy.WPF project:</p>
-<p><code>c#
-private void Watcher_Changed(object sender, FileSystemEventArgs e)
+<pre><code>private void Watcher_Changed(object sender, FileSystemEventArgs e)
 {
     if (ExecutionMode.IsRunningAsUwp())
     {
@@ -213,14 +212,13 @@ private void Watcher_Changed(object sender, FileSystemEventArgs e)
             Toast.CreateToast(xml);
         }
     }
-}</code></p>
+}
+</code></pre>
 </li>
 <li>
 <p>You will need to add a getter to AppFolders.cs in Microsoft.Knowzy.UwpHelpers to return the path to Windows.Storage.ApplicationData.Current.LocalFolder. </p>
-</li>
-</ol>
 <p>Add the following code to AppFolders.cs</p>
-<pre><code class="c#">public static string Local
+<pre><code>public static string Local
 {
     get
     {
@@ -246,8 +244,7 @@ internal static string GetSafeAppxLocalFolder()
     return null;
 }
 </code></pre>
-
-<ol>
+</li>
 <li>
 <p>Once you have made all of your changes to to code, build and run the Microsoft.Knowzy.Debug project.</p>
 </li>

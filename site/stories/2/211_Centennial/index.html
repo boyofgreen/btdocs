@@ -120,24 +120,23 @@ project to add UWP features to our converted Microsoft.Knowzy.WPF app.</p>
 <p>All the Win32 binaries created by the Win32 Microsoft.Knowzy.WPF project need to be copied to your UWP project to a folder called desktop (this exact name is not required; you can use any name you like).
 You can automate the Microsoft.Knowzy.WPF project to copy these files after each build, improving the development workflow. We are going to edit the project file Microsoft.Knowzy.WPF.csproj
 to include an AfterBuild target that will copy all the Win32 output files to the desktop folder in the Microsoft.Knowzy.UWP project as follows:</p>
-<pre><code class="xml">  &lt;Target Name=&quot;AfterBuild&quot;&gt;
-    &lt;PropertyGroup&gt;
-      &lt;TargetUWP&gt;..\Microsoft.Knowzy.UWP\desktop\&lt;/TargetUWP&gt;
-    &lt;/PropertyGroup&gt;
-    &lt;ItemGroup&gt;
-      &lt;DesktopBinaries Include=&quot;$(TargetDir)\**\*.*&quot; /&gt;
-      &lt;ExcludeFilters Include=&quot;$(TargetDir)\**\*.winmd&quot; /&gt;
-    &lt;/ItemGroup&gt;
-    &lt;ItemGroup&gt;
-      &lt;DesktopBinaries Include=&quot;$(TargetDir)\**\*.*&quot; /&gt;
-    &lt;/ItemGroup&gt;
-    &lt;ItemGroup&gt;
-      &lt;DesktopBinaries Remove=&quot;@(ExcludeFilters)&quot; /&gt;
-    &lt;/ItemGroup&gt;
-    &lt;Copy SourceFiles=&quot;@(DesktopBinaries)&quot; DestinationFiles=&quot;@(DesktopBinaries-&gt;'$(TargetUWP)\%(RecursiveDir)%(Filename)%(Extension)')&quot; /&gt;
-  &lt;/Target&gt;
+<pre><code>&lt;Target Name="AfterBuild"&gt;
+  &lt;PropertyGroup&gt;
+    &lt;TargetUWP&gt;..\Microsoft.Knowzy.UWP\desktop\&lt;/TargetUWP&gt;
+  &lt;/PropertyGroup&gt;
+  &lt;ItemGroup&gt;
+    &lt;DesktopBinaries Include="$(TargetDir)\**\*.*" /&gt;
+    &lt;ExcludeFilters Include="$(TargetDir)\**\*.winmd" /&gt;
+  &lt;/ItemGroup&gt;
+  &lt;ItemGroup&gt;
+    &lt;DesktopBinaries Include="$(TargetDir)\**\*.*" /&gt;
+  &lt;/ItemGroup&gt;
+  &lt;ItemGroup&gt;
+    &lt;DesktopBinaries Remove="@(ExcludeFilters)" /&gt;
+  &lt;/ItemGroup&gt;
+  &lt;Copy SourceFiles="@(DesktopBinaries)" DestinationFiles="@(DesktopBinaries-&gt;'$(TargetUWP)\%(RecursiveDir)%(Filename)%(Extension)')" /&gt;
+&lt;/Target&gt;
 </code></pre>
-
 <p>This rather complicated bit of XML completes several important tasks:</p>
 <ul>
 <li>
@@ -164,14 +163,13 @@ Save your changes and then reload Microsoft.Knowzy.WPF</p>
 <p>Now that the Win32 binaries are copied to the desktop folder in the Microsoft.Knowzy.UWP project after the build, we need to add the binaries to the UWP project so they will be packaged with the UWP app.
 We can automate this process by editing the Microsoft.Knowzy.UWP.csproj project. Following the same procedure you just completed when editing the Microsoft.Knowzy.WPF.csproj file, 
 you will unload, edit and reload the Microsoft.Knowzy.UWP.csproj project file. Add the following XML to the end of the Microsoft.Knowzy.UWP.csproj project file.</p>
-<pre><code class="xml">  &lt;ItemGroup&gt;
-    &lt;Content Include=&quot;desktop\**\*.*&quot;&gt;
-      &lt;Link&gt;desktop\%(RecursiveDir)%(FileName)%(Extension)&lt;/Link&gt;
-      &lt;CopyToOutputDirectory&gt;PreserveNewest&lt;/CopyToOutputDirectory&gt;
-    &lt;/Content&gt;
-  &lt;/ItemGroup&gt;
+<pre><code>&lt;ItemGroup&gt;
+  &lt;Content Include="desktop\**\*.*"&gt;
+    &lt;Link&gt;desktop\%(RecursiveDir)%(FileName)%(Extension)&lt;/Link&gt;
+    &lt;CopyToOutputDirectory&gt;PreserveNewest&lt;/CopyToOutputDirectory&gt;
+  &lt;/Content&gt;
+&lt;/ItemGroup&gt;
 </code></pre>
-
 <p>This segment of XML completes several important tasks:</p>
 <ul>
 <li>
@@ -205,56 +203,56 @@ package dependencies, required capabilities, visual elements, and extensibility 
 <ul>
 <li>
 <p>Replace the line (near line 7):</p>
-<p><code>xml
-IgnorableNamespaces="uap mp"&gt;</code></p>
+<pre><code>IgnorableNamespaces="uap mp"&gt;
+</code></pre>
 <p>with</p>
-<p><code>xml
-xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" 
+<pre><code>xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" 
 xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" 
 xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
-IgnorableNamespaces="uap mp rescap desktop"&gt;</code></p>
+IgnorableNamespaces="uap mp rescap desktop"&gt;
+</code></pre>
 <p>Adding these namespaces will allow us to add the Desktop Bridge extensions to our app.</p>
 </li>
 <li>
 <p>We need to describe to Windows 10 that our app is a Desktop Bridge App. We also ned to specify a minimum version of 13493.
 Replace the line (near line 25):</p>
-<p><code>xml
-    &lt;TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" /&gt;</code></p>
+<pre><code>&lt;TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" /&gt;
+</code></pre>
 <p>with</p>
-<p><code>xml
-    &lt;TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" /&gt;</code></p>
+<pre><code>&lt;TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" /&gt;
+</code></pre>
 </li>
 <li>
 <p>We need to tell Windows 10 that our app is a Desktop Bridge App and needs to run as a Full Trust application. This
 capability grants Desktop app capabilities to our UWP app. Add the following capability to the Capabilities section (near line 49)</p>
-<p><code>xml
-    &lt;rescap:Capability Name="runFullTrust" /&gt;</code></p>
+<pre><code>&lt;rescap:Capability Name="runFullTrust" /&gt;
+</code></pre>
 </li>
 <li>
 <p>We also need to specify that we are a Full Trust application in the Application tag. This tag also points to our WPF exe as executable for out app.
 Modify the Application tag to the following (near line 34):</p>
-<p><code>xml
-    &lt;Application Id="Knowzy" Executable="desktop\Microsoft.Knowzy.WPF.exe" EntryPoint="Windows.FullTrustApplication"&gt;</code></p>
+<pre><code>&lt;Application Id="Knowzy" Executable="desktop\Microsoft.Knowzy.WPF.exe" EntryPoint="Windows.FullTrustApplication"&gt;
+</code></pre>
 </li>
 </ul>
 <p>Your package.appxmanifest should now look something like:</p>
-<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 
 &lt;Package
-  xmlns=&quot;http://schemas.microsoft.com/appx/manifest/foundation/windows10&quot;
-  xmlns:mp=&quot;http://schemas.microsoft.com/appx/2014/phone/manifest&quot;
-  xmlns:uap=&quot;http://schemas.microsoft.com/appx/manifest/uap/windows10&quot;
-  xmlns:rescap=&quot;http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities&quot;
-  xmlns:desktop=&quot;http://schemas.microsoft.com/appx/manifest/desktop/windows10&quot;
-  xmlns:uap4=&quot;http://schemas.microsoft.com/appx/manifest/uap/windows10/4&quot;
-  IgnorableNamespaces=&quot;uap mp rescap desktop&quot;&gt;
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  IgnorableNamespaces="uap mp rescap desktop"&gt;
 
   &lt;Identity
-    Name=&quot;9aed127a-4cd4-4b87-a6a6-4b63499a73cb&quot;
-    Publisher=&quot;CN=stammen&quot;
-    Version=&quot;1.0.0.0&quot; /&gt;
+    Name="9aed127a-4cd4-4b87-a6a6-4b63499a73cb"
+    Publisher="CN=stammen"
+    Version="1.0.0.0" /&gt;
 
-  &lt;mp:PhoneIdentity PhoneProductId=&quot;9aed127a-4cd4-4b87-a6a6-4b63499a73cb&quot; PhonePublisherId=&quot;00000000-0000-0000-0000-000000000000&quot;/&gt;
+  &lt;mp:PhoneIdentity PhoneProductId="9aed127a-4cd4-4b87-a6a6-4b63499a73cb" PhonePublisherId="00000000-0000-0000-0000-000000000000"/&gt;
 
   &lt;Properties&gt;
     &lt;DisplayName&gt;Microsoft.Knowzy.UWP&lt;/DisplayName&gt;
@@ -263,34 +261,33 @@ Modify the Application tag to the following (near line 34):</p>
   &lt;/Properties&gt;
 
   &lt;Dependencies&gt;
-    &lt;TargetDeviceFamily Name=&quot;Windows.Desktop&quot; MinVersion=&quot;10.0.14393.0&quot; MaxVersionTested=&quot;10.0.14393.0&quot; /&gt;
+    &lt;TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" /&gt;
   &lt;/Dependencies&gt;
 
   &lt;Resources&gt;
-    &lt;Resource Language=&quot;x-generate&quot;/&gt;
+    &lt;Resource Language="x-generate"/&gt;
   &lt;/Resources&gt;
 
   &lt;Applications&gt;
-    &lt;Application Id=&quot;Knowzy&quot; Executable=&quot;desktop\Microsoft.Knowzy.WPF.exe&quot; EntryPoint=&quot;Windows.FullTrustApplication&quot;&gt;
+    &lt;Application Id="Knowzy" Executable="desktop\Microsoft.Knowzy.WPF.exe" EntryPoint="Windows.FullTrustApplication"&gt;
       &lt;uap:VisualElements
-        DisplayName=&quot;Microsoft.Knowzy.UWP&quot;
-        Square150x150Logo=&quot;Assets\Square150x150Logo.png&quot;
-        Square44x44Logo=&quot;Assets\Square44x44Logo.png&quot;
-        Description=&quot;Microsoft.Knowzy.UWP&quot;
-        BackgroundColor=&quot;transparent&quot;&gt;
-        &lt;uap:DefaultTile Wide310x150Logo=&quot;Assets\Wide310x150Logo.png&quot;/&gt;
-        &lt;uap:SplashScreen Image=&quot;Assets\SplashScreen.png&quot; /&gt;
+        DisplayName="Microsoft.Knowzy.UWP"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        Description="Microsoft.Knowzy.UWP"
+        BackgroundColor="transparent"&gt;
+        &lt;uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/&gt;
+        &lt;uap:SplashScreen Image="Assets\SplashScreen.png" /&gt;
       &lt;/uap:VisualElements&gt;
     &lt;/Application&gt;
   &lt;/Applications&gt;
 
   &lt;Capabilities&gt;
-    &lt;Capability Name=&quot;internetClient&quot; /&gt;
-    &lt;rescap:Capability Name=&quot;runFullTrust&quot; /&gt;
+    &lt;Capability Name="internetClient" /&gt;
+    &lt;rescap:Capability Name="runFullTrust" /&gt;
   &lt;/Capabilities&gt;
 &lt;/Package&gt;
 </code></pre>
-
 <p>Note: Your Publisher, PublisherDisplayName and other app id properties will be different.</p>
 <h4 id="step-5-deploy-and-run-your-converted-win32-app">Step 5: Deploy and run your converted Win32 App</h4>
 <p>Your converted Win32 app is now ready to be deployed and run as a UWP app on your computer.</p>
@@ -308,16 +305,15 @@ Modify the Application tag to the following (near line 34):</p>
 </ul>
 <p><img alt="Deploy" src="../images/211-deploy.png" /></p>
 <ul>
-<li>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Deploy</strong> from the menu. You will most likely get the following error:</li>
-</ul>
-<pre><code class="console">1&gt;------ Build started: Project: Microsoft.Knowzy.UWP, Configuration: Debug x86 ------
+<li>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Deploy</strong> from the menu. You will most likely get the following error:<pre><code>1&gt;------ Build started: Project: Microsoft.Knowzy.UWP, Configuration: Debug x86 ------
 1&gt;  Microsoft.Knowzy.UWP -&gt; C:\Users\stammen\github\BuildTourHack\src\Microsoft.Knowzy.UWP\bin\x86\Debug\Microsoft.Knowzy.UWP.exe
 1&gt;C:\Program Files (x86)\MSBuild\15.0\.Net\CoreRuntime\Microsoft.Net.CoreRuntime.targets(236,5): error : Applications with custom entry point executables are not supported. Check Executable attribute of the Application element in the package manifest
 ========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========
 ========== Deploy: 0 succeeded, 0 failed, 0 skipped ==========
 </code></pre>
-
-<p>Unfortuately there is a bug in the current version of Visual Studio 2017 that prevents <strong>Debug</strong> builds of C# Desktop Bridge apps from being deployed. This bug will be fixed in a future update to Visual Studio 2017.
+</li>
+</ul>
+<p>Unfortunately there is a bug in the current version of Visual Studio 2017 that prevents <strong>Debug</strong> builds of C# Desktop Bridge apps from being deployed. This bug will be fixed in a future update to Visual Studio 2017.
 Until the bug is fixed, we will need to use the <strong>Release</strong> configuration for our C# Desktop Bridge app. We will use the <strong>*Build | Configuration Manager</strong> to set this up.</p>
 <ul>
 <li>Select <strong>Configuration Manager</strong> from the <strong>Build</strong> menu.</li>
@@ -325,18 +321,17 @@ Until the bug is fixed, we will need to use the <strong>Release</strong> configu
 </ul>
 <p><img alt="Configuration Manager Release" src="../images/211-configuration-manager-release.png" /></p>
 <ul>
-<li>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Deploy</strong> from the menu.</li>
-</ul>
-<pre><code class="console">2&gt;------ Deploy started: Project: Microsoft.Knowzy.UWP, Configuration: Release x86 ------
+<li>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Deploy</strong> from the menu.<pre><code>2&gt;------ Deploy started: Project: Microsoft.Knowzy.UWP, Configuration: Release x86 ------
 2&gt;Creating a new clean layout...
 2&gt;Copying files: Total 11 mb to layout...
 2&gt;Checking whether required frameworks are installed...
 2&gt;Registering the application to run from layout...
-2&gt;Deployment complete (0:00:01.818). Full package name: &quot;9aed127a-4cd4-4b87-a6a6-4b63499a73cb_1.0.0.0_x86__71pt5m19pd38p&quot;
+2&gt;Deployment complete (0:00:01.818). Full package name: "9aed127a-4cd4-4b87-a6a6-4b63499a73cb_1.0.0.0_x86__71pt5m19pd38p"
 ========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
 ========== Deploy: 1 succeeded, 0 failed, 0 skipped ==========
 </code></pre>
-
+</li>
+</ul>
 <p>Your Win32 WPF app has now been packaged as a UWP App using Visual Studio.</p>
 <p>Search for your Microsoft.Knowzy.UWP in the Windows Start menu. Click on Microsoft.Knowzy.UWP to launch your app. </p>
 <p><img alt="Start menu" src="../images/211-startmenu.png" /></p>
@@ -349,22 +344,21 @@ throws an exception and exits.</p>
 </ul>
 <p><img alt="MainViewModel.cs" src="../images/211-mainviewmodel.png" /></p>
 <ul>
-<li>Go to the OnViewAttached() method at line 70 and comment out lines 72-75 statement after base.OnActivate();</li>
-</ul>
-<pre><code class="c#">protected override void OnViewAttached(object view, object context)
+<li>
+<p>Go to the OnViewAttached() method at line 70 and comment out lines 72-75 statement after base.OnActivate();</p>
+<pre><code>protected override void OnViewAttached(object view, object context)
 {
     /*
     foreach (var item in _dataProvider.GetData())
     {
-    DevelopmentItems.Add(new ItemViewModel(item, _eventAggregator));
+  DevelopmentItems.Add(new ItemViewModel(item, _eventAggregator));
     }
     */
 
     base.OnViewAttached(view, context);
 }
 </code></pre>
-
-<ul>
+</li>
 <li>
 <p>Select <strong>Rebuild Solution</strong> from the <strong>Build</strong> menu.</p>
 </li>

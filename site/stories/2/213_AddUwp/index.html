@@ -78,39 +78,39 @@
 <p>In the previous tasks we discovered that our Desktop Bridge version of the Knowzy app cannot find the required file Products.json. The UWP version is looking for Products.json in the location expected by the 
 WPF version. We need to correct this code so that when the UWP version of Knowzy is running it will look for the file in the correct location.</p>
 <ul>
-<li>Searching the code for Products.json we find it in a file called Config.json. </li>
-</ul>
-<pre><code class="json">{
-  &quot;JsonFilePath&quot;: &quot;Products.json&quot;,
-  &quot;DataSourceUrl&quot;: &quot;http://&quot;
+<li>
+<p>Searching the code for Products.json we find it in a file called Config.json. </p>
+<pre><code>{
+"JsonFilePath": "Products.json",
+"DataSourceUrl": "http://"
 }
 </code></pre>
-
-<ul>
-<li>Searching for JsonFilePath, we find it in src\Microsoft.KnowzyJsonDataProvider\JsonDataProvider.cs</li>
-</ul>
-<pre><code class="c#">public Product[] GetData()
+</li>
+<li>
+<p>Searching for JsonFilePath, we find it in src\Microsoft.KnowzyJsonDataProvider\JsonDataProvider.cs</p>
+<pre><code>public Product[] GetData()
 {
     var jsonFilePath = _configuration.Configuration.JsonFilePath;
     return _jsonHelper.Deserialize&lt;Product[]&gt;(_fileHelper.ReadTextFile(jsonFilePath));
 }
 </code></pre>
-
-<ul>
-<li>Setting a breakpoint around line 40 of JsonDataProvider.cs and stepping through the code we eventually find that ReadTextFile is looking for the Products.json file in the installed directory of the app.</li>
+</li>
+<li>
+<p>Setting a breakpoint around line 40 of JsonDataProvider.cs and stepping through the code we eventually find that ReadTextFile is looking for the Products.json file in the installed directory of the app.</p>
+</li>
 </ul>
 <p>When we created the Desktop Bridge version of Knowzy we copied all of the WPF Knowzy binaries to the desktop folder of the Desktop Bridge app. 
 After a build and deployment of the Knowzy app, we will find the Products.json file in the directory</p>
 <p>src\Microsoft.Knowzy.UWP\bin\x86\Release\AppX\desktop</p>
 <p><img alt="AppX Desktop Folder" src="../images/213-appx-desktop-folder.png" /></p>
 <p>So an easy fix would be to try something like:</p>
-<pre><code class="c#">public Product[] GetData()
+<pre><code>public Product[] GetData()
 {
     String jsonFilePath;
 
     if(IsRunningAsUwp())
     {
-        jsonFilePath = &quot;desktop\\&quot; + _configuration.Configuration.JsonFilePath;
+        jsonFilePath = "desktop\\" + _configuration.Configuration.JsonFilePath;
     }
     else
     {
@@ -120,17 +120,16 @@ After a build and deployment of the Knowzy app, we will find the Products.json f
     return _jsonHelper.Deserialize&lt;Product[]&gt;(_fileHelper.ReadTextFile(jsonFilePath));
 }
 </code></pre>
-
 <p>I'll save you some time and tell you that this won't work either. </p>
 <p><img alt="File not found" src="../images/213-file-not-found.png" /></p>
 <p>We actually need to do something like this:</p>
-<pre><code class="c#">public Product[] GetData()
+<pre><code>public Product[] GetData()
 {
     String jsonFilePath;
 
     if(IsRunningAsUwp())
     {
-        jsonFilePath = Path.Combine(GetUWPAppDir(),&quot;desktop&quot;, _configuration.Configuration.JsonFilePath);
+        jsonFilePath = Path.Combine(GetUWPAppDir(),"desktop", _configuration.Configuration.JsonFilePath);
     }
     else
     {
@@ -140,7 +139,6 @@ After a build and deployment of the Knowzy app, we will find the Products.json f
     return _jsonHelper.Deserialize&lt;Product[]&gt;(_fileHelper.ReadTextFile(jsonFilePath));
 }
 </code></pre>
-
 <p>We are going to need to add at least 2 UWP methods to our DeskTop Bridge version of Knowzy in order to be able to load the Products.json file.</p>
 <ol>
 <li>
@@ -185,9 +183,7 @@ If you get a DLL not found exception when running your app, it may be because th
 </li>
 <li>
 <p>Add the following code to ExecutionMode.cs. This code detects if the app is running as a UWP app.</p>
-</li>
-</ul>
-<pre><code class="c#">using System;
+<pre><code>using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Windows.System.Profile;
@@ -196,11 +192,11 @@ namespace Microsoft.Knowzy.UwpHelpers
 {
     public class ExecutionMode
     {
-        [DllImport(&quot;kernel32.dll&quot;, CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         static extern int GetCurrentPackageFullName(ref int packageFullNameLength, ref StringBuilder packageFullName);
 
-         public static bool IsRunningAsUwp()
-         {
+        public static bool IsRunningAsUwp()
+        {
             if (isWindows7OrLower())
             {
                 return false;
@@ -225,16 +221,13 @@ namespace Microsoft.Knowzy.UwpHelpers
     }
 }
 </code></pre>
-
-<ul>
+</li>
 <li>
 <p>Right-click on the Microsoft.Knowzy.JsonDataProvider project, select <strong>Add | Reference...</strong> and a reference to the Microsoft.Knowzy.UwpHelpers project.</p>
 </li>
 <li>
 <p>We can now modify src\Microsoft.KnowzyJsonDataProvider\JsonDataProvider.cs as follows:</p>
-</li>
-</ul>
-<pre><code class="c#">using Microsoft.Knowzy.UwpHelpers;
+<pre><code>using Microsoft.Knowzy.UwpHelpers;
 using System;
 
 public Product[] GetData()
@@ -243,7 +236,7 @@ public Product[] GetData()
 
     if (ExecutionMode.IsRunningAsUwp())
     {
-        jsonFilePath = &quot;desktop\\&quot; + _configuration.Configuration.JsonFilePath;
+        jsonFilePath = "desktop\\" + _configuration.Configuration.JsonFilePath;
     }
     else
     {
@@ -253,43 +246,40 @@ public Product[] GetData()
     return _jsonHelper.Deserialize&lt;Product[]&gt;(_fileHelper.ReadTextFile(jsonFilePath));
 }
 </code></pre>
-
-<ul>
-<li>Build your solution and then set a break point at the following line of JsonDataProvider.cs (around line 40). </li>
-</ul>
-<pre><code class="c#">     if (ExecutionMode.IsRunningAsUwp())
+</li>
+<li>
+<p>Build your solution and then set a break point at the following line of JsonDataProvider.cs (around line 40). </p>
+<pre><code>if (ExecutionMode.IsRunningAsUwp())
 </code></pre>
-
-<ul>
+</li>
 <li>
 <p>Press F5 to launch your app and...</p>
 <p><strong>execution does not stop at the breakpoint!</strong></p>
 </li>
 </ul>
 <p>The build did not pick up our changes to Microsoft.Knowzy.JsonDataProvider. (Or if you rebuilt the entire solution, the changes did make it into the build).
-In order to prevent having to do complete rebuilts of our solution every time we change some code, we need to tell the DesktopBridge Debugging Project (Microsoft.Knowzy.Debug) which DLL's to copy to the AppX.
-Unfortunately, the current version of Visual Studio 2017 is not able to correcty handle code changes Desktop Bridge dependencies.</p>
+In order to prevent having to do complete rebuild of our solution every time we change some code, we need to tell the DesktopBridge Debugging Project (Microsoft.Knowzy.Debug) which DLL's to copy to the AppX.
+Unfortunately, the current version of Visual Studio 2017 is not able to correctly handle code changes Desktop Bridge dependencies.</p>
 <p>Since we will be modifying the Microsoft.Knowzy.JsonDataProvider and Microsoft.Knowzy.UwpHelpers projects, let's add them to AppXPackageFileList.xml in the Microsoft.Knowzy.Debug project.</p>
-<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;Project ToolsVersion=&quot;14.0&quot;
-         xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
-  &lt;PropertyGroup&gt;
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Project ToolsVersion="14.0"
+        xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
+&lt;PropertyGroup&gt;
     &lt;MyProjectOutputPath&gt;..\..\bin\Debug&lt;/MyProjectOutputPath&gt;
-  &lt;/PropertyGroup&gt;
-  &lt;ItemGroup&gt;
-    &lt;LayoutFile Include=&quot;$(MyProjectOutputPath)\Microsoft.Knowzy.WPF.exe&quot;&gt;
-      &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.WPF.exe&lt;/PackagePath&gt;
+&lt;/PropertyGroup&gt;
+&lt;ItemGroup&gt;
+    &lt;LayoutFile Include="$(MyProjectOutputPath)\Microsoft.Knowzy.WPF.exe"&gt;
+    &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.WPF.exe&lt;/PackagePath&gt;
     &lt;/LayoutFile&gt;
-    &lt;LayoutFile Include=&quot;$(MyProjectOutputPath)\Microsoft.Knowzy.JsonDataProvider.dll&quot;&gt;
-      &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.JsonDataProvider.dll&lt;/PackagePath&gt;
+    &lt;LayoutFile Include="$(MyProjectOutputPath)\Microsoft.Knowzy.JsonDataProvider.dll"&gt;
+    &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.JsonDataProvider.dll&lt;/PackagePath&gt;
     &lt;/LayoutFile&gt;
-    &lt;LayoutFile Include=&quot;$(MyProjectOutputPath)\Microsoft.Knowzy.UwpHelpers.dll&quot;&gt;
-      &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.UwpHelpers.dll&lt;/PackagePath&gt;
+    &lt;LayoutFile Include="$(MyProjectOutputPath)\Microsoft.Knowzy.UwpHelpers.dll"&gt;
+    &lt;PackagePath&gt;$(PackageLayout)\desktop\Microsoft.Knowzy.UwpHelpers.dll&lt;/PackagePath&gt;
     &lt;/LayoutFile&gt;
-  &lt;/ItemGroup&gt;
+&lt;/ItemGroup&gt;
 &lt;/Project&gt;
 </code></pre>
-
 <p>Now every time you make a code change to Microsoft.Knowzy.JsonDataProvider or Microsoft.Knowzy.UwpHelpers, the changes will be part of the build.</p>
 <p>Press F5 again and now you should be able to hit the breakpoint in JsonDataProvider.cs.</p>
 <h4 id="step-2-adding-uwp-support-to-detect-the-appx-installation-folder">Step 2: Adding UWP support to detect the AppX Installation Folder</h4>
@@ -300,9 +290,7 @@ Unfortunately, the current version of Visual Studio 2017 is not able to correcty
 </li>
 <li>
 <p>Add the following code to AppFolders.cs. This code uses methods from the Windows 10 UWP API</p>
-</li>
-</ul>
-<pre><code class="c#">namespace Microsoft.Knowzy.UwpHelpers
+<pre><code>namespace Microsoft.Knowzy.UwpHelpers
 {
     public class AppFolders
     {
@@ -335,13 +323,11 @@ Unfortunately, the current version of Visual Studio 2017 is not able to correcty
     }
 }
 </code></pre>
-
+</li>
+</ul>
 <p>This code uses the Package class in Windows.ApplicationModel.Package to determine the installed location of the UWP AppX folder.</p>
 <ul>
-<li>We can now modify JsonDataProvider.cs as follows:</li>
-</ul>
-<pre><code class="c#">
-using System.IO;
+<li>We can now modify JsonDataProvider.cs as follows:<pre><code>using System.IO;
 
 public Product[] GetData()
 {
@@ -349,7 +335,7 @@ public Product[] GetData()
 
     if (ExecutionMode.IsRunningAsUwp())
     {
-        jsonFilePath = Path.Combine(AppFolders.Current, &quot;desktop&quot;, _configuration.Configuration.JsonFilePath);
+        jsonFilePath = Path.Combine(AppFolders.Current, "desktop", _configuration.Configuration.JsonFilePath);
     }
     else
     {
@@ -358,9 +344,9 @@ public Product[] GetData()
 
     return _jsonHelper.Deserialize&lt;Product[]&gt;(_fileHelper.ReadTextFile(jsonFilePath));
 }
-
 </code></pre>
-
+</li>
+</ul>
 <p>Press F5 to run the Microsoft.Knowzy.Debug project. Finally our Knowzy UWP app can load the Products.json file from the correct location and display the information correctly.</p>
 <p><img alt="Knowzy UWP" src="../images/213-knowzy-uwp.png" /></p>
 <p>We can also still run our original WPF version. The UWP additions are ignored by the WPF version. To try this out right-click on the Microsoft.Knowzy.WPF project and select <strong>Debug | Start new instance</strong></p>
