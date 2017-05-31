@@ -225,13 +225,10 @@ using Windows.ApplicationModel.Background;
 <p>The Microsoft.Knowzy.AppService will now be part of the Knowzy UWP AppX package after a build.</p>
 </li>
 </ul>
-<h4 id="create-a-new-c-class-library-project-microsoftknowzyuwphelpersappservice">Create a new C# Class Library project Microsoft.Knowzy.UwpHelpers.AppService</h4>
-<p>The Windows 10 AppServices UWP API does not seem seem to be compatible with Portable Class Libraries so create a regular C# Class Library project called Microsoft.Knowzy.UwpHelpers.AppService.</p>
-<p><img alt="AppService Class Library" src="../images/223-appservice-class-lib.png" /></p>
-<h4 id="add-an-appservice-helper-class-to-microsoftknowzyuwphelpersappservice">Add an AppService helper class to Microsoft.Knowzy.UwpHelpers.AppService</h4>
+<h4 id="add-a-appservice-helper-class-to-microsoftknowzyuwphelpers">Add a AppService helper class to Microsoft.Knowzy.UwpHelpers</h4>
 <ul>
 <li>
-<p>Add a new C# class called AppService.cs to the Helpers folder of the Microsoft.Knowzy.UwpHelpers.AppService project.</p>
+<p>Add a new C# class called AppService.cs to the  Microsoft.Knowzy.UwpHelpers project.</p>
 </li>
 <li>
 <p>Add the following using directives to AppService.cs</p>
@@ -306,15 +303,6 @@ App Service receives a message with the specified id, it will call the Connectio
 }
 </code></pre>
 
-<h4 id="add-a-project-reference-to-microsoftknowzyuwphelpersappservice">Add a project reference to Microsoft.Knowzy.UwpHelpers.AppService</h4>
-<ul>
-<li>
-<p>Right-click on the Microsoft.Knowzy.WPF project and select <strong>Add | Reference...</strong></p>
-</li>
-<li>
-<p>Select the <strong>Microsoft.Knowzy.UwpHelpers.AppService</strong> project under the <strong>Projects | Solution</strong> section. </p>
-</li>
-</ul>
 <h4 id="add-listener-support-to-the-app-service">Add Listener support to the App Service</h4>
 <p>We will now modify the Microsoft.Knowzy.AppService component to support the adding and removing of connection listeners</p>
 <ul>
@@ -447,7 +435,7 @@ private void RemoveListener(String id)
 
 <h4 id="enable-microsoftknowzywpf-to-use-the-app-service">Enable Microsoft.Knowzy.WPF to use the App Service</h4>
 <ul>
-<li>Add a Click event to the Menu Menu in MainView.xaml in the Microsoft.Knowzy.WPF project.</li>
+<li>Add a Click event to the Menu Menu in Views\MainView.xaml in the Microsoft.Knowzy.WPF project near line 42.</li>
 </ul>
 <pre><code class="xml">&lt;MenuItem Header=&quot;{x:Static localization:Resources.Menu_Menu}&quot; Template=&quot;{DynamicResource MenuItemControlTemplate}&quot; Click=&quot;Menu_Click&quot;/&gt;
 </code></pre>
