@@ -5,10 +5,6 @@ that allowed Knowzy app users to share images from other Windows 10 applications
 to annotate the image with the Windows 10 Inking APIs before sharing the image.
 
 
-
-
-
-
 ## Prerequisites 
 
 This task has a dependency on [Task 2.2.2](222_Share.md) and all of it's prerequisites
@@ -16,8 +12,12 @@ This task has a dependency on [Task 2.2.2](222_Share.md) and all of it's prerequ
 ## Task 
 
 1. Share an image from another Windows 10 App. The Knowzy app should appear as one of the options for Share Targets.
+
 2. Display a XAML UI for sharing with the Knowzy app.
-3. Enable Inking controls on the SharePage to allow the user to annotate the image.
+
+3. Enable Inking controls on the SharePage to allow the user to annotate the image. Look [here](https://stackoverflow.com/questions/37179815/displaying-a-background-image-on-a-uwp-ink-canvas)
+for some sample code. You will need to add the Win2D.uwp NuGet Package to your UWP project.
+
 4. Display a Toast that displays the annotated image after the sharing operation has completed.
 
 ## Comments
