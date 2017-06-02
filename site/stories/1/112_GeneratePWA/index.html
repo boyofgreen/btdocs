@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -40,19 +54,20 @@
         <div class="twelve columns">
     <h1 id="task-112-generate-progressive-web-app">Task 1.1.2 - Generate Progressive Web App</h1>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This task has a dependency on <a href="../111_BuildWebApp/">Task 1.1.1</a> and all of it's prerequisites</p>
+<p>This task has a dependency on <a href="../111_BuildWebApp/">Task 1.1.1</a> and the prerequisites found there.</p>
 <h2 id="task">Task</h2>
+<h3 id="build-the-web-app-manifest">Build the Web App Manifest</h3>
 <p>The first step is to build the Manifest for your application using the <strong>pwabuilder.com</strong> web site. The builder will search in the home page of your site looking for information about the app in specific meta tags. For more information, read <a href="http://docs.pwabuilder.com/whatPWA/what-is-a-manifest/">What is a Manifest</a>.</p>
 <h3 id="provide-a-url">Provide a URL</h3>
 <ol>
-<li>Open a browser and navigate to <a href="https://preview.pwabuilder.com">https://preview.pwabuilder.com</a></li>
-<li>Click on the <strong>Get Started</strong> button </li>
-<li>In the URL textbox, enter the https version of your URL of your site and click on <strong>Get Started</strong> again 
-<strong>Note</strong> your website URL will likely default to the http version in the browser but all azure websites also have a valid https certificate so https can be used on any azure website.</li>
+<li>Open a browser and navigate to <a href="https://preview.pwabuilder.com">https://preview.pwabuilder.com</a>.</li>
+<li>Click on the <strong>Get Started</strong> button. </li>
+<li>In the URL textbox, enter the https version of your URL of your site and click on <strong>Get Started</strong> again. 
+<strong>Note</strong> Your website URL will likely default to the http version in the browser but all azure websites also have a valid https certificate so https can be used on any azure website.</li>
 </ol>
 <p><img alt="Provide a URL" src="../images/quickstart-pwa-website-provide-a-url.png" /> </p>
 <h3 id="generate-manifest">Generate Manifest</h3>
-<p>The builder will search in the home page of your site looking for an existing manifest. If not, it will gather information about the app in specific meta tags or propose default values for the manifest properties. It will also show any warnings or suggestions to address potential issues in the collected metadata. Make sure you address any warnings before you move on. </p>
+<p>The builder will search in the home page of your site looking for an existing manifest. If not, it will gather information about the app in specific meta tags or propose default values for the manifest properties. It will also show any warnings or suggestions to address potential issues in the collected metadata. Be sure you address any warnings before you move on. </p>
 <p><img alt="Generate Manifest" src="../images/quickstart-pwa-website-generate-manifest.png" /> </p>
 <h3 id="add-images">Add Images</h3>
 <p>The builder site also checks whether the manifest has defined the expected icon sizes for the different platforms (Windows, Android, iOS) and helps to generate the missing sizes. You can also generate missing image sizes for other platforms using the <a href="http://appimagegenerator-pre.azurewebsites.net/">PWA Image Generator</a>. </p>
@@ -78,23 +93,47 @@
 <li>Click "download manifest" to get a copy of this manifest to add to your web site.</li>
 </ol>
 <h2 id="choose-a-service-worker">Choose a Service Worker</h2>
-<p>During this step you will choose functionalities you want to add to your app. The builder will include code to use sample service workers implementing those features from a repository. Learn more about service workers <a href="http://docs.pwabuilder.com/whatPWA/what-is-a-service-worker/">here</a>. There are a number of service workers to choose from on this page, but Knowzy is looking for a way to make sure it's field agents can access the app data when they have poor or no network connection.  For this functionality we'll choose the "Offline copy of pages" service worker.</p>
+<p>During this step you will choose functionalities you want to add to your app. The builder will include code to use sample service workers implementing those features from a repository. <em><a href="http://docs.pwabuilder.com/whatPWA/what-is-a-service-worker/">Learn more about service workers</a>.</em> There are a number of service workers to choose from on this page, but Knowzy is looking for a way to make sure it's field agents can access the app data when they have poor or no network connection.  For this functionality we'll choose the "Offline copy of pages" service worker.</p>
 <ol>
 <li>
-<p>Select the service worker you want to include in your application <img alt="Select Service Workers" src="../images/quickstart-pwa-website-select-service-workers.png" /> </p>
+<p>Select the service worker you want to include in your application.
+<img alt="Select Service Workers" src="../images/quickstart-pwa-website-select-service-workers.png" /> </p>
 </li>
 <li>
-<p>Download the service worker package including the code for your website and the service worker code (you can also just copy and past the code right from the site).  You'll be downloading two different js files.  The first is the registration code in which you'll be instructed how to add that to your site in the next section, and the service worker itself.  </p>
+<p>Download the service worker package, including the code for your website and the service worker code. (You can also just copy and paste the code directly from the site).  You'll be downloading two different JavaScript files.  The first is the registration code, in which you will be instructed on how to add the code to your site in the next section, and the service worker itself.  </p>
 </li>
 </ol>
 <h2 id="references">References</h2>
-<p>http://docs.pwabuilder.com/whatPWA/what-is-a-service-worker/</p>
-<p>https://www.pwabuilder.com</p>
-<h2 id="continue-to-next-task">continue to <a href="../113_ConfigureSW/">next task &gt;&gt; </a></h2>
+<ul>
+<li>
+<p><a href="http://docs.pwabuilder.com/whatPWA/what-is-a-service-worker/">What is a Service Worker?</a></p>
+</li>
+<li>
+<p><a href="https://www.pwabuilder.com">PWA Builder</a></p>
+</li>
+</ul>
+<h2 id="continue-to-next-task">Continue to <a href="../113_ConfigureSW/">next task &gt;&gt; </a></h2>
        
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

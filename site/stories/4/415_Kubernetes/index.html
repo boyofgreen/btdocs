@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -143,6 +157,23 @@ webapp   10.0.142.191   54.22.172.17   80:31945/TCP     5m
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

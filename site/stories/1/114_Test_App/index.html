@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -40,61 +54,84 @@
         <div class="twelve columns">
     <h1 id="task-114-install-app-locally-for-testing">Task 1.1.4 - Install App Locally for Testing</h1>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This task has a dependency on <a href="../113_ConfigureSW/">Task 1.1.3</a> and all of it's prerequisites</p>
+<p>This task has a dependency on <a href="../113_ConfigureSW/">Task 1.1.3</a> and all of it's prerequisites.</p>
 <h2 id="task">Task</h2>
 <h3 id="test-the-app-in-browsers">Test the App in Browsers</h3>
-<p>The first thing you want to do is make sure your PWA works well in the browser.  One of the main principles of PWAs is that the app must be "Progressive".  This means the app should work in any environment, then start taking advantage of advanced features (such as service workers and app manifest) when they are available.  In normal circumstances, you would want to test your app in the array of browsers used by your user.   To get you started, we have the newest version of Edge (with service worker support) available to you for free on browser stack  </p>
-<p><strong>NOTE</strong> for Dry Run Users, Edge 16 may not yet be available in browser stack.  You can test the service worker code in chrome <strong>END NOTE</strong></p>
+<p>First, make sure that your PWA works well in the browser.  One of the main principles of PWAs is that the app must be "Progressive", meaning that the app should work in any environment. Once the app is confirmed to load as a basic web site, then begin taking advantage of advanced features (such as service workers and app manifest) when they are available.  In normal circumstances, you would want to test your app in the array of browsers used by your user. To get you started, we have the newest version of Edge (with service worker support) available to you for free on BrowserStack.  </p>
+<p><strong>NOTE</strong> for Dry Run Users, Edge 16 may not yet be available in BrowserStack.  You can test the service worker code in chrome <strong>END NOTE</strong></p>
 <ol>
 <li>
-<p>In your browser, visit https://www.browserstack.com/test-on-microsoft-edge-browser</p>
+<p>In your browser, visit <a href="https://www.browserstack.com/test-on-microsoft-edge-browser#live-cloud">https://www.browserstack.com/test-on-microsoft-edge-browser</a>.</p>
 </li>
 <li>
 <p>Create an account if you don't already have one.</p>
 </li>
 <li>
-<p>Choose Windows &gt; 10 &gt; Edge 16 &gt; new session to get started testing in Edge
+<p>Choose Windows &gt; 10 &gt; Edge 16 &gt; new session to get started testing in Microsoft Edge.
 !(image of browser stack select)</p>
 </li>
 <li>
-<p>You can also use browser stack to test in other browsers you don't have installed on your device (trial limitations apply)</p>
+<p>You can also use BrowserStack to test in other browsers you don't have installed on your device (trial limitations apply).</p>
 </li>
 <li>
-<p>to test the service worker, simply visit a number of pages with the service worker attached to your app, and each page will be added to the cache (don't worry the service worker will always keep itself up to date).  You can then go offline and see each of those pages still work fine without a connection.  If you are using BrowserStack and can't go offline, simply open up the f12 tooling in the browser, and you can validate that the service worker is caching it's content by the logs in the console.</p>
+<p>To test the service worker, simply visit a number of pages with the service worker attached to your app. Each page you visit will be added to the cache (don't worry the service worker will always keep itself up to date).  You can then go offline and see each of those pages still work fine without a connection.  If you are using BrowserStack and can't go offline, simply open up the F12 tooling in the browser and you can validate that the service worker is caching it's content via the console logs.</p>
 </li>
 </ol>
 <h3 id="install-windows-store-pwa-locally">Install Windows Store PWA locally</h3>
-<p>The next environment you'll want to test in, is the local PWA.  To do this we'll use more tools from PWABuilder.com</p>
+<p>Next you will want to test in the local PWA environment.  To do this, we  will use more tools from PWABuilder.com.</p>
 <ol>
 <li>
-<p>In the browser, open www.pwabuilder.com/generator.</p>
+<p>In the browser, open <a href="https://www.pwabuilder.com/generator">www.pwabuilder.com/generator</a>.</p>
 </li>
 <li>
-<p>Enter your site URL and press "get started".  If you have your manifest properly linked to your page, you should see the data from your manifest (including images) show up in the builder.</p>
+<p>Enter your site URL and click "Get Started".  If you have your manifest properly linked to your page, you should see the data from your manifest (including images) show up in the builder.</p>
 </li>
 <li>
-<p>Click on the 3rd tab called "Publish PWA".  This time you'll click on the "Download" button under "Windows" to get the source code</p>
+<p>Click on the 3rd tab called "Publish PWA".  This time you will click on the "Download" button under "Windows" to get the source code.</p>
 </li>
 <li>
-<p>Inside the zip, decompress it and navigate to \PWA\Store packages\windows10 and right click on the "test_install" script and choose "run powershell script"</p>
+<p>Inside the zip, decompress it and navigate to <code>\PWA\Store packages\windows10</code>. Right click on the "test_install" script and choose "run powershell script".</p>
 </li>
 <li>
 <p>Follow the prompts to "side load the application".</p>
 </li>
 <li>
-<p>open the app from your start screen / start menu.  Your now experiencing your PWA on Windows 10!</p>
+<p>Open the app from your start screen / start menu.  You are now experiencing your PWA on Windows 10!</p>
 </li>
 </ol>
 <h3 id="f12-with-windows-store-pwa">F12 with Windows Store PWA</h3>
-<p>Your app is sideloaded on your machine, which means it's in debug mode.  While PWAs are in debug mode on Windows 10, you have access to the same f12 tools you do while in the Edge browser.  While the app in forefront on your screen, hit the "f12" button on your keyboard and the tools should open.</p>
+<p>Your app is sideloaded on your machine, which means it is in debug mode.  While PWAs are in debug mode on Windows 10, you have access to the same F12 tools you do while in the Edge browser.  With the app in the forefront on your screen, hit the "F12" button on your keyboard and the tools should open.</p>
 <h2 id="references">References</h2>
-<p>https://www.pwabuilder.com/generator</p>
-<p>https://www.browserstack.com/test-on-microsoft-edge-browser</p>
-<h2 id="continue-to-next-task">continue to <a href="../121_Add_WIndows_Feature/">next task &gt;&gt; </a></h2>
+<ul>
+<li>
+<p><a href="https://www.pwabuilder.com/generator">PWA Builder</a></p>
+</li>
+<li>
+<p><a href="https://www.browserstack.com/test-on-microsoft-edge-browser">BrowserStack</a></p>
+</li>
+</ul>
+<h2 id="continue-to-next-task">Continue to <a href="../121_Add_WIndows_Feature/">next task &gt;&gt; </a></h2>
        
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

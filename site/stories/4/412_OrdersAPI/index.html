@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -39,7 +53,7 @@
     <div class="row">
         <div class="twelve columns">
     <h1 id="task-412-create-api-endpoint-for-shipping-and-receiving-services">Task 4.1.2 - Create API endpoint for shipping and receiving services</h1>
-<p>Now that you've created a database to store your data, it's time to create APIs to access that data.  Knowzy believes in a microservices based architecture so you'll need to start by creating a new API for orders so the Web app is not going directly to the database.</p>
+<p>Now that you've created a database to store your data, it's time to create APIs to access that data.  Knowzy believes in a microservices based architecture so you'll need to start by creating a new API for orders to ensure the Web app does not go directly to the database.</p>
 <p>The end goal is a .NET Core based cross-platform solution. The architecture proposes a simplified microservice oriented architecture implementation with multiple autonomous microservices (each one owning its own data/db). The microservices will implement a simple CRUD approach using Http as the current communication protocol.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -431,6 +445,23 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

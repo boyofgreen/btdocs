@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -40,39 +54,38 @@
         <div class="twelve columns">
     <h1 id="task-113-update-your-web-app-with-pwa-features">Task 1.1.3 - Update your Web App with PWA features</h1>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This task has a dependency on <a href="../112_GeneratePWA/">Task 1.1.2</a> and all of it's prerequisites</p>
+<p>This task has a dependency on <a href="../112_GeneratePWA/">Task 1.1.2</a> and all of it's prerequisites.</p>
 <h2 id="task">Task</h2>
 <h3 id="add-web-app-manifest-to-your-site">Add Web App Manifest to your site</h3>
-<p>The first thing you'll need to do is pull the "manifest.json" file and the "images" folder that you obtained from the zip file. in the previous step.</p>
+<p>The first thing you will need to do is pull the "manifest.json" file and the "images" folder that you obtained from the zip file in the previous step.</p>
 <ol>
-<li>Add the manifest.json and the "images" folder to the root path of your site (wwwroot).  Remember if you change the path of your "images" folder, you need to update the json in your manifest file to reflect your changes. The easiest way to add new content to a project is to drag and drop the contents from the file explorer into the solutions explorer of your project.</li>
+<li>Add the manifest.json and the "images" folder to the root path of your site (wwwroot).  Remember, if you change the path of your "images" folder, you need to update the json in your manifest file to reflect your changes. The easiest way to add new content to a project is to drag and drop the contents from the file explorer into the solutions explorer of your project.</li>
 </ol>
 <p>![add image of manifest and paths ]</p>
 <ol>
 <li>
 <p>Reference the manifest in your page with a link tag:</p>
 <p><code>&lt;link rel="manifest" href="manifest.json"&gt;&lt;/link&gt;</code>
-This can be done by opening the Views \ Shippings \ index.cshtml page in your site, and adding the following to the top of the document:</p>
+This can be done by opening the <code>Views\Shippings\Index.cshtml</code> page in your site, and adding the following to the top of the document:</p>
 </li>
 </ol>
-<pre><code>
-@section HeadExtension{ 
+<pre><code>@section HeadExtension{ 
 &lt;link rel=&quot;manifest&quot; href=&quot;manifest.json&quot; /&gt;
 }
 
 </code></pre>
 
-<h3 id="add-sw-code-to-your-site">Add SW code to your site</h3>
-<p>Your Service Worker needs likewise needs to be added to your site to take effect.  </p>
+<h3 id="add-service-worker-code-to-your-site">Add Service Worker code to your site</h3>
+<p>Your Service Worker needs to be added to your site to begin working.  </p>
 <ol>
-<li>Copy the "pwabuilder-sw.js" file from the zip you downloaded from the service worker page of PWA Builder and add it to your js folder in wwwroot  (not in a folder) like so:</li>
+<li>Copy the "pwabuilder-sw.js" file from the zip you downloaded on the Service Worker page of the PWA Builder website and add it to your js folder in wwwroot  (not in a folder) like so:</li>
 </ol>
 <p><img alt="show sw location" src="../images/swlocal.png" /></p>
-<!----
+<!--
 
 2.  You will then want to add a short "time to live" for your manifest file so it can be updated often.  To do this you will need to add the following block of code to
 
-!!!!!!!!!!!!!!!!!!!!!!!how do you sent a short expiration on this file"!!!!!!!!!!!!!!!!?????????????
+!!!!!!!!!!!!!!!!!!!!!!!how do you send a short expiration on this file"!!!!!!!!!!!!!!!!?????????????
 
 -->
 
@@ -132,21 +145,40 @@ This Particular Service Worker makes a copy of all the pages you visit and cache
 <p>In Visual studio choose Project &gt; Publish...</p>
 </li>
 <li>
-<p>Choose "Microsoft Azure App Service" from the selection screen</p>
+<p>Choose "Microsoft Azure App Service" from the selection screen.</p>
 </li>
 </ol>
-<p><strong>NOTE</strong> if your Visual Studio project is still debugging your azure server or your local server, you may need to halt the server before re-publishing.</p>
+<p><strong>NOTE</strong> if your Visual Studio project is still debugging your Azure server or your local server, you may need to halt the server before re-publishing.</p>
 <p><img alt="publish screen from vs" src="../images/publish1.PNG" /></p>
 <ol>
 <li>Choose "deploy"</li>
 </ol>
 <h2 id="references">References</h2>
-<p>https://www.pwabuilder.com</p>
-<h2 id="continue-to-next-task">continue to <a href="../114_Test_App/">next task &gt;&gt; </a></h2>
+<ul>
+<li><a href="https://www.pwabuilder.com">PWA Builder</a></li>
+</ul>
+<h2 id="continue-to-next-task">Continue to <a href="../114_Test_App/">next task &gt;&gt; </a></h2>
        
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

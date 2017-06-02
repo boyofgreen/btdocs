@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -39,7 +53,7 @@
     <div class="row">
         <div class="twelve columns">
     <h1 id="task-413-create-api-endpoint-for-product-services">Task 4.1.3 - Create API endpoint for product services</h1>
-<p>You've finished creating the Orders API, it's time to create one for Products.  </p>
+<p>You've finished creating the Orders API, and now it's time to create one for Products.  </p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>This task has a dependency on <a href="../412_OrdersAPI/">Task 4.1.2</a> and all of its prerequisites.</li>
@@ -47,7 +61,7 @@
 </ul>
 <h2 id="creating-a-net-core-app">Creating a .NET Core App</h2>
 <h3 id="1-create-a-new-webapi-project">1. Create a New WebAPI Project</h3>
-<p>Our steps to get started with the Products API are the same as our previous step where we created the <a href="../412_OrdersAPI/">Orders API</a>. </p>
+<p>The steps to get started with the Products API are the same as our previous step where we created the <a href="../412_OrdersAPI/">Orders API</a>. </p>
 <p>Again you can use Visual Studio 2017 to create a new project in the <code>src\2. Services\APIs\Microsoft.Knowzy.ProductsAPI</code> folder.</p>
 <h3 id="2-implement-the-products-api">2. Implement the Products API</h3>
 <p>Go ahead and implement the Products API endpoints, using Visual Studio 2017 to test locally.</p>
@@ -68,6 +82,23 @@
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -42,11 +56,11 @@
 <h2 id="1-pre-requisites">1. Pre-Requisites</h2>
 <ul>
 <li>You should download and extract the <a href="https://www.microsoft.com/en-us/download/details.aspx?id=46436">CosmosDB Data Migration Tool</a></li>
-<li>You'll need access to an azure subscription.</li>
+<li>You'll need a Microsoft Azure subscription for this task.</li>
 </ul>
 <h3 id="a-working-with-cloud-shell">a. Working with Cloud Shell</h3>
-<p>Azure Cloud Shell comes with the Azure CLI already configured, which makes setup straightforward. We'll be using Azure Cloud Shell throughout this guide, so to get started we need to get Cloud Shell pointed toward the subscription we want to work with.</p>
-<p><strong>NB: All shell instructions are based on using the cloud shell, using a local powershell, bash session or command prompt may cause unexpected results.</strong></p>
+<p>Azure Cloud Shell comes with the Azure CLI already configured. This makes setup straightforward. We'll be using Azure Cloud Shell throughout this guide, and we'll need to get Cloud Shell pointed toward the subscription we want to work with.</p>
+<p><strong>NB: All shell instructions are based on using the Cloud Shell, using a local powershell, bash session or command prompt may cause unexpected results.</strong></p>
 <p>i) Access Azure Cloud Shell using the <code>&gt;_</code> Icon in the <strong>top right corner</strong> of the portal.</p>
 <p><img alt="DTUI Import Complete" src="../images/CloudShellIcon.JPG" /></p>
 <p>ii) Point to your Azure subscription</p>
@@ -63,12 +77,12 @@ You can list out all subscriptions you have access to using:
     az account list
 </code></pre>
 <h3 id="b-create-a-resource-group">b. Create a resource group</h3>
-<p>We need to create a resource-group to ring-fence all of our work, we'll start out by storing a couple of variables we're going to use again in our shell. <em>(Note; many resources within Azure require a unique name, as such we recommend you use the guidelines in the published <a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions">naming conventions</a>)</em></p>
+<p>We need to create a resource-group to ring-fence all of our work, and we'll start out by storing a couple of variables we're going to use again in our shell. <em>(Note; many resources within Azure require a unique name, as such we recommend you use the guidelines in the published <a href="https://docs.microsoft.com/en-us/azure/architecture/best-practices/naming-conventions">naming conventions</a>)</em></p>
 <h3 id="c-first-store-the-name-you-want-to-use-for-your-resource-group">c. First store the name you want to use for your resource group:</h3>
-<p>Resource group names must be globally unique within azure, so make sure its both memorable, and specific to you and your project.</p>
+<p>Resource group names must be globally unique within Azure, so make sure it's both memorable, and specific to you and your project.</p>
 <pre><code>RESOURCE_GROUP=&lt;unique name&gt;
 </code></pre>
-<h3 id="d-then-the-location-were-going-to-create-it-in-for-our-example-you-should-pick-from-eastus-westeurope-or-southeastasia">d. Then the location we're going to create it in <em>(for our example you should pick from: 'eastus', 'westeurope' or 'southeastasia')</em></h3>
+<h3 id="d-then-supply-the-location-were-going-to-create-it-in-for-our-example-you-should-pick-from-eastus-westeurope-or-southeastasia">d. Then supply the location we're going to create it in <em>(for our example you should pick from: 'eastus', 'westeurope' or 'southeastasia')</em></h3>
 <pre><code>LOCATION=eastus
 </code></pre>
 <h3 id="e-create-our-new-resource-group-within-our-current-subscription">e. Create our new resource group within our current subscription:</h3>
@@ -77,32 +91,32 @@ You can list out all subscriptions you have access to using:
 
 <h2 id="2-create-and-initialise-cosmosdb">2. Create and initialise CosmosDB</h2>
 <h3 id="a-store-the-name-of-our-database">a. Store the name of our database:</h3>
-<p>Like resource group names, CosmosDB names must be globally unique within azure, so again we should select something specific.</p>
+<p>Like resource group names, CosmosDB names must be globally unique within Azure, so again we should select something specific.</p>
 <pre><code>COSMOSDB_NAME=&lt;unique database name&gt; _(names must be all lower case and no symbols)_
 </code></pre>
 <h3 id="b-create-the-cosmosdb-instance">b. Create the CosmosDB instance</h3>
 <p>We can now go ahead and use the Azure CLI within the Cloud Shell to create our CosmosDB Instance.</p>
 <pre><code>az cosmosdb create -g $RESOURCE_GROUP -n $COSMOSDB_NAME --locations "EAST US2"=0
 </code></pre>
-<p>This command will take some time to complete. You'll know it's succeeded when the cloud shell console outputs something like this, containing the name you specified in step 1 above in the 'documentEndpoint':</p>
+<p>This command will take some time to complete. You'll know it succeeded when the Cloud Shell console outputs something like the below screen, containing the name you specified in step 1 above in the 'documentEndpoint':</p>
 <p><img alt="image of share screen" src="../images/DocDbCreateSuccess.JPG" /></p>
 <h3 id="c-import-data-into-collections">c. Import data into collections</h3>
 <p>For this step we'll need to use the <a href="https://www.microsoft.com/en-us/download/details.aspx?id=46436">CosmosDB Data Migration Tool</a> that you should have already downloaded and extracted.</p>
-<p>We're going to perform the following steps for 3 collections we need to add to Azure; <a href="../Reference/customers.json">Customers</a>, <a href="../Reference/products.json">Products</a> and <a href="../Reference/orders.json">Orders</a>. For convenience sake you can download a zip file containing all three: <a href="../Reference/HackSchemas.zip">Here</a>.</p>
+<p>We're going to perform the following steps for the 3 collections we need to add to Azure; <a href="../Reference/customers.json">Customers</a>, <a href="../Reference/products.json">Products</a> and <a href="../Reference/orders.json">Orders</a>. For convenience sake you can download a zip file containing all three: <a href="../Reference/HackSchemas.zip">Here</a>.</p>
 <p>i) Load up the UI version of the data migration tool by running 'dtui.exe'</p>
 <p><img alt="DTUI Exe in folder" src="../images/dt1.7Folder.JPG" /></p>
-<p>ii) You should be greeted with the following screen below, we can just click 'Next' for now.</p>
+<p>ii) You should be greeted with the following screen below, you can just click 'Next' for now.</p>
 <p><img alt="DTUI Welcome Screen" src="../images/DTScreen1.JPG" /></p>
-<p>iii) This is the 'Source Information' screen where we specify the information source for our import, select the JSON file for the collection you want to import (We'll use customers.json for our example) then click next to move on.</p>
+<p>iii) This is the 'Source Information' screen where we specify the information source for our import. Select the JSON file for the collection you want to import (We'll use customers.json for our example) then click 'Next' to move on.</p>
 <p><img alt="DTUI Source Screen" src="../images/DTScreen2.JPG" /></p>
-<p>iv) You should be presented with a screen that looks like below, the 'Target Information' screen, where specify information about the destination of our import. First set the 'Export to' option to: 'CosmosDB - Sequential record import (partitioned collection).</p>
+<p>iv) You should now see a screen that looks like below named 'Target Information', where you specify information about the destination of our import. First set the 'Export to' option to: 'CosmosDB - Sequential record import (partitioned collection).</p>
 <p><img alt="DTUI Target Screen" src="../images/DTScreen3.JPG" /></p>
-<p>v) We'll need to retrieve our 'Connection String' from the Azure Portal. Open the portal, and select your CosmosDB Instance, then click on 'Keys' and select 'Read/Write Keys' and click the button next to 'PRIMARY CONNECTION STRING' to copy it to your clipboard.</p>
+<p>v) We'll need to retrieve our 'Connection String' from the Azure Portal. Open the portal, and select your CosmosDB Instance, click on 'Keys', select 'Read/Write Keys', and click the button next to 'PRIMARY CONNECTION STRING' to copy it to your clipboard.</p>
 <p><img alt="Azure Portal DocDB Keys Blade" src="../images/DocDBPortalKeys.JPG" /></p>
-<p>vi) Go back to the CosmosDB Data Migration Tool and paste the value into the box for the connection string. The importer also requires that you specify the database you'll be importing to so add the following string with the name of your database (which you defined in step 2a) to the end of the connection string you just pasted:</p>
+<p>vi) Go back to the CosmosDB Data Migration Tool and paste the value into the box for the connection string. The importer also requires that you specify the database you'll be importing to, so add the following string with the name of your database (which you defined in step 2a) to the end of the connection string you just pasted:</p>
 <pre><code>Database=&lt;your CosmosDB name&gt;
 </code></pre>
-<p>So you have something that looks like this:</p>
+<p>You'll have something that looks like this:</p>
 <p><img alt="DTUI Target Screen" src="../images/DTScreen3Filled.JPG" /></p>
 <p>v) Click the 'verify' button, and you should get confirmation that the importer can successfully connect to your CosmosDB. Which should look like this:</p>
 <p><img alt="DTUI Target screen verified" src="../images/DTScreen3Verified.JPG" /></p>
@@ -113,11 +127,11 @@ You can list out all subscriptions you have access to using:
 <li>Collection Throughput: 400 - _This is the preset throughput to configure the collection for, we want to keep costs down during dev, so we should change this from 1000 (the default) to 400.</li>
 <li>Id Field: id - <em>This is the ID field of the schema, for sake of simplicity we've made them all 'id' (case sensitive), but this is customisable in more advanced scenarios.</em></li>
 </ul>
-<p>Once your form looks as below, then we're ready to click next!</p>
+<p>Once your form looks like below, we're ready to click 'Next'!</p>
 <p><img alt="DTUI Complete Target Screen" src="../images/DTScreen3Complete.JPG" /></p>
-<p>vii) Click 'Next' on the 'Advanced' settings screen, we want our errors to show in the tool UI so we don't need to specify anything here. Then you should be presented with a screen that looks like this:</p>
+<p>vii) Click 'Next' on the 'Advanced' settings screen. We want our errors to show in the tool UI so we don't need to specify anything here. Then you should see a screen that looks like this:</p>
 <p><img alt="DTUI Confirm Import Screen" src="../images/DTScreen4.JPG" /></p>
-<p>viii) Carefully review the import settings, and when you're satisfied click 'Import', if the import fails, errors will be displayed in the UI. All being well, your import will succeed and you'll see a screen similar to:</p>
+<p>viii) Carefully review the import settings, and when you're satisfied click 'Import'. If the import fails, errors will be displayed in the UI. All being well, your import will succeed and you'll see a screen similar to this:</p>
 <p><img alt="DTUI Import Complete" src="../images/ImportComplete.JPG" /></p>
 <p>ix) You can now return to the portal, select your CosmosDB Instance, and click on 'Document Explorer' to explore your new schema.</p>
 <p><img alt="Azure Portal Document Explorer" src="../images/DocumentExplorer.JPG" /></p>
@@ -130,6 +144,23 @@ You can list out all subscriptions you have access to using:
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -45,12 +59,12 @@
 </ul>
 <h3 id="a-configuring-docker-for-windows">a. Configuring Docker for Windows</h3>
 <p>On Windows, you'll need to share your drive with Docker in order to build images.</p>
-<p>i) Open up Docker settings by right-clicking the Docker icon in the taskbar, and choosing Settings</p>
+<p>i) Open up Docker settings by right-clicking the Docker icon in the taskbar, and choosing Settings.</p>
 <p>ii) Go to the <code>Shared Drives</code> tab and share the C drive </p>
 <p><img alt="image of share screen" src="../images/docker-sharedrive.png" /></p>
 <p>If you receive a firewall error, try these <a href="../499_Troubleshooting/">Troubleshooting</a> steps. </p>
 <h2 id="2-building-images">2. Building Images</h2>
-<p>If you have Visual Studio 2017 you can have it create Docker files for you by simply:
+<p>If you have Visual Studio 2017 you can have it create Docker files for you by doing the following:
 * Right click on the Microsoft.Knowzy.WebApp project, select <code>Add -&gt; Docker Support</code>. If you are on prompted for Target OS, choose <code>Linux</code> and click OK.</p>
 <p><img alt="Add Docker Support" src="../images/AddDockerSupport.png" />
 <img alt="Choose Docker Linux" src="../images/ChooseLinux.png" /></p>
@@ -162,7 +176,7 @@ b0ee3710499e        microsoft.knowzy.webapp        &quot;tail -f /dev/null&quot;
 docker-compose -p &lt;YOUR_NAME_PREFIX&gt; down
 </code></pre>
 
-<p>If you want to spin up your containers again, you can debug the docker-compose project in Visual Studio, or interact directly via PowerShell by running the following commands</p>
+<p>If you want to spin up your containers again, you can debug the docker-compose project in Visual Studio, or interact directly via PowerShell by running the following commands:</p>
 <pre><code class="powershell"># Create and start containers
 # -f: Use the compose &amp; override files
 # -d: Detach (Run containers in the background)
@@ -218,7 +232,7 @@ docker login -u $ACR_NAME -p &lt;your password&gt; &quot;$ACR_NAME.azurecr.io&qu
 </code></pre>
 
 <blockquote>
-<p>If you're having trouble copy/pasting the password from the Azure Cloud Shell to PowerShell, try highlighting your password and making sure your cursor is over the highlighted text, and then right click</p>
+<p>If you're having trouble copy/pasting the password from the Azure Cloud Shell to PowerShell, try highlighting your password and making sure your cursor is over the highlighted text, and then right click.</p>
 </blockquote>
 <h3 id="c-push-an-image">c. Push an Image</h3>
 <p>You've already got some tagged images, and now you need to tell Docker that they're associated with your newly created registry. You'll specify the <code>knowzy</code> namespace before pushing them to keep these apps grouped together. This is as simple as adding another tag for our existing images, using the following commands.</p>
@@ -259,6 +273,23 @@ az acr repository show-tags -n $ACR_NAME --repository knowzy/ordersapi
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>

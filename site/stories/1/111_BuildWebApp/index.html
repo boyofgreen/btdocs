@@ -16,6 +16,20 @@
     margin-left: 30px;
     list-style: outside;
   }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
 </style>
 <script type="text/javascript">
 
@@ -40,13 +54,14 @@
         <div class="twelve columns">
     <h1 id="task-111-build-a-responsive-web-app">Task 1.1.1 - Build a Responsive Web App</h1>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>your developer build should include Visual Studio 2017.. 
-You'll need to start by downloading the codebase for the webapp.   </p>
-<p>To do this, go to the git repo <a href="https://github.com/Knowzy/KnowzyInternalApps">https://github.com/Knowzy/KnowzyInternalApps</a> and clone or download the content onto your local computer.</p>
+<p>You will need <a href="https://developer.microsoft.com/windows/downloads">Visual Studio 2017</a>.</p>
+<p>Begin by downloading the codebase for the webapp, go to the git repo <a href="https://github.com/Knowzy/KnowzyInternalApps">https://github.com/Knowzy/KnowzyInternalApps</a> and clone or download the content onto your local computer.</p>
 <h2 id="task">Task</h2>
 <h3 id="make-your-website-responsive">Make your website responsive.</h3>
-<p>Most of the work has already been done to make sure that your site works well across different devices, but you'll need to make a few adjustments to the code base to ensure that it flows properly for screens of all sizes.  You'll also want to make sure that it works across platforms, since some of the Knowzy contractors carry Android tablets instead of Windows 10 devices.
-  You should have the code repo on your local device.  Open up the project in \src\Knowzy_Shipping_WebApp and run your web site locally to see the project you are starting with.</p>
+<p>Most of the work has already been done to make sure that your site works well across different devices, but you will need to make a few adjustments to the code base to ensure that it flows properly for screens of all sizes.  You should also make sure that the webapp works across platforms, since some of the Knowzy contractors carry Android tablets instead of Windows 10 devices.</p>
+<p>You should have the code repo on your local device. Open the folder <code>\src\Knowzy_Shipping_WebApp</code> and run your web site locally by double-clicking the "Microsoft.Knowzy" Visual Studio file to see the webapp project that you are starting with.</p>
+<!--   Would be helpful to identify specifically which components of the Hack Checklist need to be on your machine in order to build this project locally / complete this tutorial as everyone may not want to install all of the Hack Checklist components. (I don't) Is this only the ASP.Net web dev component? -->
+
 <ol>
 <li>Open up your site.css file at the following path:</li>
 </ol>
@@ -55,15 +70,15 @@ You'll need to start by downloading the codebase for the webapp.   </p>
 
 <p>and find the following declaration toward the top of the page:</p>
 <pre><code>.container-main {
+    width: 800px;
     padding-right: 15px;
     padding-left: 15px;
     margin: 0 auto;
-    width: 800px;
 }
 </code></pre>
 
 <ol>
-<li>Add a declaration for "container-main" inside key media queries to resize the page properly for different screen sizes. You'll want to create media queries with css declarations  for the key screen sizes of 320px, 768px, 992px, and 1200px like below:</li>
+<li>Add a declaration for the "container-main" class inside of a media query. Media queries resize the page properly for different screen sizes. You will want to create media queries with style declarations for the screen sizes of 320px, 768px, 992px, and 1200px like below:</li>
 </ol>
 <pre><code>@media all and (min-width:320px) {
     .container-main {
@@ -73,34 +88,38 @@ You'll need to start by downloading the codebase for the webapp.   </p>
 
 @media all and (min-width:768px) {
     .container-main {
-        width: 750px
+        width: 750px;
     }
 }
 
 @media all and (min-width:992px) {
     .container-main {
-        width: 970px
+        width: 970px;
     }
 }
 
 @media all and (min-width:1200px) {
     .container-main {
-        width: 1170px
+        width: 1170px;
     }
 }
 </code></pre>
 
 <p>Be sure to add these rules <em>below</em> the "container-main" rule, so the media queries will override the width of the main rule.</p>
 <ol>
-<li>View your web app in a browser (you can do this  by hitting f5 is visual studio or clicking on the start button), and adjust the width of your window to test responsiveness of the design.  If you have a tablet device, you can change the orientation of your device to make sure that the page response properly.  It should look similar to this
- [image of page layout on two different orientations]</li>
+<li>View your web app in a browser (you can do this  by hitting F5 in visual studio or clicking on the start button), and adjust the width of your window to test responsiveness of the design.  If you have a tablet device, you can change the orientation of your device to make sure that the page response properly.  </li>
 </ol>
+<!--   It should look similar to this...
+
+  IMAGES STILL NEEDED
+ [image of page layout on two different orientations] -->
+
 <p>Your app is now ready to be viewed on devices with different screen sizes and orientations.</p>
 <h3 id="deploy-your-aspnet-app-changes">Deploy your ASP.net App Changes</h3>
 <p>Now that you have these powerful new features running locally, you can publish them to your website on Azure.</p>
 <ol>
-<li>In Visual studio select the "Microsoft.Knowzy.WebApp" in the solution explorer, then choose Build &gt; Publish... 
-<strong>NOTE</strong> some configurations of visual studio may have the "publish" option as its own menu.</li>
+<li>In Visual Studio select the "Microsoft.Knowzy.WebApp" in the solution explorer, then choose Build &gt; Publish... 
+<strong>NOTE</strong> some configurations of Visual Studio may have the "publish" option as its own menu.</li>
 </ol>
 <p><img alt="publish screen from vs" src="../images/publish0.PNG" /></p>
 <ol>
@@ -120,12 +139,31 @@ You'll need to start by downloading the codebase for the webapp.   </p>
 </li>
 </ol>
 <h2 id="references">References</h2>
-<p>https://github.com/Knowzy/KnowzyInternalApps</p>
-<h2 id="continue-to-next-task">continue to <a href="../112_GeneratePWA/">next task &gt;&gt; </a></h2>
+<ul>
+<li><a href="https://github.com/Knowzy/KnowzyInternalApps">Knowzy App GitHub Repo</a></li>
+</ul>
+<h2 id="continue-to-next-task">Continue to <a href="../112_GeneratePWA/">next task &gt;&gt; </a></h2>
        
 
     </div>
   </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
 <script src="/Content/prism.js" data-default-language="javascript"></script>
 
   </body>
