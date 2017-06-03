@@ -82,14 +82,14 @@
 <h2 id="step-1-install-the-desktop-bridge-debugging-project-extension">Step 1: Install the Desktop Bridge Debugging Project Extension</h2>
 <p>If you do not have the Desktop Bridge Debugging Project extension installed into Visual Studio 2017, please complete the following steps:</p>
 <ol>
-<li>Click on the <strong>Tools</strong> menu and select <strong>Extensions and Updates...</strong></li>
-</ol>
+<li>
+<p>Click on the <strong>Tools</strong> menu and select <strong>Extensions and Updates...</strong></p>
 <p><img alt="Tools and Extensions" src="../images/212-extensions.png" /></p>
-<ol>
-<li>Select <strong>Online</strong> and enter <strong>Desktop Bridge Debugging Project</strong> in the search field. Click <strong>Download</strong>.</li>
-</ol>
+</li>
+<li>
+<p>Select <strong>Online</strong> and enter <strong>Desktop Bridge Debugging Project</strong> in the search field. Click <strong>Download</strong>.</p>
 <p><img alt="Install Desktop Bridge Debugging Project" src="../images/212-install-debugging-project.png" /></p>
-<ol>
+</li>
 <li>
 <p>Close Visual Studio 2017 and the Desktop Bridge Debugging Project Extension will be installed.</p>
 </li>
@@ -99,14 +99,14 @@
 </ol>
 <h2 id="step-2-add-the-desktop-bridge-debugging-project-to-the-solution">Step 2: Add the Desktop Bridge Debugging Project to the Solution</h2>
 <ul>
-<li>Right-click on the src folder in the Solution and select <strong>Add | New Project...</strong></li>
-</ul>
+<li>
+<p>Right-click on the src folder in the Solution and select <strong>Add | New Project...</strong></p>
 <p><img alt="Add project" src="../images/212-add-project.png" /></p>
-<ul>
-<li>Select the <strong>Other Project Types | Desktop Bridge Debugging Project</strong> project template. </li>
-</ul>
+</li>
+<li>
+<p>Select the <strong>Other Project Types | Desktop Bridge Debugging Project</strong> project template. </p>
 <p><img alt="Add debugging project" src="../images/212-new-debugging-project.png" /></p>
-<ul>
+</li>
 <li>
 <p>Name the project Microsoft.Knowzy.Debug.</p>
 </li>
@@ -152,23 +152,19 @@ Visual 2017 C# UWP Desktop Bridge deployment bug we experienced in the previous 
 <ul>
 <li>
 <p>Save and Close the Properties windows. </p>
-<ul>
-<li>
+<blockquote>
 <p><strong>Note:</strong> The Properties window can be a little buggy in saving your settings so make sure they were saved. Most issues with debugging are caused by
 incorrect Debugging Project settings.</p>
-</li>
-<li>
 <p><strong>Note:</strong> You will need to add the correct Debugging Project Properties for x86 Release and x64 Debug and Release configurations if you want to build them.</p>
-</li>
-</ul>
+</blockquote>
 </li>
 <li>
 <p>Open the AppXPackageFileList.xml file in the Microsoft.Knowzy.Debug project</p>
-</li>
-</ul>
 <p><img alt="AppXPackageFileList.xml" src="../images/212-appxpackagefilelist.png" /></p>
-<ul>
-<li>Modify the xml to the following:<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+</li>
+<li>
+<p>Modify the xml to the following:</p>
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;Project ToolsVersion="14.0"
         xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
   &lt;PropertyGroup&gt;
@@ -198,46 +194,46 @@ Then build the solution again.</p>
 </li>
 <li>
 <p>Press F5 and your UWP app will now be deployed and launch successfully. You should now be able to set breakpoints in the Microsoft.Knowzy.WPF source code.</p>
-</li>
-</ul>
+<blockquote>
 <p><strong>Note:</strong> There is a intermitent bug in the Desktop Bridge Debugging Project ** where it may hang when deploying a build. If this happens, use the Task Manager to kill Visual Studio and then reopen then solution. 
 You should then be able to build and run the app.</p>
+</blockquote>
 <p><img alt="Breakpoint" src="../images/212-breakpoint.png" /></p>
-<ul>
+</li>
 <li>
 <p>Set a breakpoint at line 79 in the file ViewModels\MainViewModel.cs in the Microsoft.Knowzy.WPF project. Restart the debugging session and it should break into the debugger at line 79. If you do not hit the breakpoint, 
 <strong>Clean</strong> and <strong>Build</strong> your solution again.</p>
 </li>
 <li>
 <p>Stop debugging and remove the comments we added in the previous task. Press F5 to start the app. You should get the following exception:</p>
+<p><img alt="Exception" src="../images/212-exception.png" /></p>
 </li>
 </ul>
-<p><img alt="Exception" src="../images/212-exception.png" /></p>
 <p>For some reason, our UWP app is unable to load the Project.json file and it appears that our app is looking for the file in the wrong directory. This is a common problem with newly converted Desktop Bridge apps.
 Depending on how the code is written, the app may be trying to load files from the wrong location. We will fix this in the next task.</p>
 <p>Step 4: Additional Debugging Settings</p>
 <p>In order to be able to easily debug both both the WPF and UWP portions of our app, we need to specify a few more debugging settings.</p>
 <ul>
-<li>Select <strong>Options...</strong> from the <strong>Debug</strong> menu.</li>
-</ul>
+<li>
+<p>Select <strong>Options...</strong> from the <strong>Debug</strong> menu.</p>
 <p><img alt="Debug options" src="../images/212-debug-options.png" /></p>
-<ul>
-<li>Click on <strong>Debugging | General</strong> and turn off the <strong>Enable Just My Code</strong> options</li>
-</ul>
+</li>
+<li>
+<p>Click on <strong>Debugging | General</strong> and turn off the <strong>Enable Just My Code</strong> options</p>
 <p><img alt="Just My Code" src="../images/212-just-my-code.png" /></p>
-<ul>
+</li>
 <li>
 <p>Right-click on the Microsoft.Knowzy.UWP project and select <strong>Properties</strong>.</p>
 </li>
 <li>
 <p>Select the <strong>Build</strong> tab and turn off <strong>Optimize Code</strong></p>
+<p><img alt="Optimize Code" src="../images/212-optimize-code.png" /></p>
+</li>
+<li>
+<p>Select the <strong>Debug</strong> tab and turn on <strong>Do not launch, but debug my code when it starts</strong></p>
+<p><img alt="Optimize Code" src="../images/212-do-not-launch.png" /></p>
 </li>
 </ul>
-<p><img alt="Optimize Code" src="../images/212-optimize-code.png" /></p>
-<ul>
-<li>Select the <strong>Debug</strong> tab and turn on <strong>Do not launch, but debug my code when it starts</strong></li>
-</ul>
-<p><img alt="Optimize Code" src="../images/212-do-not-launch.png" /></p>
 <p>We will now fix the products.json issue in the <a href="../213_AddUwp/">next task</a>.</p>
 <h2 id="references">References</h2>
 <ul>

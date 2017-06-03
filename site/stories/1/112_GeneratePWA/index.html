@@ -62,10 +62,14 @@
 <ol>
 <li>Open a browser and navigate to <a href="https://preview.pwabuilder.com">https://preview.pwabuilder.com</a>.</li>
 <li>Click on the <strong>Get Started</strong> button. </li>
-<li>In the URL textbox, enter the https version of your URL of your site and click on <strong>Get Started</strong> again. 
-<strong>Note</strong> Your website URL will likely default to the http version in the browser but all azure websites also have a valid https certificate so https can be used on any azure website.</li>
-</ol>
+<li>
+<p>In the URL textbox, enter the https version of your URL of your site and click on <strong>Get Started</strong> again. </p>
+<blockquote>
+<p><strong>Note</strong> Your website URL will likely default to the http version in the browser but all azure websites also have a valid https certificate so https can be used on any azure website.</p>
+</blockquote>
 <p><img alt="Provide a URL" src="../images/quickstart-pwa-website-provide-a-url.png" /> </p>
+</li>
+</ol>
 <h3 id="generate-manifest">Generate Manifest</h3>
 <p>The builder will search in the home page of your site looking for an existing manifest. If not, it will gather information about the app in specific meta tags or propose default values for the manifest properties. It will also show any warnings or suggestions to address potential issues in the collected metadata. Be sure you address any warnings before you move on. </p>
 <p><img alt="Generate Manifest" src="../images/quickstart-pwa-website-generate-manifest.png" /> </p>
@@ -77,27 +81,29 @@
 </li>
 <li>
 <p>Save the below Knowzy logo to your PC by right clicking and "save image as".</p>
-</li>
-</ol>
 <p><img alt="logo to upload" src="../images/Knowzylogo.png" /> </p>
-<ol>
-<li>Browse to the location of the image you downloaded and if you want to generate the missing sizes, make sure the <strong>Generate missing images from this image</strong> checkbox is marked. </li>
-</ol>
+</li>
+<li>
+<p>Browse to the location of the image you downloaded and if you want to generate the missing sizes, make sure the <strong>Generate missing images from this image</strong> checkbox is marked. </p>
+<blockquote>
 <p><strong>Note:</strong> The <strong>Upload image</strong> option will generate the required image sizes for Windows 10, and suggested images for other platforms.</p>
+</blockquote>
 <p><img alt="Upload an Image" src="../images/quickstart-pwa-website-upload-an-image.png" /> </p>
-<ol>
-<li>Click <strong>Submit</strong>. In our example, the missing image sizes are automatically generated and added to the manifest.</li>
-</ol>
+</li>
+<li>
+<p>Click <strong>Submit</strong>. In our example, the missing image sizes are automatically generated and added to the manifest.</p>
 <p><img alt="Images Preview" src="../images/quickstart-pwa-website-images-preview.png" /> </p>
-<ol>
-<li>Click "download manifest" to get a copy of this manifest to add to your web site.</li>
+</li>
+<li>
+<p>Click "download manifest" to get a copy of this manifest to add to your web site.</p>
+</li>
 </ol>
 <h2 id="choose-a-service-worker">Choose a Service Worker</h2>
 <p>During this step you will choose functionalities you want to add to your app. The builder will include code to use sample service workers implementing those features from a repository. <em><a href="http://docs.pwabuilder.com/whatPWA/what-is-a-service-worker/">Learn more about service workers</a>.</em> There are a number of service workers to choose from on this page, but Knowzy is looking for a way to make sure it's field agents can access the app data when they have poor or no network connection.  For this functionality we'll choose the "Offline copy of pages" service worker.</p>
 <ol>
 <li>
-<p>Select the service worker you want to include in your application.
-<img alt="Select Service Workers" src="../images/quickstart-pwa-website-select-service-workers.png" /> </p>
+<p>Select the service worker you want to include in your application.</p>
+<p><img alt="Select Service Workers" src="../images/quickstart-pwa-website-select-service-workers.png" /> </p>
 </li>
 <li>
 <p>Download the service worker package, including the code for your website and the service worker code. (You can also just copy and paste the code directly from the site).  You'll be downloading two different JavaScript files.  The first is the registration code, in which you will be instructed on how to add the code to your site in the next section, and the service worker itself.  </p>

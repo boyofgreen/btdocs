@@ -55,22 +55,29 @@
     <h1 id="task-521-retarget-uwp-app-to-mixed-reality-platform">Task 5.2.1 - Retarget UWP app to Mixed Reality Platform</h1>
 <p>The keynote is at a VR conference so we need a VR demo showing our Nose Prototypes. Having our 3D UWP app from 5.1.2a we can easily turn this into a VR enabled app.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This walkthrough assumes that you have:
-<em> Windows 10 Creators Update
-</em> 3D Nose Model from Paint 5.1.1 and 3D UWP from 5.1.2a
-* Unity 5.6 with UWP Plugin for exporting UWP</p>
+<p>This walkthrough assumes that you have:</p>
+<ul>
+<li>Windows 10 Creators Update</li>
+<li>3D Nose Model from Paint 5.1.1 and 3D UWP from 5.1.2a</li>
+<li>Unity 5.6 with UWP Plugin for exporting UWP</li>
+</ul>
 <h2 id="task">Task</h2>
 <h4 id="using-unity-3d-to-enable-mixed-reality">Using Unity 3D to enable Mixed Reality</h4>
-<p>Supporting Mixed Reality in Unity is just a simple toggle on the Build Settings in Unity.
-1. Open the Nose3D project you created in Unity.
-2. Go to <strong>File-&gt;Build Settings</strong> and click <strong>Player Settings</strong>
-3. A new Player Settings property pane appears on the right side of the Unity3D window.
-4. Click <strong>Other Settings</strong> to reveal a new set of properties.
-5. Tick the <strong>Virtual Reality Supported</strong> checkbox. Windows Holographic should appear automatically.</p>
-<pre><code>![3D objects tool](images/521_1.png)
-</code></pre>
+<p>Supporting Mixed Reality in Unity is just a simple toggle on the Build Settings in Unity.</p>
 <ol>
-<li>Export the project again, replacing the Folder you exported to in 5.1.2a.</li>
+<li>Open the Nose3D project you created in Unity.</li>
+<li>Go to <strong>File-&gt;Build Settings</strong> and click <strong>Player Settings</strong></li>
+<li>A new Player Settings property pane appears on the right side of the Unity3D window.</li>
+<li>
+<p>Click <strong>Other Settings</strong> to reveal a new set of properties.</p>
+</li>
+<li>
+<p>Tick the <strong>Virtual Reality Supported</strong> checkbox. Windows Holographic should appear automatically.</p>
+<p><img alt="3D objects tool" src="../images/521_1.png" /></p>
+</li>
+<li>
+<p>Export the project again, replacing the Folder you exported to in 5.1.2a.</p>
+</li>
 <li>Open the Nose3D.sln solution and build/deploy/run the UWP, it should now automatically detect that VR is enabled and will run in the connected VR headset.</li>
 </ol>
 <blockquote>

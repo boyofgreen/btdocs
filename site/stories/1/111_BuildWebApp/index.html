@@ -63,11 +63,10 @@
 <!--   Would be helpful to identify specifically which components of the Hack Checklist need to be on your machine in order to build this project locally / complete this tutorial as everyone may not want to install all of the Hack Checklist components. (I don't) Is this only the ASP.Net web dev component? -->
 
 <ol>
-<li>Open up your site.css file at the following path:</li>
-</ol>
+<li>
+<p>Open up your site.css file at the following path:</p>
 <pre><code>\wwwroot\css\site.css
 </code></pre>
-
 <p>and find the following declaration toward the top of the page:</p>
 <pre><code>.container-main {
     width: 800px;
@@ -76,10 +75,9 @@
     margin: 0 auto;
 }
 </code></pre>
-
-<ol>
-<li>Add a declaration for the "container-main" class inside of a media query. Media queries resize the page properly for different screen sizes. You will want to create media queries with style declarations for the screen sizes of 320px, 768px, 992px, and 1200px like below:</li>
-</ol>
+</li>
+<li>
+<p>Add a declaration for the "container-main" class inside of a media query. Media queries resize the page properly for different screen sizes. You will want to create media queries with style declarations for the screen sizes of 320px, 768px, 992px, and 1200px like below:</p>
 <pre><code>@media all and (min-width:320px) {
     .container-main {
         width: 100%;
@@ -104,10 +102,11 @@
     }
 }
 </code></pre>
-
 <p>Be sure to add these rules <em>below</em> the "container-main" rule, so the media queries will override the width of the main rule.</p>
-<ol>
-<li>View your web app in a browser (you can do this  by hitting F5 in visual studio or clicking on the start button), and adjust the width of your window to test responsiveness of the design.  If you have a tablet device, you can change the orientation of your device to make sure that the page response properly.  </li>
+</li>
+<li>
+<p>View your web app in a browser (you can do this  by hitting F5 in visual studio or clicking on the start button), and adjust the width of your window to test responsiveness of the design.  If you have a tablet device, you can change the orientation of your device to make sure that the page response properly.  </p>
+</li>
 </ol>
 <!--   It should look similar to this...
 
@@ -118,24 +117,24 @@
 <h3 id="deploy-your-aspnet-app-changes">Deploy your ASP.net App Changes</h3>
 <p>Now that you have these powerful new features running locally, you can publish them to your website on Azure.</p>
 <ol>
-<li>In Visual Studio select the "Microsoft.Knowzy.WebApp" in the solution explorer, then choose Build &gt; Publish... 
-<strong>NOTE</strong> some configurations of Visual Studio may have the "publish" option as its own menu.</li>
-</ol>
+<li>
+<p>In Visual Studio select the "Microsoft.Knowzy.WebApp" in the solution explorer, then choose Build &gt; Publish... 
+<strong>NOTE</strong> some configurations of Visual Studio may have the "publish" option as its own menu.</p>
 <p><img alt="publish screen from vs" src="../images/publish0.PNG" /></p>
-<ol>
-<li>Choose "Microsoft Azure App Service" from the selection screen</li>
-</ol>
+</li>
+<li>
+<p>Choose "Microsoft Azure App Service" from the selection screen</p>
 <p><img alt="publish screen from vs" src="../images/publish1.PNG" /></p>
-<ol>
-<li>Choose a name for your new site and other configurations.  This can be published as a free site.</li>
-</ol>
+</li>
+<li>
+<p>Choose a name for your new site and other configurations.  This can be published as a free site.</p>
 <p><img alt="publish screen from vs" src="../images/publish2.PNG" /></p>
-<ol>
+</li>
 <li>
 <p>Keep track of the new URL you have created, you'll want to use this later.</p>
 </li>
 <li>
-<p>hit "create" and wait for your web app to finish deploying.</p>
+<p>Hit "create" and wait for your web app to finish deploying.</p>
 </li>
 </ol>
 <h2 id="references">References</h2>

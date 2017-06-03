@@ -53,13 +53,13 @@
     <div class="row">
         <div class="twelve columns">
     <h1 id="task-332-create-an-azure-function-to-analyze-an-image-and-return-nose-location">Task 3.3.2 - Create an Azure Function to analyze an image and return nose location</h1>
-<p>Now that you've created a Cognitive Service to tell you where noses are in pictures sent from the KNOWZY mobile app, you need to create an endpoint to accept those pictures and talk to your Cognitive Service.  This task will require you to set up a new Azure Function and then to code and design it to expose an HTTP endpoint to accept an image file and return the location of the nose(s) in any faces found in the picture.</p>
+<p>Now that you've created a Cognitive Service to tell you where noses are in pictures sent from the KNOWZY mobile app, you'll need to create an endpoint to accept those pictures and talk to your Cognitive Service.  This task requires you to set up a new Azure Function, and then code and design it to expose an HTTP endpoint that accepts an image file and returns the location of the nose(s) in any faces found in the picture.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p>This task has a dependency on <a href="../331_CognitiveServices/">Task 3.3.1</a> and all of it's prerequisites</p>
 <p>This walkthrough assumes that you have:</p>
 <ol>
 <li><a href="https://www.visualstudio.com/vs/preview/">Visual Studio 2017 Preview 3</a>.</li>
-<li><a href="https://blogs.msdn.microsoft.com/webdev/2017/05/10/azure-function-tools-for-visual-studio-2017/">Azure Functions extension</a> installed. </li>
+<li><a href="https://blogs.msdn.microsoft.com/webdev/2017/05/10/azure-function-tools-for-visual-studio-2017/">Azure Functions extension</a> installed.</li>
 </ol>
 <h2 id="task">Task</h2>
 <ol>
@@ -67,7 +67,7 @@
 <li>Create an HTTP Trigger which will take in a picture and return data.</li>
 <li>Within your Function, use the <em>Name</em> and <em>Key</em> from <a href="../331_CognitiveServices/">Task 3.3.1</a> to connect to your Cognitive Service and run face detection on the image.</li>
 <li>Return the data for the nose location(s) from your Function.</li>
-<li>Position nose on top of image in app</li>
+<li>Position Knowzy nose(s) on top of the image in app.</li>
 </ol>
 <h2 id="comments">Comments</h2>
 <h6 id="1148am">@ 11:48am</h6>

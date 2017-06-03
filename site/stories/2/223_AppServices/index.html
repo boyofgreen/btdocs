@@ -74,20 +74,22 @@ in the "Exposing an App Service" section. However, this example requires that we
 how to share data between the UWP and WPF portions of our app. </p>
 <p>Here is the problem with the communications between the WPF and UWP parts of our DeskTop Bridge app using an App Service.</p>
 <ol>
-<li>The WPF app starts and connects to the App Service</li>
-</ol>
+<li>
+<p>The WPF app starts and connects to the App Service</p>
 <p><img alt="App Service WFP" src="../images/223-appservice-1.png" /></p>
-<ol>
-<li>The XAML UI starts up and connects to the App Service</li>
-</ol>
+</li>
+<li>
+<p>The XAML UI starts up and connects to the App Service</p>
 <p><img alt="App Service WFP" src="../images/223-appservice-2.png" /></p>
-<ol>
-<li>The WPF app sends a request to the App Service. It can only receive a reply from the App Service. The request is not sent to the XAML UI.
+</li>
+<li>
+<p>The WPF app sends a request to the App Service. It can only receive a reply from the App Service. The request is not sent to the XAML UI.
 Likewise, if the XAML UI makes a request to the App Service, that request is not forwarded to the WPF app. Each app can only receive a reply from
 the App Service. Each connection from an app to the App Service may also be running a separate instance of the App Servce so the two connections are not
-aware of each other.</li>
-</ol>
+aware of each other.</p>
 <p><img alt="App Service WFP" src="../images/223-appservice-reality.png" /></p>
+</li>
+</ol>
 <p>There is a solution to this problem if we make Microsoft.Knowzy.UWP.exe the startup app for our DeskTop Bridge app. However, we are not ready to make the UWP version since we have not ported the WPF UI to the UWP app.
 We still need the WPF app to be the UI for our desktop bridge app. So we will need to modify our App Service to bridge the communication between the WPF and UWP portions of our Desktop Bridge app.</p>
 <p>Requirements for this task:</p>
@@ -161,10 +163,8 @@ This tutorial will familiarize you with the following:</p>
 </li>
 <li>
 <p>Make sure you are creating the project in the <strong>src</strong> folder and name the project <strong>Microsoft.Knowzy.AppService</strong>.</p>
-</li>
-</ul>
 <p><img alt="Create AppService Project" src="../images/223-appservice-project.png" /></p>
-<ul>
+</li>
 <li>
 <p>Rename the Class1.cs file in the Microsoft.Knowzy.AppService project to AppServiceTask.cs</p>
 </li>

@@ -174,23 +174,22 @@ After a build and deployment of the Knowzy app, we will find the Products.json f
 </li>
 <li>
 <p>Name the library Microsoft.Knowzy.UwpHelpers. Make sure you are saving the project to the <strong>src</strong> directory.</p>
+<p><img alt="Create C# Class Library" src="../images/213-create-lib.png" /></p>
 </li>
 </ul>
-<p><img alt="Create C# Class Library" src="../images/213-create-lib.png" /></p>
 <p>There exists a convenient NuGet package called <a href="https://www.nuget.org/packages/UwpDesktop">UwpDesktop</a> that makes it easy for you call into UWP APIs 
 from Desktop and Centennial apps (WPF, WinForms, etc.) Let's add this NuGet package to our Microsoft.Knowzy.UwpHelpers project.</p>
 <ul>
-<li>Right-click on the Microsoft.Knowzy.UwpHelpers project and select <strong>Manage NuGet Packages...</strong></li>
-</ul>
-<p><img alt="Manage NuGet Packages" src="../images/213-manage-nuget-packages.png" /></p>
-<ul>
-<li>Click on <strong>Browse</strong>, enter UwpDesktop in the search field and then click on  <strong>Install</strong></li>
-</ul>
-<p><img alt="Install UwpDesktop" src="../images/213-uwpdesktop.png" /></p>
-<ul>
 <li>
-<p><strong>Note:</strong> Every time you add a NuGet package to a Desktop Bridge project you should probably rebuild the solution so the newly added NuGet package DLLs are correctly added to the UWP project.
-If you get a DLL not found exception when running your app, it may be because the AppX is missing the newly added DLL.</p>
+<p>Right-click on the Microsoft.Knowzy.UwpHelpers project and select <strong>Manage NuGet Packages...</strong></p>
+<p><img alt="Manage NuGet Packages" src="../images/213-manage-nuget-packages.png" /></p>
+</li>
+<li>
+<p>Click on <strong>Browse</strong>, enter UwpDesktop in the search field and then click on  <strong>Install</strong></p>
+<p><img alt="Install UwpDesktop" src="../images/213-uwpdesktop.png" /></p>
+<blockquote>
+<p><strong>Note:</strong> Every time you add a NuGet package to a Desktop Bridge project you should probably rebuild the solution so the newly added NuGet package DLLs are correctly added to the UWP project. If you get a DLL not found exception when running your app, it may be because the AppX is missing the newly added DLL.</p>
+</blockquote>
 </li>
 <li>
 <p>Add a new C# class to the Microsoft.Knowzy.UwpHelpers . Name the file ExecutionMode.cs.</p>

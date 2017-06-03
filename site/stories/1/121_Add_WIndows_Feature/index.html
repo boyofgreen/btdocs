@@ -85,39 +85,39 @@ if(window.Windows &amp;&amp; Windows.UI.Core.SystemNavigationManager){
 <h3 id="add-code-to-customize-your-pwa-app-container">Add code to customize your PWA App container</h3>
 <p>Start out by adding some code that adds a message to the tile in the start menu.  This code can be run from any page, but you will likely want to place it on index.cshtml, so that it runs as soon as the app is opened. </p>
 <ol>
-<li>Open <code>Shipping\index.cshtml</code> in Visual Studio and add a script tag at the bottom of the page.</li>
-<li>Add the following feature detection inside the script tag:</li>
-</ol>
+<li>
+<p>Open <code>Shipping\index.cshtml</code> in Visual Studio and add a script tag at the bottom of the page.</p>
+</li>
+<li>
+<p>Add the following feature detection inside the script tag:</p>
 <pre><code>if(window.Windows &amp;&amp; Windows.UI.Notifications){
 /*execute code that calls WIndows APIs */
 }
-
 </code></pre>
-
-<ol>
-<li>Inside the feature detection, add the following code to load the live tile:</li>
-</ol>
+</li>
+<li>
+<p>Inside the feature detection, add the following code to load the live tile:</p>
 <pre><code>var tileContent = new Windows.Data.Xml.Dom.XmlDocument();
  
-var tile = tileContent.createElement(&quot;tile&quot;);
+var tile = tileContent.createElement("tile");
 tileContent.appendChild(tile);
  
-var visual = tileContent.createElement(&quot;visual&quot;);
+var visual = tileContent.createElement("visual");
 tile.appendChild(visual);
  
-var bindingMedium = tileContent.createElement(&quot;binding&quot;);
-bindingMedium.setAttribute(&quot;template&quot;, &quot;TileMedium&quot;);
+var bindingMedium = tileContent.createElement("binding");
+bindingMedium.setAttribute("template", "TileMedium");
 visual.appendChild(bindingMedium);
  
-var peekImage = tileContent.createElement(&quot;image&quot;);
-peekImage.setAttribute(&quot;placement&quot;, &quot;peek&quot;);
-peekImage.setAttribute(&quot;src&quot;, &quot;https://unsplash.it/150/150/?random&quot;);
-peekImage.setAttribute(&quot;alt&quot;, &quot;Welcome to Knowsie!&quot;);
+var peekImage = tileContent.createElement("image");
+peekImage.setAttribute("placement", "peek");
+peekImage.setAttribute("src", "https://unsplash.it/150/150/?random");
+peekImage.setAttribute("alt", "Welcome to Knowsie!");
 bindingMedium.appendChild(peekImage);
  
-var text = tileContent.createElement(&quot;text&quot;);
-text.setAttribute(&quot;hint-wrap&quot;, &quot;true&quot;);
-text.innerText = &quot;Demo Message&quot;;
+var text = tileContent.createElement("text");
+text.setAttribute("hint-wrap", "true");
+text.innerText = "Demo Message";
 bindingMedium.appendChild(text);
 
 //fire the notification
@@ -126,12 +126,13 @@ var notifications = Windows.UI.Notifications;
 var tileNotification = new notifications.TileNotification(tileContent);
 notifications.TileUpdateManager.createTileUpdaterForApplication().update(tileNotification);
 </code></pre>
-
+</li>
+</ol>
 <h3 id="test-your-changes">Test your changes</h3>
 <p>To test the changes you have just made, follow the instructions in section 1.1.3 for deploying your web app, then re-deploy your changes.  One of the great things about a PWA is that you don't need to redeploy your app to see the changes, you just need to deploy to the web server.  You should be able to run your app again and see your live tile code take effect (pin your app's tile to the start menu to see).  If you don't see it immediately, it may be because of the great caching you have in your app. If this happens, you can force a cache clear by uninstalling your PWA, then installing it again from the script you downloaded from PWABuilder.com.</p>
 <p><img alt="see live tile" src="../images/livetile.png" /></p>
 <p><strong>NOTE</strong> if your Visual Studio session is still debugging your Azure instance, you may need to halt your debugger before you test locally again.</p>
-<h2 id="continue-to-bonus-task">Continue to <a href="../122_BONUS-RenoFeatures/">Bonus task &gt;&gt; </a></h2>
+<h2 id="continue-to-next-task">Continue to <a href="../122_BONUS-RenoFeatures/">next task &gt;&gt; </a></h2>
        
 
     </div>

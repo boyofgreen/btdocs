@@ -59,51 +59,40 @@
 <h3 id="add-web-app-manifest-to-your-site">Add Web App Manifest to your site</h3>
 <p>The first thing you will need to do is pull the "manifest.json" file and the "images" folder that you obtained from the zip file in the previous step.</p>
 <ol>
-<li>Add the manifest.json and the "images" folder to the root path of your site (wwwroot).  Remember, if you change the path of your "images" folder, you need to update the json in your manifest file to reflect your changes. The easiest way to add new content to a project is to drag and drop the contents from the file explorer into the solutions explorer of your project.</li>
-</ol>
-<p>![add image of manifest and paths ]</p>
-<ol>
+<li>
+<p>Add the manifest.json and the "images" folder to the root path of your site (wwwroot).  Remember, if you change the path of your "images" folder, you need to update the json in your manifest file to reflect your changes. The easiest way to add new content to a project is to drag and drop the contents from the file explorer into the solutions explorer of your project.</p>
+<!-- ![add image of manifest and paths ] -->
+
+</li>
 <li>
 <p>Reference the manifest in your page with a link tag:</p>
-<p><code>&lt;link rel="manifest" href="manifest.json"&gt;&lt;/link&gt;</code>
-This can be done by opening the <code>Views\Shippings\Index.cshtml</code> page in your site, and adding the following to the top of the document:</p>
+<pre><code>&lt;link rel="manifest" href="manifest.json"&gt;&lt;/link&gt;
+</code></pre>
+<p>This can be done by opening the <code>Views\Shippings\Index.cshtml</code> page in your site, and adding the following to the top of the document:</p>
+<pre><code>@section HeadExtension{ 
+&lt;link rel="manifest" href="manifest.json" /&gt;
+}
+</code></pre>
 </li>
 </ol>
-<pre><code>@section HeadExtension{ 
-&lt;link rel=&quot;manifest&quot; href=&quot;manifest.json&quot; /&gt;
-}
-
-</code></pre>
-
 <h3 id="add-service-worker-code-to-your-site">Add Service Worker code to your site</h3>
 <p>Your Service Worker needs to be added to your site to begin working.  </p>
 <ol>
-<li>Copy the "pwabuilder-sw.js" file from the zip you downloaded on the Service Worker page of the PWA Builder website and add it to your js folder in wwwroot  (not in a folder) like so:</li>
-</ol>
+<li>
+<p>Copy the "pwabuilder-sw.js" file from the zip you downloaded on the Service Worker page of the PWA Builder website and add it to your js folder in wwwroot  (not in a folder) like so:</p>
 <p><img alt="show sw location" src="../images/swlocal.png" /></p>
-<!--
-
-2.  You will then want to add a short "time to live" for your manifest file so it can be updated often.  To do this you will need to add the following block of code to
-
-!!!!!!!!!!!!!!!!!!!!!!!how do you send a short expiration on this file"!!!!!!!!!!!!!!!!?????????????
-
--->
-
-<ol>
-<li>Open up the landing page of your app (index.cshtml) and create a new script tag in the head from within the same HeadExtension section like so:</li>
-</ol>
+</li>
+<li>
+<p>Open up the landing page of your app (index.cshtml) and create a new script tag in the head from within the same HeadExtension section like so:</p>
 <pre><code>@section HeadExtension{ 
-&lt;link rel=&quot;manifest&quot; href=&quot;manifest.json&quot; /&gt;
+&lt;link rel="manifest" href="manifest.json" /&gt;
 &lt;script&gt;&lt;/script&gt;
 }
-
-
 </code></pre>
-
 <p>You will want to place this at the top of your document.</p>
-<ol>
-<li>Add the following registration code inside the new script tag:</li>
-</ol>
+</li>
+<li>
+<p>Add the following registration code inside the new script tag:</p>
 <pre><code>//This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
 
 //Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
@@ -118,9 +107,9 @@ if (navigator.serviceWorker.controller) {
     console.log('Service worker has been registered for scope:'+ reg.scope);
   });
 }
-
 </code></pre>
-
+</li>
+</ol>
 <!-- 
 ### Prime your Service Worker for offline
 
@@ -132,7 +121,7 @@ This Particular Service Worker makes a copy of all the pages you visit and cache
 2. Copy and past the following JSON object into the new file
 
 
-wzxhzdk:3
+wzxhzdk:0
 
 -->
 
@@ -146,12 +135,14 @@ This Particular Service Worker makes a copy of all the pages you visit and cache
 </li>
 <li>
 <p>Choose "Microsoft Azure App Service" from the selection screen.</p>
-</li>
-</ol>
+<blockquote>
 <p><strong>NOTE</strong> if your Visual Studio project is still debugging your Azure server or your local server, you may need to halt the server before re-publishing.</p>
+</blockquote>
 <p><img alt="publish screen from vs" src="../images/publish1.PNG" /></p>
-<ol>
-<li>Choose "deploy"</li>
+</li>
+<li>
+<p>Choose "deploy"</p>
+</li>
 </ol>
 <h2 id="references">References</h2>
 <ul>

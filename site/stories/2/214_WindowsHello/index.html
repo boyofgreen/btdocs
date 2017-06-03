@@ -87,13 +87,15 @@ To get started, please open the <strong>Microsoft.Knowzy.WPF.sln</strong> in the
 <p>Note: If you are starting with this from the <strong>2.1.4</strong> branch, you will need to do the following:</p>
 </blockquote>
 <ul>
-<li>Set the Build configuration to <strong>Debug | x86</strong></li>
-</ul>
+<li>
+<p>Set the Build configuration to <strong>Debug | x86</strong></p>
 <p><img alt="Debug | x86" src="../images/212-debug-x86.png" /></p>
-<ul>
-<li>Select <strong>Options</strong> from the <strong>Debug</strong> menu, From the <strong>Debugging | General</strong> Tab,  disable the <strong>Enable Just My Code</strong> option.</li>
-</ul>
+</li>
+<li>
+<p>Select <strong>Options</strong> from the <strong>Debug</strong> menu, From the <strong>Debugging | General</strong> Tab,  disable the <strong>Enable Just My Code</strong> option.</p>
 <p><img alt="Just My Code" src="../images/212-just-my-code.png" /></p>
+</li>
+</ul>
 <p>Verify these settings before you continue with this task.</p>
 <h4 id="step-1-add-a-new-uwp-helper-class-for-windows-hello">Step 1: Add a New UWP Helper Class for Windows Hello</h4>
 <p>Following the techniques presented in the previous task, we are going to add the Windows 10 UWP code for the Windows Hello API and Toast notifications as helper classes.
@@ -251,11 +253,11 @@ public async void Handle(OpenLoginMessage message)
 <p>If your computer is not capable of running the Windows Hello Login, a Toast will appear in the lower left corner of your screen.</p>
 </li>
 </ul>
-</li>
-</ul>
 <p><img alt="Login UWP" src="../images/214-login-uwp.png" /></p>
-<ul>
-<li>Run just the WPF version (right-click on the Microsoft.Knowzy.WPF project and select Debug | Start new instance). Clicking on the Login button will show:</li>
+</li>
+<li>
+<p>Run just the WPF version (right-click on the Microsoft.Knowzy.WPF project and select Debug | Start new instance). Clicking on the Login button will show:</p>
+</li>
 </ul>
 <p><img alt="Login WPF" src="../images/214-login-wpf.png" /></p>
 <p>Please note that this is not a complete implementation of Windows Hello login. For more information, please go <a href="https://docs.microsoft.com/en-us/windows/uwp/security/microsoft-passport">here</a>.</p>
