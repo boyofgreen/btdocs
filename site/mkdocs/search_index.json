@@ -12,7 +12,7 @@
         }, 
         {
             "location": "/references/", 
-            "text": "Build Tour 2017 References\n\n\n\n\nNote: This is a live page that will be updated during the Build Tour. More content coming later this month.\n\n\n\n\nKeynote\n\n\n\n\nBring your app to the Windows Store\n\n\nModernize your app with UWP\n\n\nXAML Standard and .NET Standard 2.0\n\n\nMicrosoft Graph\n\n\nMicrosoft Azure\n\n\nFluent Design System\n\n\nMixed Reality\n\n\n\n\nProgressive Web Apps\n\n\n\n\nPWA Builder\n\n\nWeb apps for education\n\n\nPWA Build session video\n\n\n\n\nDesktop Bridge\n\n\n\n\nDesktop Bridge\n\n\nFeedback\n\n\nSamples\n\n\nMicrosoft Virtual Academy Tutorials\n\n\n\n\nXamarin\n\n\n\n\nXamarin Live Player\n \n\n\nVisual Studio Mobile Center\n  \n\n\nXamarin Session demos: \nTasky\n, \nAzure Storage\n, \nEmbedded Forms\n \n\n\nWhat's new in Xamarin Forms, Build 2017\n \n\n\nVisual Studio Mobile Center, Build 2017\n\n\n\n\nContainers\n\n\n\n\nContainers\n\n\nMicrosoft Docker Hub\n\n\nVisual Studio Code\n\n\nVS Code Docker Extension\n\n\n\n\nWhat's New in AI\n\n\n\n\nMicrosoft AI\n\n\nCognitive Services\n\n\nCustom Vision Service\n\n\nCustom Speech Service\n\n\nAdaptive Cards\n\n\nBot Framework\n\n\n\n\nServerless in Azure\n\n\n\n\nTry Functions and Logic App\n\n\nAzure Function Community", 
+            "text": "Build Tour 2017 References\n\n\n\n\nNote: This is a live page that will be updated during the Build Tour. More content coming later this month.\n\n\n\n\nKeynote\n\n\n\n\nBring your app to the Windows Store\n\n\nModernize your app with UWP\n\n\nXAML Standard and .NET Standard 2.0\n\n\nMicrosoft Graph\n\n\nMicrosoft Azure\n\n\nFluent Design System\n\n\nMixed Reality\n\n\n\n\nProgressive Web Apps\n\n\n\n\nPWA Builder\n\n\nWeb apps for education\n\n\nPWAs, Build 2017\n\n\n\n\nDesktop Bridge\n\n\n\n\nDesktop Bridge\n\n\nFeedback\n\n\nSamples\n\n\nMicrosoft Virtual Academy Tutorials\n\n\n\n\nXamarin\n\n\n\n\nXamarin Live Player\n \n\n\nVisual Studio Mobile Center\n  \n\n\nXamarin Session demos: \nTasky\n, \nAzure Storage\n, \nEmbedded Forms\n \n\n\nWhat's new in Xamarin Forms, Build 2017\n \n\n\nVisual Studio Mobile Center, Build 2017\n\n\n\n\nContainers\n\n\n\n\nContainers\n\n\nMicrosoft Docker Hub\n\n\nVisual Studio Code\n\n\nVS Code Docker Extension\n\n\n\n\nWhat's New in AI\n\n\n\n\nMicrosoft AI\n\n\nCognitive Services\n\n\nCustom Vision Service\n\n\nCustom Speech Service\n\n\nAdaptive Cards\n\n\nBot Framework\n\n\n\n\nServerless in Azure\n\n\n\n\nTry Functions and Logic App\n\n\nAzure Function Community", 
             "title": "References"
         }, 
         {
@@ -27,7 +27,7 @@
         }, 
         {
             "location": "/references/#progressive-web-apps", 
-            "text": "PWA Builder  Web apps for education  PWA Build session video", 
+            "text": "PWA Builder  Web apps for education  PWAs, Build 2017", 
             "title": "Progressive Web Apps"
         }, 
         {
