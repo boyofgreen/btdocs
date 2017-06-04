@@ -170,7 +170,7 @@ private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
 <p>In addition to using the built in Xamarin.Forms controls, developers have full access to native platform controls through <a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/native-views/">native view declaration</a>. This allows developers to use native or custom controls (such as the UWP Community Toolkit), and mix them with Xamarin.Forms controls directly in XAML. For our app, we can use the native InkCanvas control and InkToolbar control when the app runs on UWP.</p>
 <ol>
 <li>
-<p>To make native views consumable via XAML, add XML namespaces for each platform we’ll be embedding views from.</p>
+<p>To make native views consumable via XAML, add XML namespaces for each platform we'll be embedding views from.</p>
 <p>We'll add the namespace for the UWP native controls as part of the ContentPage declaration that we created in the previous task (CameraPage in our example):</p>
 <pre><code>&lt;ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
