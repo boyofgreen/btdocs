@@ -58,8 +58,6 @@
 <h2 id="task">Task</h2>
 <h3 id="test-the-app-in-browsers">Test the App in Browsers</h3>
 <p>First, make sure that your PWA works well in the browser.  One of the main principles of PWAs is that the app must be "Progressive", meaning that the app should work in any environment. Once the app is confirmed to load as a basic web site, then begin taking advantage of advanced features (such as service workers and app manifest) when they are available.  In normal circumstances, you would want to test your app in the array of browsers used by your user. To get you started, we have the newest version of Edge (with service worker support) available to you for free on BrowserStack.  </p>
-<!-- **NOTE** for Dry Run Users, Edge 16 may not yet be available in BrowserStack.  You can test the service worker code in chrome **END NOTE** -->
-
 <ol>
 <li>
 <p>In your browser, visit <a href="https://www.browserstack.com/test-on-microsoft-edge-browser#live-cloud">https://www.browserstack.com/test-on-microsoft-edge-browser</a>.</p>
@@ -68,11 +66,13 @@
 <p>Create an account if you don't already have one.</p>
 </li>
 <li>
-<p>Choose Windows &gt; 10 &gt; Edge 16 &gt; new session to get started testing in Microsoft Edge.</p>
-<p>!(image of browser stack select)</p>
+<p>Choose Windows &gt; 10 &gt; Edge 15 &gt; new session to get started testing in Microsoft Edge.</p>
 </li>
 <li>
 <p>You can also use BrowserStack to test in other browsers you don't have installed on your device (trial limitations apply).</p>
+</li>
+<li>
+<p>As of today, testing Service Workers can only be tested in public builds of the latest versions of chrome and FireFox. Totest Service Worker code, open Windows &gt; 10 &gt; Chrome &gt; 58.</p>
 </li>
 <li>
 <p>To test the service worker, simply visit a number of pages with the service worker attached to your app. Each page you visit will be added to the cache (don't worry the service worker will always keep itself up to date).  You can then go offline and see each of those pages still work fine without a connection.  If you are using BrowserStack and can't go offline, simply open up the F12 tooling in the browser and you can validate that the service worker is caching it's content via the console logs.</p>
