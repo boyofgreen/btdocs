@@ -287,7 +287,7 @@
         }, 
         {
             "location": "/stories/1/122_BONUS-RenoFeatures/", 
-            "text": "Add Secondary Pinning and Native Share to App (1.2.2)\n\n\nThis task has a dependency on \nTask 1.2.1\n and all of it's prerequisites.\n\n\nTask\n\n\n\n\n\n\nNavigate to \nReno.js library documentation\n.\n\n\n\n\n\n\nAdd this js file to site.\n\n\n\n\n\n\nConfigure the features if necessary. \n\n\n\n\n\n\nRedeploy site.\n\n\n\n\n\n\nReinstall your local app (right click PowerShell script included in pwabuilder.com download).\n\n\n\n\n\n\nReferences\n\n\n\n\nProject Reno on GitHub\n\n\n\n\nContinue to \nnext task", 
+            "text": "Add Secondary Pinning and Native Share to App (1.2.2)\n\n\nThis task has a dependency on \nTask 1.2.1\n and all of it's prerequisites.\n\n\nTask\n\n\n\n\n\n\nNavigate to \nReno.js library documentation\n and follow the instructions in the README\n\n\n\n\n\n\nConfigure the features if necessary. \n\n\n\n\n\n\nRedeploy site.\n\n\n\n\n\n\nReinstall your local app (right click PowerShell script included in pwabuilder.com download).\n\n\n\n\n\n\nReferences\n\n\n\n\nProject Reno on GitHub\n\n\n\n\nContinue to \nnext task", 
             "title": "122 BONUS RenoFeatures"
         }, 
         {
@@ -297,7 +297,7 @@
         }, 
         {
             "location": "/stories/1/122_BONUS-RenoFeatures/#task", 
-            "text": "Navigate to  Reno.js library documentation .    Add this js file to site.    Configure the features if necessary.     Redeploy site.    Reinstall your local app (right click PowerShell script included in pwabuilder.com download).", 
+            "text": "Navigate to  Reno.js library documentation  and follow the instructions in the README    Configure the features if necessary.     Redeploy site.    Reinstall your local app (right click PowerShell script included in pwabuilder.com download).", 
             "title": "Task"
         }, 
         {
