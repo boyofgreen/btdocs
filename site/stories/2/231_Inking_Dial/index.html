@@ -79,6 +79,16 @@ for some sample code. You will need to add the Win2D.uwp NuGet Package to your U
 <p>Our research has found a starting point for the inking idea <a href="https://docs.microsoft.com/en-us/windows/uwp/input-and-devices/pen-and-stylus-interactions">here</a></p>
 <h6 id="1043am">@ 10:43am</h6>
 <p>We also found sample code for Inking <a href="https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/SimpleInk">here</a></p>
+<h6 id="1049am">@ 10:49am</h6>
+<p>You might need to add the following to the Dependencies tag of Package.appxmanifest in Microsoft.Knowzy.UWP in order to be able to use Win2D with Visual Studio 2017</p>
+<pre><code class="xml">  &lt;Dependencies&gt;
+    &lt;TargetDeviceFamily Name=&quot;Windows.Desktop&quot; MinVersion=&quot;10.0.14393.0&quot; MaxVersionTested=&quot;10.0.14393.0&quot; /&gt;
+    &lt;PackageDependency Name=&quot;Microsoft.VCLibs.140.00&quot; MinVersion=&quot;14.0.22929.0&quot; Publisher=&quot;CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US&quot; /&gt;
+  &lt;/Dependencies&gt;
+</code></pre>
+
+<h6 id="1058am">@ 10:58am</h6>
+<p>Hint: save the image file you receive from the Sharing Protocol to ApplicationData.Current.TemporaryFolder before trying to open it with Win2D.</p>
 <h2 id="continue-to-next-task">continue to <a href="../232_Windows_Hello/">next task &gt;&gt; </a></h2>
        
 
