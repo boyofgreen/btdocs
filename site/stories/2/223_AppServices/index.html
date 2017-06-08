@@ -166,6 +166,9 @@ This tutorial will familiarize you with the following:</p>
 <li>Make sure the Microsoft.Knowzy.WPF.sln Build configuration to <strong>Debug | x86</strong></li>
 </ul>
 <p><img alt="Debug | x86" src="../images/212-debug-x86.png" /></p>
+<ul>
+<li>Set the <strong>Microsoft.Knowzy.Debug</strong> project as the startup project.</li>
+</ul>
 <h2 id="task">Task</h2>
 <h4 id="create-the-app-service-project">Create the App Service Project</h4>
 <ul>
@@ -265,8 +268,7 @@ using Windows.ApplicationModel.Background;
 </li>
 <li>
 <p>Add the following using directives to AppService.cs</p>
-<pre><code>using System.Threading.Tasks;
-using Windows.ApplicationModel.AppService;
+<pre><code>using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 </code></pre>
 </li>
@@ -607,9 +609,16 @@ private AppServiceConnection _connection = null;
         bool result = message.ContainsKey("Status") &amp;&amp; message["Status"].ToString() == "OK";
         if (result)
         {
-            var text = message["Data"] as String;
-            textBox.Text = text;
+            textBox.Text = message["Data"] as String;
         }
+        else if (message.ContainsKey("ErrorMessage"))
+        {
+            textBox.Text = message["ErrorMessage"] as String;
+        }
+    }
+    else
+    {
+        textBox.Text = "App Service connection error: " + response.Status;
     }
 }
 </code></pre>
@@ -658,6 +667,7 @@ private AppServiceConnection _connection = null;
 <p><a href="https://blogs.windows.com/buildingapps/2017/02/01/adding-uwp-features-existing-pc-software/#vEJwTPxsf80CZvOh.97">Adding UWP features to your existing PC software</a></p>
 </li>
 </ul>
+<h2 id="the-solution-for-this-task-is-located-here">The solution for this task is located <a href="https://github.com/Knowzy/KnowzyAppsFinal/tree/master/stories/2/2.2.3">here</a></h2>
 <h2 id="continue-to-next-task">continue to <a href="../231_Inking_Dial/">next task &gt;&gt; </a></h2>
        
 
