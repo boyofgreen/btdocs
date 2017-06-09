@@ -112,23 +112,23 @@ if(window.Windows &amp;&amp; Windows.UI.Core.SystemNavigationManager){
 <li>
 <p>Inside the feature detection, add the following code to load the live tile:</p>
 <pre><code>var tileContent = new Windows.Data.Xml.Dom.XmlDocument();
- 
+
 var tile = tileContent.createElement("tile");
 tileContent.appendChild(tile);
- 
+
 var visual = tileContent.createElement("visual");
 tile.appendChild(visual);
- 
+
 var bindingMedium = tileContent.createElement("binding");
 bindingMedium.setAttribute("template", "TileMedium");
 visual.appendChild(bindingMedium);
- 
+
 var peekImage = tileContent.createElement("image");
 peekImage.setAttribute("placement", "peek");
 peekImage.setAttribute("src", "https://unsplash.it/150/150/?random");
 peekImage.setAttribute("alt", "Welcome to Knowsie!");
 bindingMedium.appendChild(peekImage);
- 
+
 var text = tileContent.createElement("text");
 text.setAttribute("hint-wrap", "true");
 text.innerText = "Demo Message";

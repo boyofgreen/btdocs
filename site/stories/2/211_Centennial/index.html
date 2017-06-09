@@ -92,12 +92,24 @@ Future updates to Visual Studio 2017 will most likely add Desktop Bridge project
 </li>
 </ul>
 <h2 id="task-add-desktop-bridge-support-in-visual-studio">Task: Add Desktop Bridge support in Visual Studio</h2>
-<p>This task covers the following steps: 
-1. Open the existing Knowzy Win32 solution with Visual Studio 2017
-2. Add a UWP project and add a project dependency to the existing WPF project
-3. Add the Microsoft.Knowzy.WPF binaries to the UWP project
-4. Edit the Microsoft.Knowzy.UWP package manifest to enable the Desktop Bridge extensions
-5. Deploy and run your converted Win32 App</p>
+<p>This task covers the following steps: </p>
+<ol>
+<li>
+<p>Open the existing Knowzy Win32 solution with Visual Studio 2017</p>
+</li>
+<li>
+<p>Add a UWP project and add a project dependency to the existing WPF project</p>
+</li>
+<li>
+<p>Add the Microsoft.Knowzy.WPF binaries to the UWP project</p>
+</li>
+<li>
+<p>Edit the Microsoft.Knowzy.UWP package manifest to enable the Desktop Bridge extensions</p>
+</li>
+<li>
+<p>Deploy and run your converted Win32 App</p>
+</li>
+</ol>
 <h4 id="step-1-open-the-existing-knowzy-win32-solution-with-visual-studio-2017">Step 1: Open the existing Knowzy Win32 solution with Visual Studio 2017</h4>
 <p>We will be converting an existing WPF application from Win32 to UWP. To get started, use Visual Studio 2017 to open <strong>Microsoft.Knowzy.WPF.sln</strong> in the <strong>src\Knowzy_Engineering_Win32App</strong> folder.</p>
 <p>Set the Microsoft.Knowzy.WPF project as the startup project. Press F5 to build and run the project. Feel free to try out the application and then quit the application and return to Visual Studio.</p>
@@ -373,6 +385,7 @@ capability grants Desktop app capabilities to our UWP app. Add the following cap
 </li>
 </ul>
 <p><img alt="Deploy" src="../images/211-deploy.png" /></p>
+<p>If you try to deploy at this point, you will see an error that says <code>Applications with custom entry point executables are not supported. Check Executable attribute of the Application element in the package manifest</code>:</p>
 <pre><code>    1&gt;------ Build started: Project: Microsoft.Knowzy.UWP, Configuration: Debug x86 ------
     1&gt;  Microsoft.Knowzy.UWP -&gt; C:\Users\stammen\github\BuildTourHack\src\Microsoft.Knowzy.UWP\bin\x86\Debug\Microsoft.Knowzy.UWP.exe
     1&gt;C:\Program Files (x86)\MSBuild\15.0\.Net\CoreRuntime\Microsoft.Net.CoreRuntime.targets(236,5): error : Applications with custom entry point executables are not supported. Check Executable attribute of the Application element in the package manifest
@@ -401,9 +414,8 @@ Until the bug is fixed, we will need to use the <strong>Release</strong> configu
 </li>
 </ul>
 <p>Your Win32 WPF app has now been packaged as a UWP app using Visual Studio.</p>
-<p>In the Windows Start menu, search for <strong>Microsoft.Knowzy.UWP</strong>. </p>
+<p>In the Windows Start menu, search for <strong>Microsoft.Knowzy.UWP</strong>. If you click the UWP app in the Start menu, <strong>you'll notice that it does not run</strong>. Actually, it did run but it exited immediately due to an error.</p>
 <p><img alt="Start menu" src="../images/211-startmenu.png" /></p>
-<p>If you click the UWP app in the Start menu, you'll notice that it does not run. Actually, it did run but it exited immediately due to an error.</p>
 <p>The error is the app cannot load the project.json file it needs to generate the Products list. The app then
 throws an exception and exits.</p>
 <p>We'll debug this error in a later task, but for now, let's comment out some code so that the app will run.</p>
