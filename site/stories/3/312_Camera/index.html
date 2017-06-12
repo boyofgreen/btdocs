@@ -145,7 +145,7 @@ public CameraPage(Nose nose)
 <p>Add a method definition for capturing the photo. It should look like this:</p>
 <pre><code>public interface IPhotoService
 {
-    Task&lt;ImageSource&gt; TakePhotoAsync();
+    Task&lt;byte[]&gt; TakePhotoAsync();
 }
 </code></pre>
 <p>You'll need to add few namespaces:</p>
@@ -167,7 +167,7 @@ namespace YourNamespace.UWP
 {
         public class PhotoService : IPhotoService
         {
-            public async Task&lt;ImageSource&gt; TakePhotoAsync()
+            public async Task&lt;byte[]&gt; TakePhotoAsync()
             {
 
             }
@@ -177,7 +177,7 @@ namespace YourNamespace.UWP
 </li>
 <li>
 <p>Implement the TakePhotoAsync method to use the native <a href="https://docs.microsoft.com/en-us/uwp/api/windows.media.capture.cameracaptureui">CameraCaptureUI</a> from UWP and make it async:</p>
-<pre><code>public Task&lt;ImageSource&gt; TakePhotoAsync()
+<pre><code>public Task&lt;byte[]&gt; TakePhotoAsync()
 {
         CameraCaptureUI captureUI = new CameraCaptureUI();
         captureUI.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
@@ -186,7 +186,12 @@ namespace YourNamespace.UWP
 
         if (photo == null) return null;
 
-        return ImageSource.FromFile(photo.Path);
+        using (var stream = await photo.OpenReadAsync())
+        {
+            var buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
+            var data = await stream.ReadAsync(buffer, (uint)stream.Size, Windows.Storage.Streams.InputStreamOptions.None);
+            return data.ToArray();
+        }
 }
 </code></pre>
 <p>You'll also need few namespaces:</p>
@@ -252,7 +257,7 @@ namespace YourNamespace.Droid
 {
         public class PhotoService : IPhotoService
         {
-            public Task&lt;ImageSource&gt; TakePhotoAsync()
+            public Task&lt;byte[]&gt; TakePhotoAsync()
             {
 
             }
@@ -274,14 +279,21 @@ namespace YourNamespace.Droid
 <li>Creates TaskCompletionSource instance that will complete once the image has been captured and the event has raised.</li>
 </ul>
 <p>Here's the code.</p>
-<pre><code>public Task&lt;ImageSource&gt; TakePhotoAsync()
+<pre><code>public Task&lt;byte[]&gt; TakePhotoAsync()
 {
     var mainActivity = Forms.Context as MainActivity;
-    var tcs = new TaskCompletionSource&lt;ImageSource&gt;();
+    var tcs = new TaskCompletionSource&lt;byte[]&gt;();
     EventHandler&lt;Java.IO.File&gt; handler = null;
     handler = (s, e) =&gt;
     {
-        tcs.SetResult(e.Path);
+        using (var streamReader = new StreamReader(e.Path))
+        {
+            using (var memstream = new MemoryStream())
+            {
+                streamReader.BaseStream.CopyTo(memstream);
+                tcs.SetResult(memstream.ToArray());
+            }
+        }
         mainActivity.ImageCaptured -= handler;
     };
 
@@ -315,8 +327,8 @@ namespace YourNamespace.Droid
     var photoService = DependencyService.Get&lt;IPhotoService&gt;();
     if(photoService != null)
     {
-        var source = await photoService.TakePhotoAsync();
-        image.Source = source;
+        var imageBytes = await photoService.TakePhotoAsync();
+        image.Source = ImageSource.FromStream(() =&gt; new MemoryStream(imageBytes));
     }
 }
 </code></pre>

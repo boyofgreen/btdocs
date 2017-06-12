@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>323 IntegrateCogSvc - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+<style>
+  body ul {
+    margin-left: 30px;
+    list-style: outside;
+  }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
+</style>
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<!--
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?dee7a3ddc5dbacaa0bd8de730683378e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script src="https://s13.cnzz.com/z_stat.php?id=1262155909&web_id=1262155909" language="JavaScript"></script>
+-->
+
+
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-323-update-xamarin-app-to-call-coginitive-services-apis">Task 3.2.3 - Update Xamarin App to call Coginitive Services APIs</h1>
+<p>It is now time to integrate calls to the Cognitive Services that you created in the previous steps into the Xamarin application. These calls can be made directly from the app. An alternative design would be to host functionality on Azure to make these calls.</p>
+<p><strong>Goals for this task:</strong> Create new functionality to the previously created Camera Page which will call the Cognitive Services APIs and display the results to the user.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>This task has a dependency on <a href="../322_EmotionAPI/">Task 3.2.2</a> and all of it's prerequisites.</li>
+</ul>
+<h2 id="task">Task</h2>
+<h3 id="add-a-new-layout-to-the-camera-page-to-display-predictions">Add a new layout to the Camera Page to display predictions</h3>
+<ol>
+<li>In Visual Studio open CameraPage.xaml</li>
+<li>Update the XAML to add a new <code>Grid</code> and other elements to display prediction results after calling Cognitive Services. Add the following snippet immediately below the <code>Button</code> element:<pre><code>&lt;Grid&gt;
+    &lt;Grid.ColumnDefinitions&gt;
+        &lt;ColumnDefinition Width="Auto" /&gt;
+        &lt;ColumnDefinition Width="*" /&gt;
+    &lt;/Grid.ColumnDefinitions&gt;
+    &lt;Grid.RowDefinitions&gt;
+        &lt;RowDefinition Height="Auto" /&gt;
+        &lt;RowDefinition Height="Auto" /&gt;
+        &lt;RowDefinition Height="Auto" /&gt;
+    &lt;/Grid.RowDefinitions&gt;
+    &lt;Label Grid.Row="0" Grid.Column="0" Text="Knowzy Products: "&gt;&lt;/Label&gt;
+    &lt;Label Grid.Row="0" Grid.Column="1" FontAttributes="Bold"  x:Name="productTags"&gt;&lt;/Label&gt;
+    &lt;Label Grid.Row="1" Grid.Column="0" Text="Probability (%): "&gt;&lt;/Label&gt;
+    &lt;Label Grid.Row="1" Grid.Column="1" FontAttributes="Bold" x:Name="productTagProbability"&gt;&lt;/Label&gt;
+    &lt;Label Grid.Row="2" Grid.Column="0" Text="Emotion: "&gt;&lt;/Label&gt;
+    &lt;Label Grid.Row="2" Grid.Column="1" FontAttributes="Bold" x:Name="emotionTag"&gt;&lt;/Label&gt;
+&lt;/Grid&gt;
+</code></pre>
+</li>
+</ol>
+<h3 id="add-code-to-call-the-custom-vision-service">Add code to call the Custom Vision service</h3>
+<ol>
+<li>
+<p>Open the code-behind file for CameraPage.xaml. </p>
+<ul>
+<li>
+<p>Add the following <code>using</code> statements at the top of the file:</p>
+<pre><code>using System.Net.Http;
+using System.Net.Http.Headers;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+</code></pre>
+</li>
+<li>
+<p>Navigate to the <code>captureButton_Clicked</code> method and update the body with the following code to invoke the <strong>Custom Vision</strong> service and display the results.
+  <strong>Note:</strong> You must replace the <code>Prediction-Key</code> header with the <strong>Prediction Key</strong> value from your Custom Vision project. Additionally, you must replace the <code>url</code> with the <strong>Prediction URL</strong> you obtained after training your model in the prior task: </p>
+<pre><code>var photoService = DependencyService.Get&lt;IPhotoService&gt;();
+if (photoService != null)
+{
+    var imageBytes = await photoService.TakePhotoAsync();
+    noseImage.Source = ImageSource.FromUri(new Uri(_nose.Image)); // set source of nose image
+    image.Source = ImageSource.FromStream(() =&gt; new MemoryStream(imageBytes));
+    imageGrid.IsVisible = true; // set visibility to true
+
+    // Invoke Cognitive Services to get predictions on the image
+    productTags.Text = "Predicting...";
+    productTagProbability.Text = "";
+    emotionTag.Text = "";
+    // Invoke the custom vision prediction api
+    var client = new HttpClient();
+    // Request headers - replace this example key with your valid subscription key.
+    client.DefaultRequestHeaders.Add("Prediction-Key", "63fe389c4f96433ba807ee948e7aa98f");
+
+    // Prediction URL - replace this example URL with your valid prediction URL obtained after training the model.
+    string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/a2545d9c-f6e9-41d5-9807-28991bec747c/image?iterationId=2f51acdf-f96c-481c-af49-6cae71e7a2cb";
+    using (var content = new ByteArrayContent(imageBytes))
+    {
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        var response = await client.PostAsync(url, content);
+        dynamic predictionResponse = await response.Content.ReadAsStringAsync()
+            .ContinueWith((readTask) =&gt; JsonConvert.DeserializeObject(readTask.Result));
+        productTags.Text = predictionResponse.Predictions[0].Tag;
+        productTagProbability.Text = (predictionResponse.Predictions[0].Probability.Value * 100).ToString();
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>You can now build and run the project. When you capture the image, make sure you are wearing one of the Knowzy Inc. products. The Custom Vision service will predict which product you are wearing with a specified probability.</p>
+</li>
+</ol>
+<h3 id="add-code-to-call-the-emotion-api-service">Add code to call the Emotion API service</h3>
+<ol>
+<li>
+<p>Open the code-behind file for CameraPage.xaml. </p>
+<ul>
+<li>Navigate to the <code>captureButton_Clicked</code> method and update the body with the following code to invoke the <strong>Emotions API</strong> services and display the results. 
+  Because we are now calling both the <strong>Custom Vision</strong> and <strong>Emotions API</strong> services, we do this in parallel to improve performance. 
+  <strong>Note:</strong> You must replace the <code>Ocp-Apim-Subscription-Key</code> header and <code>url</code> value with the values from your Emotions API account that you saved in the previous task: <pre><code>var photoService = DependencyService.Get&lt;IPhotoService&gt;();
+if (photoService != null)
+{
+    var imageBytes = await photoService.TakePhotoAsync();
+    noseImage.Source = ImageSource.FromUri(new Uri(_nose.Image)); // set source of nose image
+    image.Source = ImageSource.FromStream(() =&gt; new MemoryStream(imageBytes));
+    imageGrid.IsVisible = true; // set visibility to true
+
+    // Invoke Cognitive Services to get predictions on the image
+    productTags.Text = "Predicting...";
+    productTagProbability.Text = "";
+    emotionTag.Text = "";
+    // Invoke the custom vision prediction api
+    var customVisionTask = Task.Run(async () =&gt;
+    {
+        var client = new HttpClient();
+        // Request headers - replace this example key with your valid subscription key.
+        client.DefaultRequestHeaders.Add("Prediction-Key", "63fe389c4f96433ba807ee948e7aa98f");
+
+        // Prediction URL - replace this example URL with your valid prediction URL obtained after training the model.
+        string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/a2545d9c-f6e9-41d5-9807-28991bec747c/image?iterationId=2f51acdf-f96c-481c-af49-6cae71e7a2cb";
+        using (var content = new ByteArrayContent(imageBytes))
+        {
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            var response = await client.PostAsync(url, content);
+            dynamic predictionResponse = await response.Content.ReadAsStringAsync()
+                .ContinueWith((readTask) =&gt; JsonConvert.DeserializeObject(readTask.Result));
+            return Tuple.Create(predictionResponse.Predictions[0].Tag, predictionResponse.Predictions[0].Probability.Value * 100);
+        }
+    });
+    // Invoke the Emotion API in parallel
+    var emotionTask = Task.Run(async () =&gt;
+    {
+        var client = new HttpClient();
+        // Request headers - replace this example key with your valid key.
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "7af37d1e3e6048539c76274fd4c64d72");
+
+        // NOTE: You must use the same region in your REST call as you used to obtain your subscription keys.
+        //   For example, if you obtained your subscription keys from westcentralus, replace "westus" in the 
+        //   URI below with "westcentralus".
+        string uri = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
+        using (var content = new ByteArrayContent(imageBytes))
+        {
+            // This example uses content type "application/octet-stream".
+            // The other content types you can use are "application/json" and "multipart/form-data".
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            var response = await client.PostAsync(uri, content);
+            dynamic detectionResponse = await response.Content.ReadAsStringAsync()
+                .ContinueWith((readTask) =&gt; JsonConvert.DeserializeObject(readTask.Result));
+            // See the format of the JSON response here: https://westus.dev.cognitive.microsoft.com/docs/services/5639d931ca73072154c1ce89/operations/563b31ea778daf121cc3a5fa
+            JObject scores = detectionResponse[0].scores;
+            var highestScore = scores.Properties().OrderByDescending(score =&gt; (double)((JValue)score.Value).Value)
+                .First();
+            return Tuple.Create(highestScore.Name, (double)((JValue)highestScore.Value).Value);
+        }
+    });
+    await Task.WhenAll(customVisionTask, emotionTask);
+    // Update the UI
+    productTags.Text = customVisionTask.Result.Item1;
+    productTagProbability.Text = customVisionTask.Result.Item2.ToString();
+    emotionTag.Text = emotionTask.Result.Item1;
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>You can now build and run the project. When you now capture an image, both the <strong>Custom Vision</strong> AND <strong>Emotions API</strong> will be called to detect the Knowzy Inc. product and how excited the user feels when wearing it. Make sure you wear a Knowzy Inc. product and try out different facial expressions to represent emotions.</p>
+</li>
+</ol>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/use-prediction-api">Custom Vision Service Quickstart</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/cognitive-services/emotion/quickstarts/csharp">Emotion API Service Quickstart</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../331_Social/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

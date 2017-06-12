@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>321 CustomVisionService - Build Tour Hack</title>
+    <title>Build Tour Hack</title>
+
+    <meta name="application-name" content="Build tour 2017">
+    <link href="/Gumby-master/css/gumby.css" rel="stylesheet" />
+ <link href="/Gumby-master/css/style.css" rel="stylesheet" />
+ <link href="/prism.css" rel="stylesheet" />
+<style>
+  body ul {
+    margin-left: 30px;
+    list-style: outside;
+  }
+  .footer {
+    background-color: rgba(0,0,0,.9);
+    height: 100px;
+    color: white;
+    max-width: 100%;
+    margin-top:50px;
+    padding: 30px;
+    font-size: .8em;
+
+  }
+  .footer a, .footer a:visited {
+    color: white;
+    padding: 0 10px;
+  }
+</style>
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-100147268-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<!--
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?dee7a3ddc5dbacaa0bd8de730683378e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script src="https://s13.cnzz.com/z_stat.php?id=1262155909&web_id=1262155909" language="JavaScript"></script>
+-->
+
+
+
+</head>
+
+  <body class="language-javascript">
+
+  <div class="row">
+      <div class="six columns centered  "><a href="/index.html" class="metro"><img src="/Knowzylogo_512x512.png" /></a></div>
+  </div>
+    <div class="row">
+        <div class="twelve columns">
+    <h1 id="task-321-set-up-cognitive-services-custom-vision-service-to-recognize-people-wearing-knowzy-products">Task 3.2.1 - Set up Cognitive Services Custom Vision Service to Recognize People Wearing Knowzy Products</h1>
+<p>Our marketing department wants to let users capture pictures of themselves wearing Knowzy products to share with their friends. Knowzy can use this information to automatically detect what products are being worn and determine the user's excitement for each of the products. This information can be used to drive improvements to those products.</p>
+<p><strong>Goals for this task:</strong> Enable your Android and UWP app to use a Cognitive Services Custom Vision service to detect Knowzy products and the user's emotion from a captured image.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>This task has a dependency on <a href="../313_InkCanvas/">Task 3.1.3</a> and all of it's prerequisites.</li>
+<li>A Microsoft Account</li>
+</ul>
+<h2 id="task">Task</h2>
+<h3 id="create-a-cognitive-services-custom-vision-service-api">Create a Cognitive Services <strong>Custom Vision Service</strong> API</h3>
+<ol>
+<li>In your web browser, navigate to <a href="https://customvision.ai">https://customvision.ai</a></li>
+<li>Click the <strong>Sign In</strong> button and enter your Microsoft Account credentials.</li>
+<li>Create a new Custom Vision project by click the <strong>New Project</strong> tile</li>
+<li>Enter a name for the project (you will need to remember this later), and select <strong>General</strong> for the domain</li>
+<li>Click the <strong>Create Project</strong> button to create the new Custom Vision project</li>
+<li>Click the <strong>Settings</strong> button and copy both the <strong>Training Key</strong> and <strong>Prediction Key</strong> values - these will be required later</li>
+</ol>
+<h3 id="upload-training-images-to-the-custom-vision-service-with-knowzy-products">Upload Training Images to the Custom Vision Service with Knowzy Products</h3>
+<p>In order for the Custom Vision Service to detect which Knowzy Inc. products appear in images submitted by the app, it must first be <em>trained</em>. Training the service requires uploading a small set of images with people wearing Knowzy Inc. products in a diverse set of lighting, zooming and other conditions. Each image is <em>tagged</em> to tell the service what <em>classification</em> the image represents. Once the service has sufficient training images, it will then be able to <em>classify</em> other images (that are not part of the training set) based on matching characteristics.</p>
+<p>Because you need between 10-20 images per tag to successfully train the service, we have provided a set of images that are ready to be ingested and tagged. We have also provided a tool which is able to ingest the training images directly from an <strong>Azure Storage</strong> blob account (this will save needing to upload the images over the hack event wifi). The training images are organized into separate containers for each tag.</p>
+<ol>
+<li>You must first build the training tool. Open the solution at <code>\src\Tools\Tools.sln</code> in Visual Studio 2017.</li>
+<li>Build the solution</li>
+<li>Open a command prompt and navigate to the location where Visual Studio output the built <code>CustomVisionTrainer.exe</code>. This is <code>src\Tools\CustomVisionTrainer\bin\Debug</code>.</li>
+<li>Run the <code>CustomVisionTrainer.exe</code> tool to upload training images for the three different Knowzy Inc. products. The tool requires you to specify the <strong>Training Key</strong> and <strong>Project Name</strong> of your Custom Vision Service project and the name of the project:<pre><code>CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzy8s Knowzy8s
+CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzyvr KnowzyVR
+CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzybowzy KnowzyBowzy
+</code></pre>
+</li>
+</ol>
+<h3 id="train-the-model">Train the Model</h3>
+<ol>
+<li>Switch back to the <strong>Custom Vision</strong> portal in your web browser.</li>
+<li>On the <strong>Training Images</strong> tab, verify that the images you just uploaded using the tool are correctly displayed and tagged. <strong>Note:</strong> There may be a delay of up to 3 minutes for the images to appear.</li>
+<li>Click the <strong>Train</strong> button. This will display progress and the training images are processed and the model is constructed. The process should take less than 2 minutes.</li>
+<li>Click on the <strong>Performance</strong> tab. Verify that a new <strong>Iteration</strong> has been created after the training has completed. Select the latest iteration and click the <strong>Prediction URL</strong> button. Select the URL under the <strong>If you have an image file</strong> heading. This URL will need to be substituted into our code file when you integrate calling this service into our Xamarin application.</li>
+</ol>
+<p><a href="../322_EmotionAPI/">Go to the next Task</a> where you'll create a Cognitive Services Emotion API to detect the level of excitement of a user.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://azure.microsoft.com/en-us/services/cognitive-services/custom-vision-service/">Custom Vision Service</a></li>
+</ul>
+<h2 id="continue-to-next-task">continue to <a href="../322_EmotionAPI/">next task &gt;&gt; </a></h2>
+       
+
+    </div>
+  </div>
+    <div class="row footer">
+      <div class="four columns   "><a href="https://buildtour.microsoft.com/">Build Tour</a> | 
+
+      <a href="https://github.com/knowzy">Knowzy GitHub</a> |      
+      <a href="http://aka.ms/hackcheck ">Hack Checklist</a></div>
+      <div class="six columns "> &nbsp; </div>
+     
+      <div class="two columns "> Copyright Microsoft 2017</div>
+
+    </div>
+  <script>
+if(window.location.href.match('references')){
+document.querySelector('.metro img').src = '/bttitle.png'
+
+}
+
+</script>
+<script src="/Content/prism.js" data-default-language="javascript"></script>
+
+  </body>
+</html>

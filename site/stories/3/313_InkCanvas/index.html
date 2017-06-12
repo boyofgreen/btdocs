@@ -122,9 +122,9 @@ var _hmt = _hmt || [];
     var photoService = DependencyService.Get&lt;IPhotoService&gt;();
     if (photoService != null)
     {
-        var source = await photoService.TakePhotoAsync();
+        var imageBytes = await photoService.TakePhotoAsync();
         noseImage.Source = ImageSource.FromUri(new Uri(_nose.Image)); // set source of nose image
-        image.Source = source;
+        image.Source = ImageSource.FromStream(() =&gt; new MemoryStream(imageBytes));
         imageGrid.IsVisible = true; // set visibility to true
     }
 }
@@ -266,7 +266,7 @@ private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
 <ul>
 <li><a href="https://developer.xamarin.com/guides/xamarin-forms/user-interface/native-views/">Xamarin Native Views</a></li>
 </ul>
-<h2 id="continue-to-next-task">continue to <a href="../321_Social/">next task &gt;&gt; </a></h2>
+<h2 id="continue-to-next-task">continue to <a href="../321_CustomVisionService/">next task &gt;&gt; </a></h2>
 <h2 id="the-solution-for-this-task-is-located-here">The solution for this task is located <a href="https://github.com/Knowzy/KnowzyAppsFinal/tree/master/stories/3/3.1.3">here</a></h2>
        
 

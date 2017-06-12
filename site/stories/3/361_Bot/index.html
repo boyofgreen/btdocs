@@ -4,7 +4,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>342 CICD AndroidApp - Build Tour Hack</title>
+    <title>361 Bot - Build Tour Hack</title>
     <title>Build Tour Hack</title>
 
     <meta name="application-name" content="Build tour 2017">
@@ -68,31 +68,25 @@ var _hmt = _hmt || [];
   </div>
     <div class="row">
         <div class="twelve columns">
-    <h1 id="task-342-set-up-continuous-integration-and-deployment-for-the-android-app-using-visual-studio-mobile-center">Task 3.4.2 - Set up Continuous Integration and Deployment for the Android app using Visual Studio Mobile Center</h1>
-<p>Now that you've made an app that works, the CTO would like to ensure higher quality by setting up Continuous Integration and Delivery. To that end, you've been instructed to make sure that after every code check-in the app compiles, all tests are run, and new versions can be delivered to beta testers with ease. This task will focus on the Android version of the app, with the previous task covering Windows.</p>
+    <h1 id="task-361-create-a-customer-bot">Task 3.6.1 - Create a Customer Bot</h1>
+<p>Our users want to be able to check and modify the status of their orders from anywhere, including chat bot platforms like Skype and Facebook. They'd also like to send feedback and create support tickets from the bot.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<ul>
-<li>This task has a dependency on <a href="../311_XamarinForms/">Task 3.1.1</a> and all of it's prerequisites.</li>
-<li>If you've already set up a code repository for <a href="../341_CICD_WindowsApp/">Task 3.4.1</a>, you can use that and skip to step 2 below.</li>
-</ul>
+<p>This task has a dependency on the <a href="../../4/412_OrdersAPI/">Orders API created under section 4.1.2</a> and all of its prerequisites</p>
 <h2 id="task">Task</h2>
 <ol>
-<li>Add your application to a compatible source control system.</li>
-<li>Create an Android app in Mobile Center, and connect it to your repo.</li>
-<li>Ensure your app builds the first time.  </li>
-<li>Add your teammates so that they will receive notifications on build.</li>
-<li>Make sure your teammates can install your app.</li>
+<li>Create a bot using the Microsoft Bot Framework that asks for the user to log in (a Minimum Viable Product would be asking for the user id to identify the user). </li>
+<li>Once the user logs in, the bot can list user orders, find a specific order status from an Order ID, and cancel the order if it hasn't been shipped.</li>
+<li>The bot also allows the user to open support tickets and send feedback.</li>
 </ol>
 <h2 id="comments">Comments</h2>
-<h6 id="937am">@ 9:37am</h6>
-<p>It sounds like we can use multiple different source control systems with Mobile Center.  Check out <a href="https://docs.microsoft.com/en-us/mobile-center/build/connect">these docs</a> I found about connecting to a repository.</p>
-<h6 id="1004am">@ 10:04am</h6>
-<p>I finally figured out how to <a href="https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/publishing_an_application/part_2_-_signing_the_android_application_package/visual-studio-xa-4.2.5-and-earlier/">creating a Keystore for signing an app</a>.  This should save you some time!</p>
-<h6 id="122pm">@ 1:22pm</h6>
-<p>It sounds like the Build config in Mobile Center let's us trigger a build with every code check-in.  That means our builds will happen automatically!</p>
-<h6 id="356pm">@ 3:56pm</h6>
-<p>My friends wanted to know whenever I built an app so I figured out how to create a distribution group <a href="https://docs.microsoft.com/en-us/mobile-center/distribution/groups">here</a>.</p>
-<h2 id="continue-to-next-task">continue to <a href="../343_EventLogging/">next task &gt;&gt; </a></h2>
+<h6 id="902am">@ 9:02am</h6>
+<p>I've done a bit of investigation, found these samples <a href="https://github.com/Microsoft/BotBuilder-Samples/tree/master/CSharp/">in C#</a> and <a href="https://github.com/Microsoft/BotBuilder-Samples/tree/master/Node">in Node.js</a> that should help us get started.  The core-MultiDialogs and the cards-CarouselCards samples seem interesting.</p>
+<h6 id="923am">@ 9:23am</h6>
+<p>If the bot asks the user to sign in we can use this <a href="https://blogs.msdn.microsoft.com/richard_dizeregas_blog/2017/05/15/bot-authentication-in-the-bot-framework/">nice library called BotAuth</a> for it. </p>
+<h6 id="1031am">@ 10:31am</h6>
+<p>We can use this to keep track of the user's id (<a href="https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-state">C#</a> and <a href="https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-save-user-data">Node.js</a>) like in the core-State sample. After logging in we can use the user id to get our bot to call the <a href="../../4/412_OrdersAPI/">Orders API</a> to get order details for the user. </p>
+<h6 id="1105am">@ 11:05am</h6>
+<p>We can use Microsoft Cognitive Services to enhance our bot, like the <a href="https://azure.microsoft.com/en-us/services/cognitive-services/language-understanding-intelligent-service/">Language Understanding Intelligent Service</a> to <a href="https://docs.microsoft.com/en-us/bot-framework/cognitive-services-bot-intelligence-overview#language-understanding">understand commands</a> and the <a href="https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/">Text Analytics API</a> for sentiment analysis of feedback. </p>
        
 
     </div>
