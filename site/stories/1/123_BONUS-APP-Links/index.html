@@ -89,6 +89,23 @@ var _hmt = _hmt || [];
 <p>Reinstall your local app.</p>
 </li>
 </ol>
+<p><strong>Tip:</strong> Make sure your ASP.NET MVC site can serve up the windows-app-web-link file.  A simple way to do this for testing is to enable known file types to be served - modify your StartUp.cs / Configure method to look as follows:</p>
+<pre><code>    app.UseStaticFiles(new StaticFileOptions()
+    {
+       ServeUnknownFileTypes = true,
+       DefaultContentType = "text/plain"
+    });
+
+    app.UseStaticFiles();
+
+    app.UseMvc(routes =&gt;
+    {
+    ...
+</code></pre>
+<p><strong>Tip:</strong> In the generated windows10 package, you can either develop via the source\App.jsproj project in Visual Studio, or you can use your favorite editor with the manifest\appxmanifest.xml file and use the test_install.ps1 script to deploy. </p>
+<p><strong>Tip:</strong> Remember that Apps for Websites is a Windows 10 Anniversary Update feature.</p>
+<p>If using Visual Studio, make sure your Project Properties Target version is at least "10.0.14393".</p>
+<p>If using the appxmanifest.xml, make sure your MaxVersionTested property has a version number of at least "10.0.14393".</p>
 <h2 id="references">References</h2>
 <p><a href="https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking">https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking</a> <strong> Note code samples in c#, but manifest changes are the same </strong></p>
 <p><a href="https://blogs.windows.com/buildingapps/2016/03/07/hosted-web-apps-go-beyond-the-app/#JoWUjrHvp5wDFPt1.97">https://blogs.windows.com/buildingapps/2016/03/07/hosted-web-apps-go-beyond-the-app/#JoWUjrHvp5wDFPt1.97</a> <strong> Note this shows you how to do a javascript activation object to navigate your app to the URL that launched it </strong></p>

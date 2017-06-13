@@ -81,19 +81,19 @@ var _hmt = _hmt || [];
 <ol>
 <li>In your web browser, navigate to <a href="https://customvision.ai">https://customvision.ai</a></li>
 <li>Click the <strong>Sign In</strong> button and enter your Microsoft Account credentials.</li>
-<li>Create a new Custom Vision project by click the <strong>New Project</strong> tile</li>
+<li>Create a new Custom Vision project by clicking the <strong>New Project</strong> tile</li>
 <li>Enter a name for the project (you will need to remember this later), and select <strong>General</strong> for the domain</li>
 <li>Click the <strong>Create Project</strong> button to create the new Custom Vision project</li>
 <li>Click the <strong>Settings</strong> button and copy both the <strong>Training Key</strong> and <strong>Prediction Key</strong> values - these will be required later</li>
 </ol>
 <h3 id="upload-training-images-to-the-custom-vision-service-with-knowzy-products">Upload Training Images to the Custom Vision Service with Knowzy Products</h3>
-<p>In order for the Custom Vision Service to detect which Knowzy Inc. products appear in images submitted by the app, it must first be <em>trained</em>. Training the service requires uploading a small set of images with people wearing Knowzy Inc. products in a diverse set of lighting, zooming and other conditions. Each image is <em>tagged</em> to tell the service what <em>classification</em> the image represents. Once the service has sufficient training images, it will then be able to <em>classify</em> other images (that are not part of the training set) based on matching characteristics.</p>
-<p>Because you need between 10-20 images per tag to successfully train the service, we have provided a set of images that are ready to be ingested and tagged. We have also provided a tool which is able to ingest the training images directly from an <strong>Azure Storage</strong> blob account (this will save needing to upload the images over the hack event wifi). The training images are organized into separate containers for each tag.</p>
+<p>In order for the Custom Vision Service to detect which Knowzy products appear in images submitted by the app, it must first be <em>trained</em>. Training the service requires uploading a small set of images with people wearing Knowzy products in a diverse set of lighting, zooming and other conditions. Each image is <em>tagged</em> to tell the service what <em>classification</em> the image represents. Once the service has sufficient training images, it will then be able to <em>classify</em> other images (that are not part of the training set) based on matching characteristics.</p>
+<p>Because you need between 10-20 images per tag to successfully train the service, we have provided a set of images that are ready to be ingested and tagged. We have also provided a tool which is able to ingest the training images directly from an <strong>Azure Storage</strong> blob account (this will save needing to upload the images). The training images are organized into separate containers for each tag.</p>
 <ol>
 <li>You must first build the training tool. Open the solution at <code>\src\Tools\Tools.sln</code> in Visual Studio 2017.</li>
 <li>Build the solution</li>
 <li>Open a command prompt and navigate to the location where Visual Studio output the built <code>CustomVisionTrainer.exe</code>. This is <code>src\Tools\CustomVisionTrainer\bin\Debug</code>.</li>
-<li>Run the <code>CustomVisionTrainer.exe</code> tool to upload training images for the three different Knowzy Inc. products. The tool requires you to specify the <strong>Training Key</strong> and <strong>Project Name</strong> of your Custom Vision Service project and the name of the project:<pre><code>CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzy8s Knowzy8s
+<li>Run the <code>CustomVisionTrainer.exe</code> tool to upload training images for the three different Knowzy products. The tool requires you to specify the <strong>Training Key</strong> and <strong>Project Name</strong> of your Custom Vision Service project and the name of the project:<pre><code>CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzy8s Knowzy8s
 CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzyvr KnowzyVR
 CustomVisionTrainer.exe {Training Key} {Project Name} https://bthackcustomvisiontrain.blob.core.windows.net/knowzybowzy KnowzyBowzy
 </code></pre>
