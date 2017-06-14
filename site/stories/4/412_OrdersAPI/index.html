@@ -170,7 +170,19 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 </code></pre>
 
 <p>Note how we are using the <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection">ASP.NET Core dependency injection</a> to get the config instance passed into the class initializer for us, and with it we get the environment variable values. You can read more about configuration in ASP.NET Core in <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration">this help article</a>.</p>
-<p>Modify <code>Startup.cs</code> and register our data access with the list of services (IoC) and with new JSON serialization settings:</p>
+<p>Install the Newtonsoft JSON NuGet package:
+1. Right click on your project and select "Manage Nuget Packages"
+2. Select the "Browse" tab
+3. Search for "Newtonsoft"
+4. Select "Newtonsoft.Json"
+5. Press "Install"</p>
+<pre><code>![Install Newtonsoft JSON](images/newtonsoft.png)
+</code></pre>
+<p>Modify <code>Startup.cs</code> and register your data access with the list of services (IoC) and with new JSON serialization settings. First, you'll need to include the Newtonsoft.Json namespace at the top:</p>
+<pre><code class="language-diff">+ using Newtonsoft.Json;
+</code></pre>
+
+<p>Then, continue to modify <code>Startup.cs</code> as follows:</p>
 <pre><code class="language-diff">public void ConfigureServices(IServiceConnection services)
 {
   // Add framework services.

@@ -155,6 +155,24 @@ var _hmt = _hmt || [];
 <p><img alt="publish screen from vs" src="../images/publish3.PNG" /></p>
 </li>
 </ol>
+<h2 id="deployment-errors">Deployment Errors</h2>
+<ul>
+<li>
+<p>When attempting to deploy, you may run into an issue where Azure complains that a certain .dll is locked. If this is the case, you'll have to perform the following steps:</p>
+<ol>
+<li>Sign into <a href="https://portal.azure.com">https://portal.azure.com</a> with the same credentials you used to deploy your web app</li>
+<li>Select "App Services" from the left-most menu (see 1 in the figure below)</li>
+<li>Select your web app (see 2 in the figure below)</li>
+<li>
+<p>Press restart on the top menu bar (see 3 in the figure below)</p>
+<p><img alt="publish screen from vs" src="../images/publish-error0.PNG" /></p>
+</li>
+<li>
+<p>Once your web app has finished restarting, re-deploying your web app should be successful.</p>
+</li>
+</ol>
+</li>
+</ul>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://github.com/Knowzy/KnowzyInternalApps">Knowzy App GitHub Repo</a></li>
