@@ -68,7 +68,7 @@ var _hmt = _hmt || [];
   </div>
     <div class="row">
         <div class="twelve columns">
-    <h1 id="task-323-update-xamarin-app-to-call-coginitive-services-apis">Task 3.2.3 - Update Xamarin App to call Coginitive Services APIs</h1>
+    <h1 id="task-323-update-xamarin-app-to-call-cognitive-services-apis">Task 3.2.3 - Update Xamarin App to call Cognitive Services APIs</h1>
 <p>It is now time to integrate calls to the Cognitive Services that you created in the previous steps into the Xamarin application. These calls can be made directly from the app. An alternative design would be to host functionality on Azure to make these calls.</p>
 <p><strong>Goals for this task:</strong> Create new functionality to the previously created Camera Page which will call the Cognitive Services APIs and display the results to the user.</p>
 <h2 id="prerequisites">Prerequisites</h2>
@@ -115,7 +115,7 @@ using Newtonsoft.Json.Linq;
 </li>
 <li>
 <p>Navigate to the <code>captureButton_Clicked</code> method and update the body with the following code to invoke the <strong>Custom Vision</strong> service and display the results.
-  <strong>Note:</strong> You must replace the <code>Prediction-Key</code> header with the <strong>Prediction Key</strong> value from your Custom Vision project. Additionally, you must replace the <code>url</code> with the <strong>Prediction URL</strong> you obtained after training your model in the prior task: </p>
+  <strong>Note:</strong> You must replace the <code>Prediction-Key</code> header with the <strong>Prediction Key</strong> value you saved when you created your Custom Vision project in the prior task. Additionally, you must replace the <code>url</code> with the <strong>Prediction URL</strong> you saved after training your model: </p>
 <pre><code>var photoService = DependencyService.Get&lt;IPhotoService&gt;();
 if (photoService != null)
 {

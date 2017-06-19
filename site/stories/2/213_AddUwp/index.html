@@ -222,7 +222,7 @@ After a build and deployment of the Knowzy app, we will find the Products.json f
 <p>Right-click on the Microsoft.Knowzy.UwpHelpers project and select <strong>Add</strong> and then <strong>Reference...</strong></p>
 </li>
 <li>
-<p>On the left of the Reference Manager, go to Browse and find the following file <strong>“C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework.NETCore\v4.5\System.Runtime.WindowsRuntime.dll”</strong>. Add a reference to this file.</p>
+<p>On the left of the Reference Manager, go to Browse and find the following file <strong>"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework.NETCore\v4.5\System.Runtime.WindowsRuntime.dll"</strong>. Add a reference to this file.</p>
 <p><img alt="Windows.winmd" src="../images/213-runtime.png" /></p>
 </li>
 <li>
@@ -406,6 +406,7 @@ public Product[] GetData()
 </code></pre>
 </li>
 </ul>
+<p>In the ViewModels folder of the Microsoft.Knowzy.WPF project, open the MainViewModel.cs file and re-enable lines lines 72-75.</p>
 <p>Press F5 to run the Microsoft.Knowzy.Debug project. Finally our Knowzy UWP app can load the Products.json file from the correct location and display the information correctly.</p>
 <p><img alt="Knowzy UWP" src="../images/213-knowzy-uwp.png" /></p>
 <p>We can also still run our original WPF version. The UWP additions are ignored by the WPF version. To try this out right-click on the Microsoft.Knowzy.WPF project and select <strong>Debug | Start new instance</strong></p>
